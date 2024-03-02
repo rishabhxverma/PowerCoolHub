@@ -9,5 +9,4 @@ public class PowercoolHubApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(PowercoolHubApplication.class, args);
 	}
-
 }
