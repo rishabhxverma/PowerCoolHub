@@ -14,6 +14,14 @@ public class DemoController {
     }
 
     /**
+     * Display demo login error page.
+     */
+    @GetMapping("/demo/login/error")
+    public String showLoginError() {
+        return "login/error";
+    }
+
+    /**
      * Display demo register page.
      */
     @GetMapping("/demo/register")
