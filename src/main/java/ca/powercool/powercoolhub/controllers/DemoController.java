@@ -28,4 +28,12 @@ public class DemoController {
     public String showRegister() {
         return "register";
     }
+
+    /**
+     * Display demo register page.
+     */
+    @GetMapping("/demo/register/error")
+    public String showRegisterError() {
+        return "register/error";
+    }
 }
