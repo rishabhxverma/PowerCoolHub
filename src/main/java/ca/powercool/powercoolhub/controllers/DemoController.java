@@ -12,4 +12,12 @@ public class DemoController {
     public String showLogin() {
         return "login";
     }
+
+    /**
+     * Display demo register page.
+     */
+    @GetMapping("/demo/register")
+    public String showRegister() {
+        return "register";
+    }
 }
