@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ca.powercool.powercoolhub.models.User;
 
 public interface UserRepository extends JpaRepository<User, Long>{
-    User findByName(String name);
+    User findByUsername(String username);
 }
