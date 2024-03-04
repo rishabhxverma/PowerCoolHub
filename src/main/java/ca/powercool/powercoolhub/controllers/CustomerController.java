@@ -22,7 +22,7 @@ public class CustomerController {
     public String viewAllCustomers(Model model) {
         List<Customer> customers = customerRepository.findAll();
         model.addAttribute("customers", customers);
-        return "viewAll"; // Return the name of the Thymeleaf template
+        return "customers/viewAll"; // Return the name of the Thymeleaf template
     }
 
     @GetMapping("/{id}")
