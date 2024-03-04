@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Customer</title>
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <style>
@@ -11,54 +10,47 @@
             color: red;
         }
     </style>
+
+
 </head>
 <body>
     <div class="container">
         <h2>Add Customer</h2>
-        <form id="addCustomerForm" method="post" action="/customers">
+        <form id="addCustomerForm" th:object="${customer}" method="post" action="/customers">
             <div class="form-group">
                 <label for="name">Name:</label>
-                <input type="text" class="form-control" id="name" name="name" required>
-                <span class="error-message" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                <input type="text" class="form-control" id="name" th:field="*{name}" required>
             </div>
             <div class="form-group">
                 <label for="address">Address:</label>
-                <input type="text" class="form-control" id="address" name="address" required>
-                <span class="error-message" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
+                <input type="text" class="form-control" id="address" th:field="*{address}" required>
             </div>
             <div class="form-group">
                 <label for="phoneNumber">Phone Number:</label>
-                <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" required>
-                <span class="error-message" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
+                <input type="text" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" required>
             </div>
             <div class="form-group">
                 <label for="notes">Notes:</label>
-                <input type="text" class="form-control" id="notes" name="notes">
+                <textarea class="form-control" id="notes" th:field="*{notes}"></textarea>
             </div>
             <div class="form-group">
                 <label for="lastServiced">Last Serviced:</label>
-                <input type="date" class="form-control" id="lastServiced" name="lastServiced">
+                <input type="date" class="form-control" id="lastServiced" th:field="*{lastServiced}">
             </div>
             <div class="form-group">
                 <label for="installationDate">Installation Date:</label>
-                <input type="date" class="form-control" id="installationDate" name="installationDate">
+                <input type="date" class="form-control" id="installationDate" th:field="*{installationDate}">
             </div>
             <div class="form-group">
                 <label for="state">State:</label>
-                <input type="text" class="form-control" id="state" name="state">
+                <input type="text" class="form-control" id="state" th:field="*{state}" required>
             </div>
-            <div class="form-group form-check">
-                <input type="checkbox" class="form-check-input" id="paymentReceived" name="paymentReceived">
-                <label class="form-check-label" for="paymentReceived">Payment Received</label>
+            <div class="form-group">
+                <label for="paymentReceived">Payment Received:</label>
+                <input type="checkbox" class="form-control" id="paymentReceived" th:field="*{paymentReceived}">
             </div>
-            <!-- Add more fields as needed -->
-
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit">Submit</button>
         </form>
     </div>
-    <!-- Bootstrap JS -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
