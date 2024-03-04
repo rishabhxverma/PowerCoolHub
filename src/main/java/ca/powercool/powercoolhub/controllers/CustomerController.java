@@ -33,6 +33,11 @@ public class CustomerController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping("/add")
+    public String showAddCustomerForm() {
+        return "customer/addCustomer"; 
+    }
+
     @PostMapping("/")
     public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
         Customer createdCustomer = customerRepository.save(customer);
