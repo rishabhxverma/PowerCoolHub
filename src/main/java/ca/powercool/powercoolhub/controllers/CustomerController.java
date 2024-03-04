@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
@@ -16,6 +18,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
 import org.springframework.http.HttpStatus;
@@ -32,11 +36,13 @@ public class CustomerController {
     private CustomerRepository customerRepository;
 
     @GetMapping("/viewAll")
-    public String getAllCustomers(Model model) {
+    public ResponseEntity<List<Customer>> getAllCustomers() {
         List<Customer> customers = customerRepository.findAll();
-        model.addAttribute("customers", customers);
-        return "viewAll"; 
+        
+        return new ResponseEntity<>(customers, HttpStatus.OK);
     }
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Customer> getCustomerById(@PathVariable Integer id) {
