@@ -35,7 +35,7 @@ public class CustomerController {
 
     @GetMapping("/add")
     public String showAddCustomerForm() {
-        return "customer/addCustomer"; 
+        return "customers/addCustomer"; 
     }
 
     @PostMapping("/")
