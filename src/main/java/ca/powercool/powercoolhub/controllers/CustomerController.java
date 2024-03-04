@@ -33,9 +33,11 @@ public class CustomerController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("/add")
-    public String showAddCustomerForm() {
-        return "customer/addCustomer"; 
+
+    @GetMapping("/addCustomer")
+    public String showAddCustomerForm(Model model) {
+        model.addAttribute("customer", new Customer());
+        return "customers/addCustomer";
     }
 
     @PostMapping("/")
