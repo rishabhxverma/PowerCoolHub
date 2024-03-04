@@ -1,5 +1,5 @@
 package ca.powercool.powercoolhub.models;
-
+import java.sql.Date;
 import jakarta.persistence.*;
 
 @Entity
@@ -14,14 +14,14 @@ public class Customer {
     private String address;
     private String phoneNumber;
     private String notes;
-    private String lastServiced;
-    private String installationDate;
+    private Date lastServiced;
+    private Date installationDate;
     private String state; //Can be a set of strings we assign to this, ie Archived, requested service, requested install.
     private boolean paymentReceived; //true / false for the payment received or pending
     public Customer() {
     }
-    public Customer(Integer id, String name, String address, String phoneNumber, String notes, String lastServiced,
-            String installationDate, String state, boolean paymentReceived) {
+    public Customer(Integer id, String name, String address, String phoneNumber, String notes, Date lastServiced,
+            Date installationDate, String state, boolean paymentReceived) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -62,16 +62,16 @@ public class Customer {
     public void setNotes(String notes) {
         this.notes = notes;
     }
-    public String getLastServiced() {
+    public Date getLastServiced() {
         return lastServiced;
     }
-    public void setLastServiced(String lastServiced) {
+    public void setLastServiced(Date lastServiced) {
         this.lastServiced = lastServiced;
     }
-    public String getInstallationDate() {
+    public Date getInstallationDate() {
         return installationDate;
     }
-    public void setInstallationDate(String installationDate) {
+    public void setInstallationDate(Date installationDate) {
         this.installationDate = installationDate;
     }
     public String getState() {
@@ -86,4 +86,6 @@ public class Customer {
     public void setPaymentReceived(boolean paymentReceived) {
         this.paymentReceived = paymentReceived;
     }
+    
+
 }
