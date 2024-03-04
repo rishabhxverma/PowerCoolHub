@@ -22,8 +22,36 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
-@Controller
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import java.util.Optional;
+
+import ca.powercool.powercoolhub.models.Customer;
+
+@RestController
+@RequestMapping("/customers")
 public class CustomerController {
+
     @Autowired
-    private CustomerRepository customerRepo;
+    private CustomerRepository customerRepository;
+
+    @GetMapping("/viewAll")
+    public ResponseEntity<List<Customer>> getAllCustomers() {
+        List<Customer> customers = customerRepository.findAll();
+        return new ResponseEntity<>(customers, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Customer> getCustomerById(@PathVariable Integer id) {
+        Optional<Customer> customerOptional = customerRepository.findById(id);
+        return customerOptional.map(customer -> new ResponseEntity<>(customer, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PostMapping("/")
+    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
+        Customer createdCustomer = customerRepository.save(customer);
+        return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
+    }
 }
+
