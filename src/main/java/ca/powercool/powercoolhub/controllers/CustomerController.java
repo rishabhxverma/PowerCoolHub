@@ -25,6 +25,6 @@ import org.springframework.web.servlet.view.RedirectView;
 @Controller
 public class CustomerController {
     @Autowired
-    private CustomerRepository customerRepo;
+    private CustomerRepository customerRepository;
     
 }
