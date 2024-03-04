@@ -2,8 +2,6 @@ package ca.powercool.powercoolhub.models;
 
 import jakarta.persistence.*;
 
-import jakarta.persistence.Entity;
-
 @Entity
 @Table(name="customers")
 public class Customer {
@@ -11,42 +9,52 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     
-    private String firstName;
-    private String lastName;
+    //Can be changed - some basic data about each customer
+    private String name;
     private String address;
+    private String phoneNumber;
     private String notes;
     private String lastServiced;
     private String installationDate;
-    private String state;
+    private String state; //Can be a set of strings we assign to this, ie Archived, requested service, requested install.
+    private boolean paymentReceived; //true / false for the payment received or pending
     public Customer() {
     }
-    public Customer(String firstName, String lastName, String address, String notes, String lastServiced,
-            String installationDate, String state) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public Customer(Integer id, String name, String address, String phoneNumber, String notes, String lastServiced,
+            String installationDate, String state, boolean paymentReceived) {
+        this.id = id;
+        this.name = name;
         this.address = address;
+        this.phoneNumber = phoneNumber;
         this.notes = notes;
         this.lastServiced = lastServiced;
         this.installationDate = installationDate;
         this.state = state;
+        this.paymentReceived = paymentReceived;
     }
-    public String getFirstName() {
-        return firstName;
+    public Integer getId() {
+        return id;
     }
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setId(Integer id) {
+        this.id = id;
     }
-    public String getLastName() {
-        return lastName;
+    public String getName() {
+        return name;
     }
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setName(String name) {
+        this.name = name;
     }
     public String getAddress() {
         return address;
     }
     public void setAddress(String address) {
         this.address = address;
+    }
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
     public String getNotes() {
         return notes;
@@ -72,5 +80,10 @@ public class Customer {
     public void setState(String state) {
         this.state = state;
     }
-    
+    public boolean isPaymentReceived() {
+        return paymentReceived;
+    }
+    public void setPaymentReceived(boolean paymentReceived) {
+        this.paymentReceived = paymentReceived;
+    }
 }
