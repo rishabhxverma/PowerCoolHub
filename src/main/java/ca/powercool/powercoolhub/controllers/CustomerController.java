@@ -32,11 +32,6 @@ public class CustomerController {
         return customerOptional.map(customer -> new ResponseEntity<>(customer, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-    
-    @GetMapping("/add")
-    public String showAddCustomerForm() {
-        return "customers/addCustomer"; 
-
 
     @GetMapping("/addCustomer")
     public String showAddCustomerForm(Model model) {
@@ -46,9 +41,10 @@ public class CustomerController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
+    public String createCustomer(@ModelAttribute Customer customer, Model model) {
         Customer createdCustomer = customerRepository.save(customer);
-        return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
+        model.addAttribute("customer", createdCustomer);
+        return "redirect:/customers/viewAll"; // Redirect to the viewAll endpoint
     }
 
     @PutMapping("/{id}")
