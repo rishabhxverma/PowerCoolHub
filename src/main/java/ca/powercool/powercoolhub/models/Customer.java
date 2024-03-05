@@ -32,6 +32,14 @@ public class Customer {
         this.state = state;
         this.paymentReceived = paymentReceived;
     }
+    public Customer(Integer id, String name, String address, String phoneNumber, String notes) {
+        this.id = id;
+        this.name = name;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.notes = notes;
+    }
+    
     public Integer getId() {
         return id;
     }
