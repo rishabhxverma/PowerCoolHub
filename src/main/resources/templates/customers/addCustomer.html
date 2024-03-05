@@ -33,22 +33,6 @@
                 <label for="notes">Notes:</label>
                 <textarea class="form-control" id="notes" th:field="*{notes}"></textarea>
             </div>
-            <div class="form-group">
-                <label for="lastServiced">Last Serviced:</label>
-                <input type="date" class="form-control" id="lastServiced" th:field="*{lastServiced}">
-            </div>
-            <div class="form-group">
-                <label for="installationDate">Installation Date:</label>
-                <input type="date" class="form-control" id="installationDate" th:field="*{installationDate}">
-            </div>
-            <div class="form-group">
-                <label for="state">State:</label>
-                <input type="text" class="form-control" id="state" th:field="*{state}" required>
-            </div>
-            <div class="form-group">
-                <label for="paymentReceived">Payment Received:</label>
-                <input type="checkbox" class="form-control" id="paymentReceived" th:field="*{paymentReceived}">
-            </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
