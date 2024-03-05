@@ -41,9 +41,10 @@ public class CustomerController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
+    public String createCustomer(@ModelAttribute Customer customer, Model model) {
         Customer createdCustomer = customerRepository.save(customer);
-        return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
+        model.addAttribute("customer", createdCustomer);
+        return "redirect:/customers/viewAll"; // Redirect to the viewAll endpoint
     }
 
     @PutMapping("/{id}")
