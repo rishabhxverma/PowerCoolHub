@@ -16,7 +16,7 @@
 <body>
     <div class="container">
         <h2>Add Customer</h2>
-        <form id="addCustomerForm" th:object="${customer}" method="post" action="/customers">
+        <form id="addCustomerForm" th:object="${customer}" method="post" action="/customers/">
             <div class="form-group">
                 <label for="name">Name:</label>
                 <input type="text" class="form-control" id="name" th:field="*{name}" required>
@@ -49,7 +49,7 @@
                 <label for="paymentReceived">Payment Received:</label>
                 <input type="checkbox" class="form-control" id="paymentReceived" th:field="*{paymentReceived}">
             </div>
-            <button type="submit">Submit</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
         </form>
     </div>
 </body>
