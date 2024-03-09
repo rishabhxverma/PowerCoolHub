@@ -1,5 +1,10 @@
 package ca.powercool.powercoolhub.controllers;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +23,13 @@ import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class UserController {
+
+    static class RegistrationException extends Exception {
+        public RegistrationException(String message) {
+            super(message);
+        }
+    }
+
     @Autowired
     private UserRepository userRepo;
 
@@ -104,5 +117,54 @@ public class UserController {
             return "/users/login";
         }
         return "/users/employee/employeeDashboard";
+    }
+
+    @PostMapping("/register")
+    public String registerEmployeeIntoDataBase(@RequestParam("email") String employeeEmail,
+            @RequestParam("name") String employeeName,
+            @RequestParam("password") String employeePassword,
+            HttpServletResponse statusSetter) {
+
+        try {
+            checkUserRegistrationByEmail(employeeEmail);
+            User newUser = new User();
+            newUser.setName(employeeName);
+            newUser.setEmail(employeeEmail);
+            newUser.setPassword(employeePassword);
+            newUser.setRole("employee");
+            userRepo.save(newUser);
+            statusSetter.setStatus(201);
+            return "users/login";
+        } catch (RegistrationException e) {
+            System.err.println("Registration failed: " + e.getMessage());
+            return "register/error";
+        }
+    }
+
+    private void checkUserRegistrationByEmail(String employeeEmail) throws RegistrationException {
+        if (emailExists(employeeEmail)) {
+            throw new RegistrationException("The email is already in use!");
+        }
+    }
+
+    private boolean emailExists(String userEmail) {
+        String query = "SELECT EXISTS(SELECT 1 FROM users WHERE email = ?)";
+
+        try (Connection conn = DriverManager.getConnection(
+                "jdbc:postgresql://dpg-cnh7f3da73kc73b7o2ag-a.oregon-postgres.render.com/powercool_hub_database",
+                "powercool_hub_database_user", "jblaTia2sez3rMqOj8tW9yxcFgEiybMg");
+                PreparedStatement preparedStatement = conn.prepareStatement(query)) {
+
+            preparedStatement.setString(1, userEmail);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getBoolean(1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
