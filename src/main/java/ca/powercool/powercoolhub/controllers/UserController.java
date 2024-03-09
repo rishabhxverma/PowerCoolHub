@@ -1,21 +1,15 @@
 package ca.powercool.powercoolhub.controllers;
 
-import java.lang.ProcessBuilder.Redirect;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,29 +30,29 @@ public class UserController {
         // Check for manager session attribute
         User manager = (User) request.getSession().getAttribute("manager_session");
         if (manager != null) {
-            return "redirect:/users/managerDashboard"; 
+            return "redirect:/users/managerDashboard";
         }
-        
+
         // Check for employee session attribute
         User employee = (User) request.getSession().getAttribute("employee_session");
         if (employee != null) {
-            return "redirect:/users/employeeDashboard"; 
+            return "redirect:/users/employeeDashboard";
         }
-        
+
         // If neither session attribute is present, return the login page
         return "/users/login";
     }
 
     @PostMapping("/users/login")
     public String postLogin(@RequestParam Map<String, String> data, Model model, HttpServletRequest request) {
-        String name = data.get("username");
+        String email = data.get("email");
         String password = data.get("password");
-        User user = userRepo.findByUsername(name);
+        User user = userRepo.findByEmail(email);
 
-        model.addAttribute("username", name);
+        model.addAttribute("email", email);
         // Check if the user exists
         if (user == null) {
-            model.addAttribute("loginError", "Username not found.");
+            model.addAttribute("loginError", "Email not found.");
             return "/users/login";
         }
         // Check if the password is correct
@@ -70,12 +64,10 @@ public class UserController {
         else if (user.getRole().equals("manager")) {
             request.getSession().setAttribute("manager_session", user);
             return "redirect:/users/managerDashboard";
-        } 
-        else if (user.getRole().equals("employee")) {
+        } else if (user.getRole().equals("employee")) {
             request.getSession().setAttribute("employee_session", user);
             return "redirect:/users/employeeDashboard";
-        }  
-        else {
+        } else {
             request.getSession().invalidate();
             model.addAttribute("loginError", "User role is not recognized."); // This should never happen
             return "/users/login";
@@ -98,7 +90,7 @@ public class UserController {
             request.getSession().invalidate();
             return "/users/login";
         }
-        
+
         return "/users/managerDashboard";
     }
 
@@ -111,6 +103,6 @@ public class UserController {
             request.getSession().invalidate();
             return "/users/login";
         }
-        return "/users/employeeDashboard"; 
+        return "/users/employeeDashboard";
     }
 }
