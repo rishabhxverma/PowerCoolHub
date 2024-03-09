@@ -1,18 +1,16 @@
 package ca.powercool.powercoolhub.forms;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class LoginForm {
-    @NotNull
     @Email(message = "Invalid email.")
     @Size(min = 2, message = "Email must be at least {min} characters long.")
     private String email;
 
     @NotNull
-    @Min(value = 5, message = "Password must be at least {value} characters long.")
+    @Size(min = 5, message = "Password must be at least {min} characters long.")
     private String password;
 
     // Setters
@@ -26,10 +24,10 @@ public class LoginForm {
 
     // Getters
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
     public String getPassword() {
-        return password;
+        return this.password;
     }
 }
