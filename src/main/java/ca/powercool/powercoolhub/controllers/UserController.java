@@ -53,7 +53,7 @@ public class UserController {
     public String postLogin(@RequestParam Map<String, String> data, Model model, HttpServletRequest request) {
         String name = data.get("username");
         String password = data.get("password");
-        User user = userRepo.findByName(name);
+        User user = userRepo.findByUsername(name);
 
         model.addAttribute("username", name);
         // Check if the user exists
