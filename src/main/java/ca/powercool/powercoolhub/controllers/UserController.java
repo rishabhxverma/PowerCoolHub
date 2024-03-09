@@ -30,13 +30,13 @@ public class UserController {
         // Check for manager session attribute
         User manager = (User) request.getSession().getAttribute("manager_session");
         if (manager != null) {
-            return "redirect:/users/managerDashboard";
+            return "redirect:/users/manager/managerDashboard";
         }
 
         // Check for employee session attribute
         User employee = (User) request.getSession().getAttribute("employee_session");
         if (employee != null) {
-            return "redirect:/users/employeeDashboard";
+            return "redirect:/users/employee/employeeDashboard";
         }
 
         // If neither session attribute is present, return the login page
@@ -63,10 +63,10 @@ public class UserController {
         // Correct password, proceed with setting session and redirecting
         else if (user.getRole().equals("manager")) {
             request.getSession().setAttribute("manager_session", user);
-            return "redirect:/users/managerDashboard";
+            return "redirect:/users/manager/managerDashboard";
         } else if (user.getRole().equals("employee")) {
             request.getSession().setAttribute("employee_session", user);
-            return "redirect:/users/employeeDashboard";
+            return "redirect:/users/employee/employeeDashboard";
         } else {
             request.getSession().invalidate();
             model.addAttribute("loginError", "User role is not recognized."); // This should never happen
@@ -82,7 +82,7 @@ public class UserController {
     }
 
     // Ensures that the user is logged in as a manager
-    @GetMapping("/users/managerDashboard")
+    @GetMapping("/users/manager/managerDashboard")
     public String getManagerDashboard(HttpServletRequest request, Model model) {
         User manager = (User) request.getSession().getAttribute("manager_session");
         if (manager == null || !manager.getRole().equals("manager")) {
@@ -91,11 +91,11 @@ public class UserController {
             return "/users/login";
         }
 
-        return "/users/managerDashboard";
+        return "/users/manager/managerDashboard";
     }
 
     // Ensures that the user is logged in as an employee
-    @GetMapping("users/employeeDashboard")
+    @GetMapping("/users/employee/employeeDashboard")
     public String getEmployeeDashboard(HttpServletRequest request, Model model) {
         User employee = (User) request.getSession().getAttribute("employee_session");
         if (employee == null || !employee.getRole().equals("employee")) {
@@ -103,6 +103,6 @@ public class UserController {
             request.getSession().invalidate();
             return "/users/login";
         }
-        return "/users/employeeDashboard";
+        return "/users/employee/employeeDashboard";
     }
 }
