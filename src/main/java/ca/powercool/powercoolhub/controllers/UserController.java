@@ -5,17 +5,20 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
-
+import ca.powercool.powercoolhub.forms.LoginForm;
 import ca.powercool.powercoolhub.models.User;
+import ca.powercool.powercoolhub.models.UserRole;
 import ca.powercool.powercoolhub.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,7 +34,7 @@ public class UserController {
     }
 
     @Autowired
-    private UserRepository userRepo;
+    private UserRepository userRepository;
 
     @GetMapping("/")
     public RedirectView process() {
@@ -39,69 +42,64 @@ public class UserController {
     }
 
     @GetMapping("/users/login")
-    public String getLogin(Model model, HttpServletRequest request) {
-        // Check for manager session attribute
-        User manager = (User) request.getSession().getAttribute("manager_session");
-        if (manager != null) {
-            return "redirect:/users/manager/managerDashboard";
-        }
+    public String getLogin(LoginForm loginForm, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute("user");
 
-        // Check for employee session attribute
-        User employee = (User) request.getSession().getAttribute("employee_session");
-        if (employee != null) {
-            return "redirect:/users/employee/employeeDashboard";
+        // Ensure the user is redirected to a correct dashboard.
+        if (user != null) {
+            return (user.getRole() == UserRole.EMPLOYEE) ? "redirect:/users/employeeDashboard"
+                    : "redirect:/users/managerDashboard";
         }
 
         // If neither session attribute is present, return the login page
-        return "/users/login";
+        return "/login";
     }
 
     @PostMapping("/users/login")
-    public String postLogin(@RequestParam Map<String, String> data, Model model, HttpServletRequest request) {
-        String email = data.get("email");
-        String password = data.get("password");
-        User user = userRepo.findByEmail(email);
+    public String postLogin(@Valid LoginForm loginForm, BindingResult bindingResult,
+            HttpServletRequest request) {
 
-        model.addAttribute("email", email);
-        // Check if the user exists
+        if (bindingResult.hasErrors()) {
+            return "/login";
+        }
+
+        String email = loginForm.getEmail();
+        String password = loginForm.getPassword();
+
+        User user = this.userRepository.findByEmail(email);
+
+        // User does not exist.
         if (user == null) {
-            model.addAttribute("loginError", "Email not found.");
-            return "/users/login";
+            bindingResult.addError(new FieldError("message", "user", "The user does not exist."));
+            return "/login";
         }
-        // Check if the password is correct
-        if (!user.getPassword().equals(password)) {
-            model.addAttribute("loginError", "Incorrect password.");
-            return "/users/login";
-        }
-        // Correct password, proceed with setting session and redirecting
-        else if (user.getRole().equals("manager")) {
-            request.getSession().setAttribute("manager_session", user);
-            return "redirect:/users/manager/managerDashboard";
-        } else if (user.getRole().equals("employee")) {
-            request.getSession().setAttribute("employee_session", user);
-            return "redirect:/users/employee/employeeDashboard";
-        } else {
-            request.getSession().invalidate();
-            model.addAttribute("loginError", "User role is not recognized."); // This should never happen
-            return "/users/login";
-        }
+
+        // Use session to keep track of user data.
+        HttpSession session = request.getSession();
+        session.setAttribute("user", user);
+
+        // TODO: Add an authentication give user's email and password.
+        boolean authenticated = user.getPassword().equals(password);
+        return (authenticated && user.getRole() == UserRole.EMPLOYEE) ? "redirect:/users/employee/employeeDashboard"
+                : "redirect:/users/manager/managerDashboard";
+
     }
 
     // Logs user out
     @GetMapping("/logout")
     public String logoutUser(HttpServletRequest request) {
         request.getSession().invalidate();
-        return "/users/login";
+        return "redirect:/users/login";
     }
 
     // Ensures that the user is logged in as a manager
     @GetMapping("/users/manager/managerDashboard")
     public String getManagerDashboard(HttpServletRequest request, Model model) {
-        User manager = (User) request.getSession().getAttribute("manager_session");
-        if (manager == null || !manager.getRole().equals("manager")) {
+        User manager = (User) request.getSession().getAttribute("user");
+        if (manager == null || !manager.getRole().equals(UserRole.MANAGER)) {
             model.addAttribute("loginError", "Access Denied. You do not have permission to view this page.");
             request.getSession().invalidate();
-            return "/users/login";
+            return "/login";
         }
 
         return "/users/manager/managerDashboard";
@@ -110,11 +108,11 @@ public class UserController {
     // Ensures that the user is logged in as an employee
     @GetMapping("/users/employee/employeeDashboard")
     public String getEmployeeDashboard(HttpServletRequest request, Model model) {
-        User employee = (User) request.getSession().getAttribute("employee_session");
-        if (employee == null || !employee.getRole().equals("employee")) {
+        User employee = (User) request.getSession().getAttribute("user");
+        if (employee == null || !employee.getRole().equals(UserRole.EMPLOYEE)) {
             model.addAttribute("loginError", "Access Denied. You do not have permission to view this page.");
             request.getSession().invalidate();
-            return "/users/login";
+            return "/login";
         }
         return "/users/employee/employeeDashboard";
     }
@@ -137,7 +135,7 @@ public class UserController {
             newUser.setEmail(employeeEmail);
             newUser.setPassword(employeePassword);
             newUser.setRole("employee");
-            userRepo.save(newUser);
+            userRepository.save(newUser);
             statusSetter.setStatus(201);
             return "users/login";
         } catch (RegistrationException e) {
