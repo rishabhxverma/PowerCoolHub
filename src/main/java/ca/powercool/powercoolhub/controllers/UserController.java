@@ -119,6 +119,11 @@ public class UserController {
         return "/users/employee/employeeDashboard";
     }
 
+    @GetMapping("/register")
+    public String showRegister(Model model, HttpServletRequest request) {
+        return "/register";
+    }
+
     @PostMapping("/register")
     public String registerEmployeeIntoDataBase(@RequestParam("email") String employeeEmail,
             @RequestParam("name") String employeeName,
