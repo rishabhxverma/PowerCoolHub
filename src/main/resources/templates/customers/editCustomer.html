@@ -49,8 +49,18 @@
                         <label for="paymentReceived">Payment Received:</label>
                         <input type="checkbox" class="form-check-input" id="paymentReceived" th:field="*{paymentReceived}">
                     </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <!-- This is a placeholder div to maintain space between the buttons in case you need alignment without direct contact -->
+                        <div></div> 
+                    </div>
                 </div>
+            </div>
+        </form>
+        <form th:action="@{/customers/delete/{id}(id=${customer.id})}" method="post" onsubmit="return confirm('Are you sure you want to delete this customer?');" class="mt-2">
+            <div class="d-flex justify-content-end">
+                <input type="hidden" name="_method" value="DELETE" />
+                <button type="submit" class="btn btn-danger">Delete Customer</button>
             </div>
         </form>
     </div>

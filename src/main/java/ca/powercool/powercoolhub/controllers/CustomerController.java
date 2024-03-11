@@ -73,15 +73,16 @@ public class CustomerController {
         return "redirect:/customers/viewAll";
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteCustomer(@PathVariable Integer id) {
-        Optional<Customer> customerOptional = customerRepository.findById(id);
-        if (customerOptional.isPresent()) {
-            customerRepository.deleteById(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    @PostMapping("/delete/{id}")
+    public String deleteCustomer(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+    Optional<Customer> customerOptional = customerRepository.findById(id);
+    if (customerOptional.isPresent()) {
+        customerRepository.deleteById(id);
+        redirectAttributes.addFlashAttribute("success", "Customer deleted successfully!");
+    } else {
+        redirectAttributes.addFlashAttribute("error", "Customer not found.");
     }
+    return "redirect:/customers/viewAll";
+}
 }
 
