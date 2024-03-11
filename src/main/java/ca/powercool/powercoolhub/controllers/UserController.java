@@ -1,10 +1,5 @@
 package ca.powercool.powercoolhub.controllers;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -129,7 +124,7 @@ public class UserController {
             HttpServletResponse statusSetter) {
 
         try {
-            checkUserRegistrationByEmail(employeeEmail);
+            userRepository.checkUserRegistrationByEmail(employeeEmail);
             User newUser = new User();
             newUser.setName(employeeName);
             newUser.setEmail(employeeEmail);
@@ -142,32 +137,5 @@ public class UserController {
             System.err.println("Registration failed: " + e.getMessage());
             return "register/error";
         }
-    }
-
-    private void checkUserRegistrationByEmail(String employeeEmail) throws RegistrationException {
-        if (emailExists(employeeEmail)) {
-            throw new RegistrationException("The email is already in use!");
-        }
-    }
-
-    private boolean emailExists(String userEmail) {
-        String query = "SELECT EXISTS(SELECT 1 FROM users WHERE email = ?)";
-
-        try (Connection conn = DriverManager.getConnection(
-                "jdbc:postgresql://dpg-cnh7f3da73kc73b7o2ag-a.oregon-postgres.render.com/powercool_hub_database",
-                "powercool_hub_database_user", "jblaTia2sez3rMqOj8tW9yxcFgEiybMg");
-                PreparedStatement preparedStatement = conn.prepareStatement(query)) {
-
-            preparedStatement.setString(1, userEmail);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getBoolean(1);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 }
