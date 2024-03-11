@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import ca.powercool.powercoolhub.models.Customer;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
@@ -22,44 +24,56 @@ public class CustomerController {
     public String viewAllCustomers(Model model) {
         List<Customer> customers = customerRepository.findAll();
         model.addAttribute("customers", customers);
-        return "customers/viewAll"; // Return the name of the Thymeleaf template
+        return "customers/viewAll";
     }
 
-    @GetMapping("/{id}")
-    @ResponseBody
-    public ResponseEntity<Customer> getCustomerById(@PathVariable Integer id) {
-        Optional<Customer> customerOptional = customerRepository.findById(id);
-        return customerOptional.map(customer -> new ResponseEntity<>(customer, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-    }
+    @GetMapping("/edit/{id}")
+    public String showEditCustomerForm(@PathVariable Integer id, Model model) {
+    Customer customer = customerRepository.findById(id)
+                         .orElseThrow(() -> new IllegalArgumentException("Invalid customer Id:" + id));
+    model.addAttribute("customer", customer);
+    return "customers/editCustomer"; 
+}
 
     @GetMapping("/addCustomer")
     public String showAddCustomerForm(Model model) {
         model.addAttribute("customer", new Customer());
         return "customers/addCustomer";
-
     }
+
+    @GetMapping("/searchCustomer")
+    public String searchCustomerByName(@RequestParam(value = "customerName", defaultValue = "") String customerName, Model model) {
+        customerName = customerName.trim(); 
+        if (customerName == "") {
+            return "redirect:/customers/viewAll"; 
+        }
+    
+        List<Customer> customers = customerRepository.findByNameLike(customerName + "%");
+        model.addAttribute("customers", customers);
+        model.addAttribute("searchTerm", customerName); 
+        return "customers/searchResults"; 
+    }
+
+    @PostMapping("/update/{id}")
+    public String updateCustomer(@PathVariable Integer id, @ModelAttribute("customer") Customer customerDetails, RedirectAttributes redirectAttributes) {
+    Optional<Customer> customerOptional = customerRepository.findById(id);
+    if (!customerOptional.isPresent()) {
+        return "customers/editedCustomer";
+    }
+
+    customerDetails.setId(id);
+    customerRepository.save(customerDetails);
+    redirectAttributes.addFlashAttribute("success", "Customer updated successfully!");
+    return "customers/editedCustomer";
+}
 
     @PostMapping("/")
     public String createCustomer(@ModelAttribute Customer customer, Model model) {
         Customer createdCustomer = customerRepository.save(customer);
-        model.addAttribute("customer", createdCustomer);
-        return "redirect:/customers/viewAll"; // Redirect to the viewAll endpoint
+        return "redirect:/customers/viewAll";
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Integer id, @RequestBody Customer customer) {
-        Optional<Customer> customerOptional = customerRepository.findById(id);
-        if (customerOptional.isPresent()) {
-            customer.setId(id);
-            Customer updatedCustomer = customerRepository.save(customer);
-            return new ResponseEntity<>(updatedCustomer, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Integer id) {
         Optional<Customer> customerOptional = customerRepository.findById(id);
         if (customerOptional.isPresent()) {
@@ -70,3 +84,4 @@ public class CustomerController {
         }
     }
 }
+

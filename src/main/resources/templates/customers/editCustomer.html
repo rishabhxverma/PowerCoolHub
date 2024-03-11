@@ -1,24 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Add Customer</title>
-
-    <!-- Bootstrap CSS -->
+    <title>Edit Customer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <style>
         .error-message {
             color: red;
         }
     </style>
-
-
 </head>
 <body>
     <div class="container">
         <div class="d-flex justify-content-center align-items-center">
-            <h1>Add Customer</h1>
+            <h1 th:text="'Edit ' + ${customer.name}">Edit Customer></h1>
         </div>
-        <form id="addCustomerForm" th:object="${customer}" method="post" action="/customers/">
+        <form id="editCustomerForm" th:action="@{/customers/update/{id}(id=${customer.id})}" th:object="${customer}" method="post">
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     <div class="form-group">
@@ -36,6 +32,22 @@
                     <div class="form-group">
                         <label for="notes">Notes:</label>
                         <textarea class="form-control" id="notes" th:field="*{notes}"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastServiced">Last Serviced:</label>
+                        <input type="date" class="form-control" id="lastServiced" th:field="*{lastServiced}">
+                    </div>
+                    <div class="form-group">
+                        <label for="installationDate">Installation Date:</label>
+                        <input type="date" class="form-control" id="installationDate" th:field="*{installationDate}">
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State:</label>
+                        <input type="text" class="form-control" id="state" th:field="*{state}">
+                    </div>
+                    <div class="form-group">
+                        <label for="paymentReceived">Payment Received:</label>
+                        <input type="checkbox" class="form-check-input" id="paymentReceived" th:field="*{paymentReceived}">
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
