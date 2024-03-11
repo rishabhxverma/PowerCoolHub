@@ -13,12 +13,21 @@
     <div class="d-flex justify-content-center mt-4 mb-4">
         <div class="col-sm-6 col-md-4 col-lg-3">
             <form action="/customers/searchCustomer" method="GET" class="input-group">
+                <!-- Button -->
+                <button class="btn rounded-circle" type="button" title="Add Customer" style="width: 50px; height: 50px; padding: 0; margin-right: 15px;" onclick="window.location.href='/customers/addCustomer'">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                      </svg>
+                </button>
+                <!-- Search Input -->
                 <input type="search" class="form-control" placeholder="Search by name" aria-label="Search" name="customerName">
+                <!-- Search Button -->
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
         </div>
     </div>
-    <div class="container">
+    <div class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-auto">
                 <table class="table table-bordered table-hover">
@@ -47,7 +56,6 @@
                 </table>
             </div>
         </div>
-        <button class="btn btn-primary" onclick="window.location.href='/customers/addCustomer'">Add Customer</button>
     </div>
 </body>
 </html>
