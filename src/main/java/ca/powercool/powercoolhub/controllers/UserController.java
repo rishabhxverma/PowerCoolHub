@@ -22,7 +22,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @Controller
 public class UserController {
 
-    static class RegistrationException extends Exception {
+    public static class RegistrationException extends Exception {
         public RegistrationException(String message) {
             super(message);
         }

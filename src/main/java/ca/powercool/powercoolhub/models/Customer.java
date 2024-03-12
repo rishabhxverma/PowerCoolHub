@@ -15,20 +15,20 @@ public class Customer {
     private String phoneNumber;
     private String notes;
     private Date lastServiced;
-    private Date installationDate;
+    private Date nextService;
     private String state; //Can be a set of strings we assign to this, ie Archived, requested service, requested install.
     private boolean paymentReceived; //true / false for the payment received or pending
     public Customer() {
     }
     public Customer(Integer id, String name, String address, String phoneNumber, String notes, Date lastServiced,
-            Date installationDate, String state, boolean paymentReceived) {
+            Date nextService, String state, boolean paymentReceived) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.notes = notes;
         this.lastServiced = lastServiced;
-        this.installationDate = installationDate;
+        this.nextService = nextService;
         this.state = state;
         this.paymentReceived = paymentReceived;
     }
@@ -76,11 +76,11 @@ public class Customer {
     public void setLastServiced(Date lastServiced) {
         this.lastServiced = lastServiced;
     }
-    public Date getInstallationDate() {
-        return installationDate;
+    public Date getNextService() {
+        return nextService;
     }
-    public void setInstallationDate(Date installationDate) {
-        this.installationDate = installationDate;
+    public void setNextService(Date nextService) {
+        this.nextService = nextService;
     }
     public String getState() {
         return state;
