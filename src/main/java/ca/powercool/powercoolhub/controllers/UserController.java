@@ -1,6 +1,10 @@
 package ca.powercool.powercoolhub.controllers;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,13 +25,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class UserController {
-
-    public static class RegistrationException extends Exception {
-        public RegistrationException(String message) {
-            super(message);
-        }
-    }
-
     @Autowired
     private UserRepository userRepository;
 
@@ -117,25 +114,29 @@ public class UserController {
         return "/register";
     }
 
+    @GetMapping("/check-email")
+    public ResponseEntity<Map<String, Boolean>> checkEmailExists(@RequestParam("email") String email) {
+        boolean exists = userRepository.existsByEmail(email);
+        return ResponseEntity.ok(Collections.singletonMap("exists", exists));
+    }
+
     @PostMapping("/register")
     public String registerEmployeeIntoDataBase(@RequestParam("email") String employeeEmail,
             @RequestParam("name") String employeeName,
             @RequestParam("password") String employeePassword,
             HttpServletResponse statusSetter) {
 
-        try {
-            userRepository.checkUserRegistrationByEmail(employeeEmail);
-            User newUser = new User();
-            newUser.setName(employeeName);
-            newUser.setEmail(employeeEmail);
-            newUser.setPassword(employeePassword);
-            newUser.setRole("employee");
-            userRepository.save(newUser);
-            statusSetter.setStatus(201);
-            return "users/login";
-        } catch (RegistrationException e) {
-            System.err.println("Registration failed: " + e.getMessage());
-            return "register/error";
+        if (userRepository.existsByEmail(employeeEmail)) {
+            statusSetter.setStatus(HttpServletResponse.SC_CONFLICT);
+            return "register";
         }
+
+        User newUser = new User();
+        newUser.setName(employeeName);
+        newUser.setEmail(employeeEmail);
+        newUser.setPassword(employeePassword);
+        newUser.setRole(UserRole.EMPLOYEE);
+        userRepository.save(newUser);
+        return "redirect:/users/login";
     }
 }

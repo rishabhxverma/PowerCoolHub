@@ -13,7 +13,6 @@ public class LoginForm {
     @Size(min = 5, message = "Password must be at least {min} characters long.")
     private String password;
 
-    // Setters
     public void setEmail(String email) {
         this.email = email;
     }
@@ -22,7 +21,6 @@ public class LoginForm {
         this.password = password;
     }
 
-    // Getters
     public String getEmail() {
         return this.email;
     }
