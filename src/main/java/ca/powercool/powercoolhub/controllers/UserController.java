@@ -40,7 +40,7 @@ public class UserController {
         // Ensure the user is redirected to a correct dashboard.
         if (user != null) {
             return (user.getRole() == UserRole.EMPLOYEE) ? "redirect:/users/employeeDashboard"
-                    : "redirect:/users/dashboard";
+                    : "redirect:/users/manager/dashboard";
         }
 
         // If neither session attribute is present, return the login page
