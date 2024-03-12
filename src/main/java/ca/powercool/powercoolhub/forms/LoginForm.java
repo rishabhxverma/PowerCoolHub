@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class LoginForm {
+
+    private String message;
+
     @Email(message = "Invalid email.")
     @Size(min = 2, message = "Email must be at least {min} characters long.")
     private String email;
@@ -21,11 +24,19 @@ public class LoginForm {
         this.password = password;
     }
 
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public String getEmail() {
         return this.email;
     }
 
     public String getPassword() {
         return this.password;
+    }
+
+    public String getMessage() {
+        return this.message;
     }
 }

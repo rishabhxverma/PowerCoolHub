@@ -62,7 +62,9 @@ public class UserController {
 
         // User does not exist.
         if (user == null) {
-            bindingResult.addError(new FieldError("message", "user", "The user does not exist."));
+            // bindingResult.addError(new FieldError("message", "user", "The user does not exist."));
+            // bindingResult.rejectValue("userError", "error.user", "The user does not exist.");
+
             return "/login";
         }
 
@@ -70,8 +72,18 @@ public class UserController {
         HttpSession session = request.getSession();
         session.setAttribute("user", user);
 
+        System.out.println(user.getPassword());
+
         // TODO: Add an authentication give user's email and password.
         boolean authenticated = user.getPassword().equals(password);
+
+        // The user does not provide correct password.
+        if (!authenticated) {
+            // bindingResult.addError(new FieldError("message", "user", "The given credentials is incorrect."));
+            bindingResult.rejectValue("message", "error.message", "The given credentials is incorrect.");
+            return "/login";
+        }
+
         return (authenticated && user.getRole().equals(UserRole.EMPLOYEE))
                 ? "redirect:/users/employee/employeeDashboard"
                 : "redirect:/users/manager/dashboard";
