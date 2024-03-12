@@ -40,7 +40,7 @@ public class UserController {
         // Ensure the user is redirected to a correct dashboard.
         if (user != null) {
             return (user.getRole() == UserRole.EMPLOYEE) ? "redirect:/users/employeeDashboard"
-                    : "redirect:/users/managerDashboard";
+                    : "redirect:/users/dashboard";
         }
 
         // If neither session attribute is present, return the login page
@@ -73,7 +73,7 @@ public class UserController {
         // TODO: Add an authentication give user's email and password.
         boolean authenticated = user.getPassword().equals(password);
         return (authenticated && user.getRole() == UserRole.EMPLOYEE) ? "redirect:/users/employee/employeeDashboard"
-                : "redirect:/users/manager/managerDashboard";
+                : "redirect:/users/manager/dashboard";
 
     }
 
@@ -85,7 +85,7 @@ public class UserController {
     }
 
     // Ensures that the user is logged in as a manager
-    @GetMapping("/users/manager/managerDashboard")
+    @GetMapping("/users/manager/dashboard")
     public String getManagerDashboard(HttpServletRequest request, Model model) {
         User manager = (User) request.getSession().getAttribute("user");
         if (manager == null || !manager.getRole().equals(UserRole.MANAGER)) {
@@ -94,7 +94,7 @@ public class UserController {
             return "/login";
         }
 
-        return "/users/manager/managerDashboard";
+        return "/users/manager/dashboard";
     }
 
     // Ensures that the user is logged in as an employee
