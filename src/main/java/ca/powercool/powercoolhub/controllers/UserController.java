@@ -39,8 +39,8 @@ public class UserController {
 
         // Ensure the user is redirected to a correct dashboard.
         if (user != null) {
-            return (user.getRole() == UserRole.EMPLOYEE) ? "redirect:/users/employeeDashboard"
-                    : "redirect:/users/dashboard";
+            return (user.getRole().equals(UserRole.EMPLOYEE)) ? "redirect:/users/employee/employeeDashboard"
+                : "redirect:/users/manager/dashboard";
         }
 
         // If neither session attribute is present, return the login page
@@ -72,7 +72,7 @@ public class UserController {
 
         // TODO: Add an authentication give user's email and password.
         boolean authenticated = user.getPassword().equals(password);
-        return (authenticated && user.getRole() == UserRole.EMPLOYEE) ? "redirect:/users/employee/employeeDashboard"
+        return (authenticated && user.getRole().equals(UserRole.EMPLOYEE)) ? "redirect:/users/employee/employeeDashboard"
                 : "redirect:/users/manager/dashboard";
 
     }
