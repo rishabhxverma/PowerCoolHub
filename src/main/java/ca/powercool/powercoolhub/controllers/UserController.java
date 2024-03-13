@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -57,12 +58,18 @@ public class UserController {
 
         String email = loginForm.getEmail();
         String password = loginForm.getPassword();
+        
 
         model.addAttribute("savedEmail", email);
 
         User user = this.userRepository.findByEmail(email);
         // User does not exist.
         if (user == null) {
+            try { 
+                Thread.sleep(250); // Delay to prevent brute force attacks
+            }catch (InterruptedException e) {
+                Thread.currentThread().interrupt();             
+            }
             bindingResult.addError(new FieldError("loginForm", "email", "No user found with this email."));
             return "login";
         }
@@ -70,8 +77,13 @@ public class UserController {
         // Use session to keep track of user data.
         request.getSession().setAttribute("user", user);
 
-        // TODO: Add an authentication give user's email and password.
-        if (!user.getPassword().equals(password)) {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            try {
+                Thread.sleep(250); // Delay to prevent brute force attacks
+            }catch (InterruptedException e) {
+                Thread.currentThread().interrupt();             
+            }
             bindingResult.addError(new FieldError("loginForm", "password", "Incorrect password."));
             return "login";
         }
@@ -121,10 +133,13 @@ public class UserController {
             return "register";
         }
 
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String hashedPassword = passwordEncoder.encode(employeePassword);
+
         User newUser = new User();
         newUser.setName(employeeName);
         newUser.setEmail(employeeEmail);
-        newUser.setPassword(employeePassword);
+        newUser.setPassword(hashedPassword);
         newUser.setRole(UserRole.EMPLOYEE);
         userRepository.save(newUser);
         return "redirect:/login";
