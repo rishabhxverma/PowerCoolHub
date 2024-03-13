@@ -27,8 +27,16 @@
                         <label for="email" class="form-label">Email</label>
                         <input type="text" class="form-control" name="email" 
                             th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
-                            th:value="${email != null} ? ${email} : ''"
-                        >
+                            th:field="*{email}"
+                            >
+                            <script> // Sets the value of the email input field if the email is saved in the model (probably not best solution, but works)
+                                document.addEventListener('DOMContentLoaded', (event) => {
+                                    var savedEmail = "[[${savedEmail}]]";
+                                    if (savedEmail) {
+                                        document.getElementById('email').value = savedEmail;
+                                    }
+                                });
+                            </script>
                         <p 
                             th:classappend="${#fields.hasErrors('email')} ? 'text-danger m-2' : ''"
                             th:if="${#fields.hasErrors('email')}" 
