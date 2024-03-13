@@ -46,7 +46,7 @@ public class CustomerController {
             return "redirect:/customers/viewAll";
         }
 
-        List<Customer> customers = customerRepository.findByNameLike(customerName + "%");
+        List<Customer> customers = customerRepository.findByNameLikeIgnoreCase(customerName + "%");
         model.addAttribute("customers", customers);
         model.addAttribute("searchTerm", customerName);
         return "customers/searchResults";

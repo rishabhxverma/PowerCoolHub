@@ -9,5 +9,5 @@ import ca.powercool.powercoolhub.models.Customer;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Integer> {
-    List<Customer> findByNameLike(String namePattern);
+    List<Customer> findByNameLikeIgnoreCase(String namePattern);
 }
