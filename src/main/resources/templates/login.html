@@ -16,7 +16,7 @@
                 <img style="height: 8rem" src="/images/powercool-logo.jpeg" alt="PowerCool Logo">
             </div>
             <div class="col-12 mt-2">
-                <form class="border rounded px-4 pt-4 pb-4 mb-4" th:action="@{/users/login}" th:object="${loginForm}" method="post">
+                <form class="border rounded px-4 pt-4 pb-4 mb-4" th:action="@{/login}" th:object="${loginForm}" method="post">
                     <div 
                         th:classappend="${#fields.hasErrors('message')} ? 'alert alert-danger' : ''"
                         th:if="${#fields.hasErrors('message')}" 
