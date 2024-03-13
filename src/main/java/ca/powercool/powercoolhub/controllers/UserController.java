@@ -17,7 +17,6 @@ import ca.powercool.powercoolhub.models.UserRole;
 import ca.powercool.powercoolhub.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -125,7 +124,8 @@ public class UserController {
     @PostMapping("/register")
     public String registerEmployeeIntoDataBase(@RequestParam("email") String employeeEmail,
             @RequestParam("name") String employeeName,
-            @RequestParam("password") String employeePassword,
+            @RequestParam("password") String employeePassword, 
+            @RequestParam("role") String userRole,
             HttpServletResponse statusSetter) {
 
         if (userRepository.existsByEmail(employeeEmail)) {
@@ -140,7 +140,7 @@ public class UserController {
         newUser.setName(employeeName);
         newUser.setEmail(employeeEmail);
         newUser.setPassword(hashedPassword);
-        newUser.setRole(UserRole.EMPLOYEE);
+        newUser.setRole(userRole);
         userRepository.save(newUser);
         return "redirect:/login";
     }
