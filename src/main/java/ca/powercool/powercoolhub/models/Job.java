@@ -1,0 +1,75 @@
+package ca.powercool.powercoolhub.models;
+
+import java.util.Date;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "jobs")
+public class Job {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private int customerId;
+    private Date serviceDate;
+    private String note;
+    private String jobType;
+    private boolean jobDone;
+
+    public Job(){}
+
+    public Job(Integer id, int customerId, Date serviceDate, String note, String jobType, boolean jobDone) {
+        this.id = id;
+        this.customerId = customerId;
+        this.serviceDate = serviceDate;
+        this.note = note;
+        this.jobType = jobType;
+        this.jobDone = jobDone;
+    }
+
+    public int getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(int customerId) {
+        this.customerId = customerId;
+    }
+
+    public Date getServiceDate() {
+        return serviceDate;
+    }
+
+    public void setServiceDate(Date serviceDate) {
+        this.serviceDate = serviceDate;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public String getJobType() {
+        return jobType;
+    }
+
+    public void setJobType(String jobType) {
+        this.jobType = jobType;
+    }
+
+    public boolean isJobDone() {
+        return jobDone;
+    }
+
+    public void setJobDone(boolean jobDone) {
+        this.jobDone = jobDone;
+    }
+}
