@@ -11,14 +11,8 @@
 
     <!-- Google Maps API -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD7W1stQyxkMS1msMvHXRHBPDltzAXZh3g&libraries=places"></script>
-    <!-- Search Auto-Complete on window load-->
-    <script>
-      function initAutocomplete() {
-        var input = document.getElementById("address");
-        var autocomplete = new google.maps.places.Autocomplete(input);
-      }
-      window.onload = initAutocomplete;
-    </script>
+    <!-- Search Auto-Complete on window load and form validation-->
+    <script src="/js/customer.js"></script>
 </head>
 <body>
     <div th:replace="fragments/top-navigation :: top-navigation"></div>
