@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Optional;
 import ca.powercool.powercoolhub.models.Customer;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Controller
 @RequestMapping("/customers")
@@ -83,4 +86,10 @@ public class CustomerController {
         }
         return "redirect:/customers/viewAll";
     }
+
+    @GetMapping("/calendar")
+    public String getCalendar() {
+        return "customers/calendar";
+    }
+    
 }

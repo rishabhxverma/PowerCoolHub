@@ -1,0 +1,73 @@
+<div id="calendar-container" th:fragment="calendar-fragment">
+    <div id="calendar-buttons">
+        <button id="prev-week" onclick="changeWeek(-1)">Prev week</button>
+        <span id="week-offset">Current week</span>
+        <button id="next-week" onclick="changeWeek(1)">Next week</button>
+    </div>
+    <div class="row">
+        <div class="col calendar-top" style="border-left: 2px solid black; border-top-left-radius: 12px;">
+            <span>Sun</span>
+            <span class="week-date">Mar 17</span>
+        </div>
+        <div class="col calendar-top">
+            <span>Mon</span>
+            <span class="week-date">Mar 18</span>
+        </div>
+        <div class="col calendar-top">
+            <span>Tue</span>
+            <span class="week-date">Mar 19</span>
+        </div>
+        <div class="col calendar-top">
+            <span>Wed</span>
+            <span class="week-date">Mar 20</span>
+        </div>
+        <div class="col calendar-top">
+            <span>Thu</span>
+            <span class="week-date">Mar 21</span>
+        </div>
+        <div class="col calendar-top">
+            <span>Fri</span>
+            <span class="week-date">Mar 22</span>
+        </div>
+        <div class="col calendar-top" style="border-right: 2px solid black; border-top-right-radius: 12px;">
+            <span>Sat</span>
+            <span class="week-date">Mar 23</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col calendar-col" style="border-left: 2px solid black; border-bottom-left-radius: 3px;">
+            <!-- Sunday -->
+            <div class="job">
+                <div class="job-name">Customer Name Very Very Very Long</div>
+                <div class="job-type">Job Type</div>
+            </div>
+            <div class="job finished">
+                <div class="job-name">Customer Name</div>
+                <div class="job-type">Job Type</div>
+            </div>
+            <div class="job">
+                <div class="job-name">Customer Name</div>
+                <div class="job-type">Job Type</div>
+            </div>
+        </div>
+        
+        <div class="col calendar-col">
+            <!-- Monday -->
+        </div>
+        <div class="col calendar-col">
+            <!-- Tuesday -->
+        </div>
+        <div class="col calendar-col">
+            <!-- Wednesday -->
+        </div>
+        <div class="col calendar-col">
+            <!-- Thursday -->
+        </div>
+        <div class="col calendar-col">
+            <!-- Friday -->
+        </div>
+        <div class="col calendar-col" style="border-right: 2px solid black; border-bottom-right-radius: 3px;">
+            <!-- Saturday -->
+        </div>
+    </div>
+</div>

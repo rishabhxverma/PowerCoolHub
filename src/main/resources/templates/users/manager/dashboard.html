@@ -20,6 +20,8 @@
       integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
       crossorigin="anonymous"
     ></script>
+    <link rel="stylesheet" href="/css/calendar.css">
+    <script src="/js/calendar.js"></script>
 
     <style>
       /* On small screens, set height to 'auto' for the grid */
@@ -126,6 +128,7 @@
           </div>
         </div>
       </div>
+      <div class="row" th:replace="/fragments/calendar :: calendar-fragment"></div>
     </main>
 
     <style>
