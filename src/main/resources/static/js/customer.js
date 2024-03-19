@@ -6,5 +6,3 @@ function initAutocomplete() {
   var autocomplete = new google.maps.places.Autocomplete(input);
 }
 window.onload = initAutocomplete;
-
-window.onload = initAutocomplete;
