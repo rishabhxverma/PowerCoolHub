@@ -24,6 +24,9 @@ public class Job {
 
     public Job(){}
 
+    //upcoming jobs will have service date but job done will be false
+    //completed jobs will have service date and job done will be true
+    //cancelled jobs will have no service date and job done will be false
     public Job(Integer id, int customerId, Date serviceDate, String note, String jobType, boolean jobDone) {
         this.id = id;
         this.customerId = customerId;
