@@ -1,6 +1,6 @@
 package ca.powercool.powercoolhub.models;
 
-import java.util.Date;
+import java.sql.Date;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -71,5 +71,13 @@ public class Job {
 
     public void setJobDone(boolean jobDone) {
         this.jobDone = jobDone;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }
