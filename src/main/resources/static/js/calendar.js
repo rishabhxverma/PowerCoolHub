@@ -66,7 +66,6 @@ function fetchJobsAndDisplay(weekDates) {
                 let jobDate = createDateFromString(job.serviceDate);
                 jobDate = formatDate(jobDate);
                 let dayColumn;
-                console.log(jobDate);
                 // Finds the column for the job
                 for(let i=0; i<7; i++){
                     if(jobDate === week[i]){

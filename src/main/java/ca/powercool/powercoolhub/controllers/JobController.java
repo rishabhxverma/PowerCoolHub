@@ -57,11 +57,7 @@ public class JobController {
     @ResponseBody
     public List<Job> getJobsForWeek(@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
                                     @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-        List<Job>  jobs = jobRepository.findJobsBetweenDates(startDate, endDate);  
-        System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-        for(int i=0;i<jobs.size();i++){
-            System.out.println(jobs.get(i).getId());
-        }                   
+        List<Job>  jobs = jobRepository.findJobsBetweenDates(startDate, endDate);                  
         return jobs;
     }
 }
