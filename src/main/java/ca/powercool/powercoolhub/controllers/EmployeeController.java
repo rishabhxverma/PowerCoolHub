@@ -35,4 +35,14 @@ public class EmployeeController {
 
         return "users/employee/history";
     }
+
+    @GetMapping("/employee/history/details")
+    public String getEmployeeHistoryDetails(HttpServletRequest request, Model model) {
+        User user = (User) request.getSession().getAttribute("user");
+
+        // Pass model attribute to the view.
+        model.addAttribute("user", user);
+
+        return "users/employee/history/details";
+    }
 }

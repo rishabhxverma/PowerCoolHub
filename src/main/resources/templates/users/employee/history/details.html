@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/employee/head :: head}"></head>
+
+<body>
+    <!-- Navigation bars -->
+    <div th:replace="~{fragments/employee/top-navigation :: top-navigation}"></div>
+
+    <div class="container px-5 mt-4">
+        <div th:replace="~{fragments/employee/history/details :: details}"></div>
+    </div>
+
+    <link rel="stylesheet" th:href="@{/css/employee/history/details.css}">
+</body>
+</head>
+
+</html>
