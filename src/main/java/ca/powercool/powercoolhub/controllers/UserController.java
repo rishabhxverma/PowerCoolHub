@@ -88,7 +88,7 @@ public class UserController {
         }
         
         return (user.getRole().equals(UserRole.MANAGER)) ? "redirect:/users/manager/dashboard"
-                : "redirect:/users/employee/dashboard";
+                : "redirect:/employee";
     }
 
     // Logs user out
@@ -102,12 +102,6 @@ public class UserController {
     @GetMapping("/users/manager/dashboard")
     public String getManagerDashboard(HttpServletRequest request) {
         return "users/manager/dashboard";
-    }
-
-    // Ensures that the user is logged in as an employee
-    @GetMapping("/users/employee/dashboard")
-    public String getEmployeeDashboard(HttpServletRequest request) {
-        return "users/employee/dashboard";
     }
 
     @GetMapping("/register")
