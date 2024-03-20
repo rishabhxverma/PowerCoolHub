@@ -20,7 +20,7 @@
       integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
       crossorigin="anonymous"
     ></script>
-    <link rel="stylesheet" href="/css/calendar.css">
+    <link rel="stylesheet" href="/css/calendar.css" />
     <script src="/js/calendar.js"></script>
 
     <style>
@@ -40,97 +40,91 @@
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
       <!-- Bootstrap 5 Dashboard Code -->
       <div class="container">
-        <div class="row">
-          <div class="col-sm-9">
-            <div class="well">
-              <h4>Dashboard</h4>
-              <p>
-                Welcome to the dashboard! Here, you'll be able to view this
-                week's appointments, colour coded by the type of appointment,
-                and be able to click on the client to view further details
-              </p>
-            </div>
-            <div class="row">
-              <div class="col-sm-3">
-                <div class="well">
-                  <h4>Client Analytics:</h4>
-                  <p>
-                    In these sections, you'll be able to view specific customer
-                    information to finetune and optimize your business!
-                  </p>
-                </div>
-              </div>
-              <div class="col-sm-3">
-                <div class="well">
-                  <h4>12</h4>
-                  <p>Unscheduled Clients</p>
-                </div>
-              </div>
-              <div class="col-sm-3">
-                <div class="well">
-                  <h4>3</h4>
-                  <p>Client Payment pending</p>
-                </div>
-              </div>
-              <div class="col-sm-3">
-                <div class="well">
-                  <h4>Company Success</h4>
-                  <p>10000000000%</p>
-                </div>
+        <div class="col-md-12">
+          <div class="well">
+            <h4>Dashboard</h4>
+            <p>
+              Welcome to the dashboard! Here, you'll be able to view this week's
+              appointments, colour coded by the type of appointment, and be able
+              to click on the client to view further details
+            </p>
+          </div>
+          <div class="well">
+            <div th:replace="/fragments/calendar :: calendar-fragment"></div>
+          </div>
+          <div class="row">
+            <div class="col-sm-3">
+              <div class="well">
+                <h4>Client Analytics:</h4>
+                <p>
+                  In these sections, you'll be able to view specific customer
+                  information to finetune and optimize your business!
+                </p>
               </div>
             </div>
-            <div class="row">
-              <div class="col-sm-4">
-                <div class="well">
-                  <!-- sample graphic -->
-                  <img
-                    width="100%"
-                    src="https://previews.123rf.com/images/cofkocof/cofkocof0803/cofkocof080300056/2724814-illustration-of-a-business-chart-showing-success-growth-achievement-rising.jpg"
-                    alt="Sample Chart"
-                  />
-                </div>
-              </div>
-              <div class="col-sm-4">
-                <div class="well">
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Ut enim ad minim veniam
-                  </p>
-                </div>
-              </div>
-              <div class="col-sm-4">
-                <div class="well">
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua.
-                  </p>
-                </div>
+            <div class="col-sm-3">
+              <div class="well">
+                <h4>12</h4>
+                <p>Unscheduled Clients</p>
               </div>
             </div>
-            <div class="row">
-              <div class="col-sm-8">
-                <div class="well">
-                  <img width="100%" src="/img/sample-fake-schedule.png" />
-                </div>
+            <div class="col-sm-3">
+              <div class="well">
+                <h4>3</h4>
+                <p>Client Payment pending</p>
               </div>
-              <div class="col-sm-4">
-                <div class="well">
-                  <p>
-                    Here, you'll be able to view your employee's schedules,
-                    assign employees to specific clients, and find their
-                    time-sheets in the employees tab!
-                  </p>
-                </div>
+            </div>
+            <div class="col-sm-3">
+              <div class="well">
+                <h4>Company Success</h4>
+                <p>10000000000%</p>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-4">
+              <div class="well">
+                <!-- sample graphic -->
+                <img
+                  width="100%"
+                  src="https://previews.123rf.com/images/cofkocof/cofkocof0803/cofkocof080300056/2724814-illustration-of-a-business-chart-showing-success-growth-achievement-rising.jpg"
+                  alt="Sample Chart"
+                />
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="well">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                  Ut enim ad minim veniam
+                </p>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="well">
+                <p>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-8"></div>
+            <div class="col-sm-4">
+              <div class="well">
+                <p>
+                  Here, you'll be able to view your employee's schedules, assign
+                  employees to specific clients, and find their time-sheets in
+                  the employees tab!
+                </p>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="row" th:replace="/fragments/calendar :: calendar-fragment"></div>
     </main>
-
     <style>
       body {
         font-size: 0.875rem;
