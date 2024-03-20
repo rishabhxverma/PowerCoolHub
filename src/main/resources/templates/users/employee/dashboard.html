@@ -21,7 +21,10 @@
     <div th:replace="~{fragments/employee/top-navigation :: top-navigation}"></div>
 
     <div class="container px-5 mt-4">
-        <h2 th:text="'Welcome back, ' + ${user.name}"></h2>
+        <!-- <h2 th:text="'Welcome back, ' + ${user.name}"></h2> -->
+
+        <div th:replace="~{fragments/employee/upcoming-jobs :: upcoming-jobs}"></div>
+
     </div>
 
 
