@@ -1,6 +1,16 @@
 <div class="container" th:fragment="history-table">
     <div class="row">
-        <h2>Work Hours</h2>
+        <h2 class="px-0">Work Hours</h2>
+
+        <div class="filter p-0">
+            <select class="form-select float-end" aria-label="Default select example" style="width: 8rem">
+                <option selected>Filter</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+            </select>
+        </div>
+
         <div class="table-container mt-3">
             <table class="table">
                 <thead>
