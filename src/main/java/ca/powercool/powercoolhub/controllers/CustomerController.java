@@ -92,4 +92,15 @@ public class CustomerController {
         return "customers/calendar";
     }
     
+    @GetMapping("/getCustomerNameFromId")
+    @ResponseBody
+    public String getCustomerNameFromId(@RequestParam("customerId") int customerId) {
+        Optional<Customer> customer = customerRepository.findById(customerId);
+        if (customer.isPresent()) {
+            return customer.get().getName();
+        } else {
+            return "No customer exists";
+        }
+    }
+    
 }
