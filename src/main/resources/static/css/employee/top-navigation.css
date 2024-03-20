@@ -1,0 +1,13 @@
+.clock.fa-fade {
+    --fa-animation-duration: 2s; 
+    --fa-fade-opacity: 0.4;
+}
+
+.clock-button {
+    /* Remove default button styles */
+    border: none;
+    outline: none;
+    /* Optionally remove other default styles */
+    background-color: transparent;
+    cursor: pointer;
+}
