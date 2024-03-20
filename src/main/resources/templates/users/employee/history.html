@@ -8,8 +8,10 @@
     <div th:replace="~{fragments/employee/top-navigation :: top-navigation}"></div>
 
     <div class="container px-5 mt-4">
-        <div th:replace="~{fragments/employee/upcoming-jobs :: upcoming-jobs}"></div>
+        <div th:replace="~{fragments/employee/history-table :: history-table}"></div>
     </div>
+
+    <link rel="stylesheet" th:href="@{/css/employee/table.css}">
 </body>
 </head>
 
