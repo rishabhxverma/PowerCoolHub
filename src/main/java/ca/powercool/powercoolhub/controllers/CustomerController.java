@@ -71,7 +71,7 @@ public class CustomerController {
 
     @PostMapping("/")
     public String createCustomer(@ModelAttribute Customer customer, Model model) {
-        Customer createdCustomer = customerRepository.save(customer);
+        customerRepository.save(customer);
         return "redirect:/customers/viewAll";
     }
 
