@@ -22,7 +22,8 @@ public class Customer {
     private String state; // Can be a set of strings we assign to this, ie Archived, requested service,
                           // requested install.
     private boolean paymentReceived; // true / false for the payment received or pending
-
+    private boolean upcomingAppointment;
+    private boolean waitingToBeScheduled;
     public Customer() {
     }
 
@@ -39,12 +40,26 @@ public class Customer {
         this.paymentReceived = paymentReceived;
     }
 
+    // Constructor for adding a new customer, no id, no last serviced, no next
     public Customer(Integer id, String name, String address, String phoneNumber, String notes) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.notes = notes;
+        waitingToBeScheduled = true;
+    }
+
+    public void setUpcomingAppointment(boolean upcomingAppointment) {
+        this.upcomingAppointment = upcomingAppointment;
+    }
+
+    public boolean isWaitingToBeScheduled() {
+        return waitingToBeScheduled;
+    }
+
+    public void setWaitingToBeScheduled(boolean waitingToBeScheduled) {
+        this.waitingToBeScheduled = waitingToBeScheduled;
     }
 
     public Integer getId() {

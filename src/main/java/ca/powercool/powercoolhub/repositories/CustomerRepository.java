@@ -12,4 +12,8 @@ import ca.powercool.powercoolhub.models.Customer;
 public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     List<Customer> findByNameLikeIgnoreCase(String namePattern);
     Optional<Customer> findById(Integer id);
+    List<Customer> findByUpcomingAppointmentTrue();
+    List<Customer> findByWaitingToBeScheduledTrue();
+    List<Customer> findByPendingPaymentTrue();
+    List<Customer> findByPaymentReceivedTrue();
 }
