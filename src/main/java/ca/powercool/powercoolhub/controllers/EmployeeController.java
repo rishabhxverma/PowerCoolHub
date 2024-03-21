@@ -99,7 +99,18 @@ public class EmployeeController {
 
             return "users/manager/operationsOnUsers/successMessageOnUpdate";
         } else {
-            return "register";
+            return "users/manager/operationsOnUsers/failedUpdate";
+        }
+    }
+
+    @PostMapping("/users/manager/operationsOnUsers/deleteUsers")
+    public String deleteUserByEmail(@RequestParam("email") String email) {
+        User user = userRepo.findByEmail(email);
+        if (user != null) {
+            userRepo.delete(user);
+            return "users/manager/operationsOnUsers/successfulDeletion";
+        } else {
+            return "users/manager/operationsOnUsers/failedDeletion";
         }
     }
 }
