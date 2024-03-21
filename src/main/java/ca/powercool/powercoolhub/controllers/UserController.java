@@ -16,7 +16,6 @@ import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.models.UserRole;
 import ca.powercool.powercoolhub.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -57,22 +56,21 @@ public class UserController {
 
         String email = loginForm.getEmail();
         String password = loginForm.getPassword();
-        
 
         model.addAttribute("savedEmail", email);
 
         User user = this.userRepository.findByEmail(email);
         // User does not exist.
         if (user == null) {
-            try { 
+            try {
                 Thread.sleep(250); // Delay to prevent brute force attacks
-            }catch (InterruptedException e) {
-                Thread.currentThread().interrupt();             
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
             bindingResult.addError(new FieldError("loginForm", "email", "No user found with this email."));
             return "login";
         }
-        
+
         // Use session to keep track of user data.
         request.getSession().setAttribute("user", user);
 
@@ -80,13 +78,13 @@ public class UserController {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             try {
                 Thread.sleep(250); // Delay to prevent brute force attacks
-            }catch (InterruptedException e) {
-                Thread.currentThread().interrupt();             
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
             bindingResult.addError(new FieldError("loginForm", "password", "Incorrect password."));
             return "login";
         }
-        
+
         return (user.getRole().equals(UserRole.MANAGER)) ? "redirect:/users/manager/dashboard"
                 : "redirect:/employee";
     }
@@ -113,29 +111,5 @@ public class UserController {
     public ResponseEntity<Map<String, Boolean>> checkEmailExists(@RequestParam("email") String email) {
         boolean exists = userRepository.existsByEmail(email);
         return ResponseEntity.ok(Collections.singletonMap("exists", exists));
-    }
-
-    @PostMapping("/register")
-    public String registerEmployeeIntoDataBase(@RequestParam("email") String employeeEmail,
-            @RequestParam("name") String employeeName,
-            @RequestParam("password") String employeePassword, 
-            @RequestParam("role") String userRole,
-            HttpServletResponse statusSetter) {
-
-        if (userRepository.existsByEmail(employeeEmail)) {
-            statusSetter.setStatus(HttpServletResponse.SC_CONFLICT);
-            return "register";
-        }
-
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String hashedPassword = passwordEncoder.encode(employeePassword);
-
-        User newUser = new User();
-        newUser.setName(employeeName);
-        newUser.setEmail(employeeEmail);
-        newUser.setPassword(hashedPassword);
-        newUser.setRole(userRole);
-        userRepository.save(newUser);
-        return "redirect:/login";
     }
 }

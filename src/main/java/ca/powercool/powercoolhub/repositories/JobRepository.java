@@ -14,5 +14,4 @@ import java.util.List;
 public interface JobRepository extends JpaRepository<Job, Integer> {
     @Query("SELECT j FROM Job j WHERE j.serviceDate BETWEEN :startDate AND :endDate")
     List<Job> findJobsBetweenDates(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
-    List<Job> findByCustomerId(Integer customerId);
 }

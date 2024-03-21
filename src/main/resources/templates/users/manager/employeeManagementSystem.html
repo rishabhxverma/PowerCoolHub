@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>View Employees</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+</head>
+
+<body>
+
+    <header class="py-3" style="background-color: rgb(40, 39, 39);">
+        <div class="container-fluid" style="background-color: rgb(40, 39, 39);">
+            <h1 style="color: #e0e9f7;" class="text-center"><b>Employee List</b></h1>
+        </div>
+    </header>
+
+    <main class="container my-4">
+        <div class="table-responsive mb-4">
+            <table class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user : ${users}">
+                        <td th:text="${user.name}">John Doe</td>
+                        <td th:text="${user.role}">Employee</td>
+                        <td th:text="${user.email}">john.doe@example.com</td>
+                        <td>
+                            <a href="/users/manager/operationsOnUsers/editUsers" class="btn btn-outline-primary btn-sm"
+                                role="button">Edit</a>
+                            <a href="/users/manager/operationsOnUsers/deleteUsers" class="btn btn-outline-danger btn-sm"
+                                role="button">Delete</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="text-left">
+            <div class="text-left">
+                <a th:href="@{/register}" class="btn btn-success" role="button">Add a New Employee</a>
+            </div><br>
+            <a href="/users/manager/dashboard" class="btn btn-success" role="button">Back to
+                Dashboard</a>
+        </div>
+    </main>
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(120deg, #e0e9f7 0%, #e0edf3 100%);
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        header {
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

@@ -1,20 +1,27 @@
 package ca.powercool.powercoolhub.controllers;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import ca.powercool.powercoolhub.models.User;
+import ca.powercool.powercoolhub.models.UserRole;
 import ca.powercool.powercoolhub.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Controller
 public class EmployeeController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepository userRepo;
 
     @GetMapping("/employee")
     public String getEmployeeDashboard(HttpServletRequest request, Model model) {
@@ -26,23 +33,73 @@ public class EmployeeController {
         return "users/employee/dashboard";
     }
 
-    @GetMapping("/employee/history")
-    public String getEmployeeHistory(HttpServletRequest request, Model model) {
-        User user = (User) request.getSession().getAttribute("user");
+    @PostMapping("/register")
+    public String registerEmployeeIntoDataBase(@RequestParam("email") String employeeEmail,
+            @RequestParam("name") String employeeName,
+            @RequestParam("password") String employeePassword,
+            @RequestParam("role") String userRole,
+            HttpServletResponse statusSetter) {
 
-        // Pass model attribute to the view.
-        model.addAttribute("user", user);
+        if (userRepo.existsByEmail(employeeEmail)) {
+            statusSetter.setStatus(HttpServletResponse.SC_CONFLICT);
+            return "register";
+        }
 
-        return "users/employee/history";
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String hashedPassword = passwordEncoder.encode(employeePassword);
+
+        User newUser = new User();
+        newUser.setName(employeeName);
+        newUser.setEmail(employeeEmail);
+        newUser.setPassword(hashedPassword);
+        newUser.setRole(userRole);
+        userRepo.save(newUser);
+        return "redirect:/login";
     }
 
-    @GetMapping("/employee/history/details")
-    public String getEmployeeHistoryDetails(HttpServletRequest request, Model model) {
-        User user = (User) request.getSession().getAttribute("user");
+    @GetMapping("/users/manager/employeeManagementSystem")
+    public String getAllUsers(Model model) {
+        List<User> users = userRepo.findAll();
+        model.addAttribute("users", users);
+        return "users/manager/employeeManagementSystem";
+    }
 
-        // Pass model attribute to the view.
-        model.addAttribute("user", user);
+    @GetMapping("/users/manager/operationsOnUsers/editUsers")
+    public String getPathForUserEdition() {
+        return "users/manager/operationsOnUsers/editUsers";
+    }
 
-        return "users/employee/history/details";
+    @GetMapping("/users/manager/operationsOnUsers/deleteUsers")
+    public String getPathForUserDeletion() {
+        return "users/manager/operationsOnUsers/deleteUsers";
+    }
+
+    @PostMapping("/users/manager/operationsOnUsers/editUsers")
+    public String updateUserByEmailAddress(
+            @RequestParam("oldEmail") String oldEmail,
+            @RequestParam("name") String newName,
+            @RequestParam("email") String newEmail,
+            @RequestParam("role") String newTitle,
+            @RequestParam("password") String newPassword) {
+
+        User existingUser = userRepo.findByEmail(oldEmail);
+        if (existingUser != null) {
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String hashedPassword = passwordEncoder.encode(newPassword);
+
+            existingUser.setName(newName);
+            existingUser.setEmail(newEmail);
+            if (newTitle.toLowerCase().equals("manager")) {
+                existingUser.setRole(UserRole.MANAGER);
+            } else {
+                existingUser.setRole(UserRole.EMPLOYEE);
+            }
+            existingUser.setPassword(hashedPassword);
+            userRepo.save(existingUser);
+
+            return "users/manager/operationsOnUsers/successMessageOnUpdate";
+        } else {
+            return "register";
+        }
     }
 }
