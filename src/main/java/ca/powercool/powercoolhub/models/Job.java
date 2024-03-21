@@ -21,7 +21,7 @@ public class Job {
     private String note;
     private String jobType;
     private boolean jobDone;
-    String customerName;
+    private String customerName;
 
     public Job(){}
 
