@@ -1,7 +1,6 @@
 package ca.powercool.powercoolhub.models;
 
 import java.sql.Date;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,15 +18,19 @@ public class Job {
     private int customerId;
     private Date serviceDate;
     private String note;
-    private String jobType;
+    private JobType jobType;
     private boolean jobDone;
+    private boolean paymentReceived;
 
-    public Job(){}
+    public enum JobType {
+        SERVICE,
+        INSTALL,
+        REPAIR
+    }
 
-    //upcoming jobs will have service date but job done will be false
-    //completed jobs will have service date and job done will be true
-    //cancelled jobs will have no service date and job done will be false
-    public Job(Integer id, int customerId, Date serviceDate, String note, String jobType, boolean jobDone) {
+    public Job() {}
+
+    public Job(Integer id, int customerId, Date serviceDate, String note, JobType jobType, boolean jobDone) {
         this.id = id;
         this.customerId = customerId;
         this.serviceDate = serviceDate;
@@ -36,6 +39,23 @@ public class Job {
         this.jobDone = jobDone;
     }
 
+    public boolean isActive() {
+        return !jobDone;
+    }
+
+    public boolean isPaymentReceived() {
+        return paymentReceived;
+    }
+
+    public boolean pendingPayment() {
+        return !paymentReceived;
+    }
+
+    public void setPaymentReceived(boolean paymentReceived) {
+        this.paymentReceived = paymentReceived;
+    }
+
+    // Getters and setters
     public int getCustomerId() {
         return customerId;
     }
@@ -59,13 +79,13 @@ public class Job {
     public void setNote(String note) {
         this.note = note;
     }
-
+    //returns the job type as a string, not an enum, no Job
     public String getJobType() {
-        return jobType;
+        return String.valueOf(jobType).toLowerCase();
     }
 
     public void setJobType(String jobType) {
-        this.jobType = jobType;
+        this.jobType = JobType.valueOf(jobType);
     }
 
     public boolean isJobDone() {

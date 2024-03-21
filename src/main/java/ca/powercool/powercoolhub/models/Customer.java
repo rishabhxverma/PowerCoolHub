@@ -10,25 +10,35 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // Can be changed - some basic data about each customer
+    // Basic data about each customer
     private String name;
     private String address;
+    private String email;
     private String phoneNumber;
     private String notes;
-
     private Date lastServiced;
     private Date nextService;
 
-    private String state; // Can be a set of strings we assign to this, ie Archived, requested service,
-                          // requested install.
-    private boolean paymentReceived; // true / false for the payment received or pending
-    private boolean upcomingAppointment;
-    private boolean waitingToBeScheduled;
+    /*
+     * The state of the customer, which can be one of the following: ARCHIVED (job finished and no future jobs planned)
+     * UPCOMING_APPOINTMENT_SERVICE, UPCOMING_APPOINTMENT_INSTALL,
+     * UPCOMING_APPOINTMENT_REPAIR
+     * 
+     */
+    public enum CustomerState {
+        ARCHIVED,
+        UPCOMING_APPOINTMENT_SERVICE,
+        UPCOMING_APPOINTMENT_INSTALL,
+        UPCOMING_APPOINTMENT_REPAIR
+    }
+
+    @Enumerated(EnumType.STRING)
+    private CustomerState state;
     public Customer() {
     }
 
     public Customer(Integer id, String name, String address, String phoneNumber, String notes, Date lastServiced,
-            Date nextService, String state, boolean paymentReceived) {
+            Date nextService, CustomerState state) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -37,29 +47,54 @@ public class Customer {
         this.lastServiced = lastServiced;
         this.nextService = nextService;
         this.state = state;
-        this.paymentReceived = paymentReceived;
     }
 
     // Constructor for adding a new customer, no id, no last serviced, no next
-    public Customer(Integer id, String name, String address, String phoneNumber, String notes) {
-        this.id = id;
+    public Customer(String name, String address, String phoneNumber, String notes) {
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.notes = notes;
-        waitingToBeScheduled = true;
+        this.state = CustomerState.UPCOMING_APPOINTMENT_SERVICE; // Default state for new customers
     }
 
-    public void setUpcomingAppointment(boolean upcomingAppointment) {
-        this.upcomingAppointment = upcomingAppointment;
+    // Getters and setters
+
+    // Other methods
+
+    public boolean isArchived() {
+        return state == CustomerState.ARCHIVED;
     }
 
-    public boolean isWaitingToBeScheduled() {
-        return waitingToBeScheduled;
+    public boolean hasUpcomingAppointment() {
+        return state != CustomerState.ARCHIVED;
     }
 
-    public void setWaitingToBeScheduled(boolean waitingToBeScheduled) {
-        this.waitingToBeScheduled = waitingToBeScheduled;
+    public boolean requestingAppointment() {
+        return (state == CustomerState.ARCHIVED && nextService == null);
+    }
+
+
+    public void archive() {
+        state = CustomerState.ARCHIVED;
+        nextService = null;
+    }
+
+
+
+    public String getStateString() {
+        switch (state) {
+            case ARCHIVED:
+                return "Archived";
+            case UPCOMING_APPOINTMENT_SERVICE:
+                return "Upcoming Service";
+            case UPCOMING_APPOINTMENT_INSTALL:
+                return "Upcoming Install";
+            case UPCOMING_APPOINTMENT_REPAIR:
+                return "Upcoming Repair";
+            default:
+                return "Unknown";
+        }
     }
 
     public Integer getId() {
@@ -80,6 +115,14 @@ public class Customer {
 
     public String getAddress() {
         return address;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setAddress(String address) {
@@ -118,19 +161,11 @@ public class Customer {
         this.nextService = nextService;
     }
 
-    public String getState() {
+    public CustomerState getState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(CustomerState state) {
         this.state = state;
-    }
-
-    public boolean isPaymentReceived() {
-        return paymentReceived;
-    }
-
-    public void setPaymentReceived(boolean paymentReceived) {
-        this.paymentReceived = paymentReceived;
     }
 }

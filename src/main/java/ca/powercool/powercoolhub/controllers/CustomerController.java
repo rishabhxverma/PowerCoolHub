@@ -102,31 +102,5 @@ public class CustomerController {
     }
 
     //all mappings for customer queries
-    @GetMapping("/customers/upcomingAppointments")
-    public String getCustomersWithUpcomingAppointments(Model model) {
-        List<Customer> customers = customerRepository.findByUpcomingAppointmentTrue();
-        model.addAttribute("customers", customers);
-        return "customers/list";
-    }
 
-    @GetMapping("/customers/waitingToBeScheduled")
-    public String getCustomersWaitingToBeScheduled(Model model) {
-        List<Customer> customers = customerRepository.findByWaitingToBeScheduledTrue();
-        model.addAttribute("customers", customers);
-        return "customers/list";
-    }
-
-    @GetMapping("/customers/pendingPayments")
-    public String getCustomersWithPendingPayments(Model model) {
-        List<Customer> customers = customerRepository.findByPendingPaymentTrue();
-        model.addAttribute("customers", customers);
-        return "customers/list";
-    }
-
-    @GetMapping("/customers/paymentReceived")
-    public String getCustomersWithPaymentReceived(Model model) {
-        List<Customer> customers = customerRepository.findByPaymentReceivedTrue();
-        model.addAttribute("customers", customers);
-        return "customers/list";
-    }
 }

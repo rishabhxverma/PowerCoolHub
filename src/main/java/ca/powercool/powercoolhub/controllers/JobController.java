@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 
 import ca.powercool.powercoolhub.models.Customer;
 import ca.powercool.powercoolhub.models.Job;
+import ca.powercool.powercoolhub.models.Job.JobType;
 import ca.powercool.powercoolhub.repositories.JobRepository;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -35,22 +36,26 @@ public class JobController {
     public String addJobForTheCustomerIntoDataBase(@RequestParam("customerId") int customerIdInfo,
             @RequestParam("dateService") Date serviceDate,
             @RequestParam("note") String note,
-            @RequestParam("jobType") String jobType,
-            @RequestParam("jobDone") String jobDoneYes,
+            @RequestParam("jobType") String jobTypeString,
+            @RequestParam("jobDone") boolean jobIsDone,
             HttpServletResponse stat) {
         Job job = new Job();
         job.setCustomerId(customerIdInfo);
         job.setServiceDate(serviceDate);
         job.setNote(note);
-        job.setJobType(jobType);
-        if (jobDoneYes.toLowerCase().equals("yes")) {
-            job.setJobDone(true);
-        } else {
-            job.setJobDone(false);
-        }
+        job.setJobType(jobTypeString);
+        job.setJobDone(jobIsDone);
         jobRepository.save(job);
         stat.setStatus(HttpServletResponse.SC_OK);
         return "jobs/jobSuccess";
+    }
+
+    //get jobs from customer id
+    @GetMapping("/getJobs")
+    public String getJobsForCustomer(@RequestParam("customerId") int customerId, Model model) {
+        List<Job> jobs = jobRepository.findByCustomerId(customerId);
+        model.addAttribute("jobs", jobs);
+        return "jobs/viewJobs";
     }
 
     @GetMapping("/getWeek")
