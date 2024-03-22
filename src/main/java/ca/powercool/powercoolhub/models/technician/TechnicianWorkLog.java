@@ -13,6 +13,9 @@ import java.time.LocalDateTime;
 @Table(name = "technician_work_logs")
 public class TechnicianWorkLog {
 
+    public static String CLOCK_IN = "clock-in";
+    public static String CLOCK_OUT = "clock-out";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

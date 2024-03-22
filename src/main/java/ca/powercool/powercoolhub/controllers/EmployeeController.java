@@ -1,9 +1,7 @@
 package ca.powercool.powercoolhub.controllers;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,10 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.models.technician.TechnicianWorkLog;
+import ca.powercool.powercoolhub.models.technician.data.GroupedWorkLogsData;
 import ca.powercool.powercoolhub.repositories.TechnicianWorkLogRepository;
 import ca.powercool.powercoolhub.services.TechnicianWorkLogService;
 import ca.powercool.powercoolhub.utilities.LocalDateTimeUtility;
-import ca.powercool.powercoolhub.utilities.PrintUtility;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.ui.Model;
@@ -49,11 +47,11 @@ public class EmployeeController {
         List<TechnicianWorkLog> workLogs = this.technicianWorkLogRepository.findWorkLogsBetween(user.getId(),
                 startDateTime, endDateTime);
 
-        Map<LocalDate, List<TechnicianWorkLog>> grouppedWorkLogs = this.technicianWorkLogService.groupWorkLogsByDate(workLogs);
-        
+        List<GroupedWorkLogsData> historyData = this.technicianWorkLogService.getTechnicianHistoryData(workLogs);
+
         // Pass model attribute to the view.
         model.addAttribute("user", user);
-        model.addAttribute("work_logs", grouppedWorkLogs);
+        model.addAttribute("workLogs", historyData);
 
         return "users/employee/history";
     }

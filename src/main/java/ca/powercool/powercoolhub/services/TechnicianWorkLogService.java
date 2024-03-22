@@ -1,11 +1,9 @@
 package ca.powercool.powercoolhub.services;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
-
 import ca.powercool.powercoolhub.models.technician.TechnicianWorkLog;
+import ca.powercool.powercoolhub.models.technician.data.GroupedWorkLogsData;
 
 public interface TechnicianWorkLogService {
-    Map<LocalDate, List<TechnicianWorkLog>> groupWorkLogsByDate(List<TechnicianWorkLog> workLogs);
+    List<GroupedWorkLogsData> getTechnicianHistoryData(List<TechnicianWorkLog> workLogs);
 }

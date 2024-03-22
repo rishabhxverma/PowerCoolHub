@@ -16,14 +16,14 @@
                 <thead>
                     <tr>
                         <th scope="col">Date</th>
-                        <th scope="col">Hours</th>
+                        <th scope="col">Minute(s)</th>
                         <th scope="col"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="date : ${work_logs}">
-                        <td th:text="${#temporals.format(date.key, 'MMM d, yyyy')}"></td>
-                        <td th:text="0"></td>
+                    <tr th:each="workLog : ${workLogs}">
+                        <td th:text="${#temporals.format(workLog.date, 'MMM d, yyyy')}"></td>
+                        <td th:text="${workLog.minutes + '(' + (workLog.minutes / 60) + ' hrs' + ')'}"></td>
                         <td><a href="#" class="fa-solid fa-caret-right text-dark text-decoration-none"></a></td>
                     </tr>
                     <!-- <tr>
