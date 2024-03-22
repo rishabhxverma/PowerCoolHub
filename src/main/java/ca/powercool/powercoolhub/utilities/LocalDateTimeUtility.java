@@ -14,4 +14,24 @@ public class LocalDateTimeUtility {
         return dateTime.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
                 .withHour(23).withMinute(59).withSecond(59).withNano(999999999);
     }
+
+    public static LocalDateTime getFirstDayOfMonth(LocalDateTime dateTime) {
+        return dateTime.with(TemporalAdjusters.firstDayOfMonth())
+                .withHour(0).withMinute(0).withSecond(0).withNano(0);
+    }
+
+    public static LocalDateTime getLastDayOfMonth(LocalDateTime dateTime) {
+        return dateTime.with(TemporalAdjusters.lastDayOfMonth())
+                .withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+    }
+
+    public static LocalDateTime getFirstDayOfYear(LocalDateTime dateTime) {
+        return dateTime.with(TemporalAdjusters.firstDayOfYear())
+                .withHour(0).withMinute(0).withSecond(0).withNano(0);
+    }
+
+    public static LocalDateTime getLastDayOfYear(LocalDateTime dateTime) {
+        return dateTime.with(TemporalAdjusters.lastDayOfYear())
+                .withHour(23).withMinute(59).withSecond(59).withNano(999999999);
+    }
 }

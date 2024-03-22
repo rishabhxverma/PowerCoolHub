@@ -41,8 +41,8 @@ public class EmployeeController {
         User user = (User) request.getSession().getAttribute("user");
 
         LocalDateTime currentDateTime = LocalDateTime.now();
-        LocalDateTime startDateTime = LocalDateTimeUtility.getFirstDayOfWeek(currentDateTime);
-        LocalDateTime endDateTime = LocalDateTimeUtility.getLastDayOfWeek(currentDateTime);
+        LocalDateTime startDateTime = LocalDateTimeUtility.getFirstDayOfMonth(currentDateTime);
+        LocalDateTime endDateTime = LocalDateTimeUtility.getLastDayOfMonth(currentDateTime);
 
         List<TechnicianWorkLog> workLogs = this.technicianWorkLogRepository.findWorkLogsBetween(user.getId(),
                 startDateTime, endDateTime);
