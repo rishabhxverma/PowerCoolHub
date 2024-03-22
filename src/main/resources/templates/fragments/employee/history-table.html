@@ -3,7 +3,7 @@
         <h2 class="px-0">Work Hours</h2>
 
         <div class="filter p-0">
-            <select class="form-select float-end" aria-label="Default select example" style="width: 8rem">
+            <select class="form-select float-end" aria-label="Default select example" style="width: 8rem" onchange="on_filter_option_changed(this)">
                 <option selected>Filter</option>
                 <option value="weekly">Weekly</option>
                 <option value="monthly">Monthly</option>
@@ -20,19 +20,10 @@
                         <th scope="col"></th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr th:each="workLog : ${workLogs}">
-                        <td th:text="${#temporals.format(workLog.date, 'MMM d, yyyy')}"></td>
-                        <td th:text="${workLog.minutes + '(' + (workLog.minutes / 60) + ' hrs' + ')'}"></td>
-                        <td><a href="#" class="fa-solid fa-caret-right text-dark text-decoration-none"></a></td>
-                    </tr>
-                    <!-- <tr>
-                        <td scope="row">{ date }</td>
-                        <td>{ hours }</td>
-                        <td><a href="#" class="fa-solid fa-caret-right text-dark text-decoration-none"></a></td>
-                    </tr> -->
-                </tbody>
+                <tbody th:with="workLogs=${workLogs}" th:replace="~{fragments/employee/history/history-table-data :: history-table-data}"></tbody>
             </table>
         </div>
     </div>
+
+    <script th:src="@{/js/employee/history-table.js}" defer></script>
 </div>
