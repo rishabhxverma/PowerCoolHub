@@ -21,16 +21,19 @@ public class Job {
     private String note;
     private String jobType;
     private boolean jobDone;
+    private String customerName;
 
     public Job(){}
 
-    public Job(Integer id, int customerId, Date serviceDate, String note, String jobType, boolean jobDone) {
+    public Job(Integer id, int customerId, Date serviceDate, String note, String jobType, boolean jobDone,
+            String customerName) {
         this.id = id;
         this.customerId = customerId;
         this.serviceDate = serviceDate;
         this.note = note;
         this.jobType = jobType;
         this.jobDone = jobDone;
+        this.customerName = customerName;
     }
 
     public int getCustomerId() {
@@ -79,5 +82,13 @@ public class Job {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 }
