@@ -21,31 +21,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Jan 2, 2024</td>
-                        <td>8</td>
+                    <tr th:each="date : ${work_logs}">
+                        <td th:text="${#temporals.format(date.key, 'MMM d, yyyy')}"></td>
+                        <td th:text="0"></td>
                         <td><a href="#" class="fa-solid fa-caret-right text-dark text-decoration-none"></a></td>
                     </tr>
-                    <tr>
-                        <td scope="row">Jan 1, 2024</td>
-                        <td>6</td>
-                        <td><a href="#" class="fa-solid fa-caret-right text-dark text-decoration-none"></a></td>
-                    </tr>
-                    <tr>
-                        <td scope="row">Dec 31, 2023</td>
-                        <td>8</td>
-                        <td><a href="#" class="fa-solid fa-caret-right text-dark text-decoration-none"></a></td>
-                    </tr>
-                    <tr>
-                        <td scope="row">...</td>
-                        <td>...</td>
-                        <td><a href="#" class="fa-solid fa-caret-right text-dark text-decoration-none"></a></td>
-                    </tr>
-                    <tr>
+                    <!-- <tr>
                         <td scope="row">{ date }</td>
                         <td>{ hours }</td>
                         <td><a href="#" class="fa-solid fa-caret-right text-dark text-decoration-none"></a></td>
-                    </tr>
+                    </tr> -->
                 </tbody>
             </table>
         </div>

@@ -1,11 +1,20 @@
 package ca.powercool.powercoolhub.controllers;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import ca.powercool.powercoolhub.models.User;
-import ca.powercool.powercoolhub.repositories.UserRepository;
+import ca.powercool.powercoolhub.models.technician.TechnicianWorkLog;
+import ca.powercool.powercoolhub.repositories.TechnicianWorkLogRepository;
+import ca.powercool.powercoolhub.services.TechnicianWorkLogService;
+import ca.powercool.powercoolhub.utilities.LocalDateTimeUtility;
+import ca.powercool.powercoolhub.utilities.PrintUtility;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.ui.Model;
@@ -14,7 +23,10 @@ import org.springframework.ui.Model;
 public class EmployeeController {
 
     @Autowired
-    private UserRepository userRepository;
+    private TechnicianWorkLogRepository technicianWorkLogRepository;
+
+    @Autowired
+    private TechnicianWorkLogService technicianWorkLogService;
 
     @GetMapping("/employee")
     public String getEmployeeDashboard(HttpServletRequest request, Model model) {
@@ -30,8 +42,18 @@ public class EmployeeController {
     public String getEmployeeHistory(HttpServletRequest request, Model model) {
         User user = (User) request.getSession().getAttribute("user");
 
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime startDateTime = LocalDateTimeUtility.getFirstDayOfWeek(currentDateTime);
+        LocalDateTime endDateTime = LocalDateTimeUtility.getLastDayOfWeek(currentDateTime);
+
+        List<TechnicianWorkLog> workLogs = this.technicianWorkLogRepository.findWorkLogsBetween(user.getId(),
+                startDateTime, endDateTime);
+
+        Map<LocalDate, List<TechnicianWorkLog>> grouppedWorkLogs = this.technicianWorkLogService.groupWorkLogsByDate(workLogs);
+        
         // Pass model attribute to the view.
         model.addAttribute("user", user);
+        model.addAttribute("work_logs", grouppedWorkLogs);
 
         return "users/employee/history";
     }
