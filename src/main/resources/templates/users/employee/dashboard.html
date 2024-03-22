@@ -6,10 +6,11 @@
 <body>
     <!-- Navigation bars -->
     <div th:replace="~{fragments/employee/top-navigation :: top-navigation}"></div>
-
+    <div id="coordinates" style="font-size:16px; display:none;"></div>
     <div class="container px-5 mt-4">
         <div th:replace="~{fragments/employee/upcoming-jobs :: upcoming-jobs}"></div>
     </div>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD7W1stQyxkMS1msMvHXRHBPDltzAXZh3g&callback=initMap" type="text/javascript"></script>
 </body>
 </head>
 
