@@ -19,4 +19,16 @@ public interface JobRepository extends JpaRepository<Job, Integer> {
     List<Job> findByJobDoneFalse();                 // active appointments
     List<Job> findByPaymentReceivedTrue();          // payment history
     List<Job> findByPaymentReceivedFalse();         // pending payments
+
+    //find jobs assigned to specific technician ID
+    @Query("SELECT j FROM Job j WHERE :technicianId MEMBER OF j.technicianIds")
+    List<Job> findByTechnicianId(@Param("technicianId") int technicianId);
+
+    //find jobs assigned to specific tech ID within dates
+    @Query("SELECT j FROM Job j WHERE :technicianId MEMBER OF j.technicianIds AND j.serviceDate BETWEEN :startDate AND :endDate")
+    List<Job> findByTechnicianIdBetweenDates(@Param("technicianId") int technicianId, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+    //find jobs that arent assigned to any techID
+    @Query("SELECT j FROM Job j WHERE j.technicianIds IS EMPTY")
+    List<Job> findUnassignedJobs();
 }

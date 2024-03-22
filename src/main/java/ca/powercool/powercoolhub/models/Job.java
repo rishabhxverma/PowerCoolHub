@@ -1,6 +1,8 @@
 package ca.powercool.powercoolhub.models;
 
 import java.sql.Date;
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -18,6 +20,8 @@ public class Job {
     private int customerId;
     private Date serviceDate;
     private String note;
+    // technician ids assigned to this job
+    private List<Integer> technicianIds;
     private JobType jobType;
     private boolean jobDone;
     private boolean paymentReceived;
@@ -39,8 +43,21 @@ public class Job {
         this.jobDone = jobDone;
     }
 
+
     public boolean isActive() {
         return !jobDone;
+    }
+
+    public List<Integer> getTechnicianIds() {
+        return technicianIds;
+    }
+
+    public void setTechnicianIds(List<Integer> technicianIds) {
+        this.technicianIds = technicianIds;
+    }
+
+    public void addTechnicianById(int technicianId) {
+        technicianIds.add(technicianId);
     }
 
     public boolean isPaymentReceived() {
