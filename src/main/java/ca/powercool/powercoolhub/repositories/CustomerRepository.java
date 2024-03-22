@@ -16,17 +16,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
     //customer query
     // has upcoming appointment, CustomerState != CustomerState.ARCHIVED
-    @Query("SELECT c FROM Customer c WHERE c.state != 'ARCHIVED'")
+
     List<Customer> findByStateNot(Customer.CustomerState state);
-    @Query("SELECT c FROM Customer c WHERE c.state = 'ARCHIVED'")
-    List<Customer> findArchivedCustomers(Customer.CustomerState state);
-    @Query("SELECT c FROM Customer c WHERE c.state = 'UPCOMING_APPOINTMENT_SERVICE'")
-    List<Customer> findServiceCustomers(Customer.CustomerState state);
-    @Query("SELECT c FROM Customer c WHERE c.state = 'UPCOMING_APPOINTMENT_INSTALL'")
-    List<Customer> findInstallCustomers(Customer.CustomerState state);
-    @Query("SELECT c FROM Customer c WHERE c.state = 'UPCOMING_APPOINTMENT_REPAIR'")
-    List<Customer> findRepairCustomers(Customer.CustomerState state);
-    
-
-
+    List<Customer> findByState(Customer.CustomerState state);
 }

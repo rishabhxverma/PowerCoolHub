@@ -3,7 +3,11 @@ package ca.powercool.powercoolhub.models;
 import java.sql.Date;
 import java.util.List;
 
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -21,7 +25,11 @@ public class Job {
     private Date serviceDate;
     private String note;
     // technician ids assigned to this job
+    @ElementCollection
+    @CollectionTable(name = "job_technicians")
+    @Column(name = "technician_id")
     private List<Integer> technicianIds;
+    @Enumerated(jakarta.persistence.EnumType.STRING)
     private JobType jobType;
     private boolean jobDone;
     private boolean paymentReceived;
