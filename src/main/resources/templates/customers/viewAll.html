@@ -143,6 +143,20 @@
             data.forEach((customer) => {
               var row = document.createElement("tr");
 
+              // Add button if filter is "requesting-app"
+              if (selectedFilter === "requesting-app") {
+                var buttonCell = document.createElement("td");
+                var button = document.createElement("button");
+                button.textContent = "Book Appointment";
+                button.classList.add("btn", "btn-primary");
+                button.addEventListener("click", function () {
+                  // Open modal code goes here
+                  console.log("Open modal for customer: " + customer.id);
+                });
+                buttonCell.appendChild(button);
+                row.appendChild(buttonCell);
+              }
+
               var nameCell = document.createElement("td");
               var nameLink = document.createElement("a");
               nameLink.href = `/customers/edit/${customer.id}`;
