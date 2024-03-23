@@ -128,8 +128,6 @@
     </main>
     <script>
       document.getElementById("filter").addEventListener("change", function () {
-        // Get the selected filter, if the filter is all or Choose..., show all customers instead of applying a filter
-
         var selectedFilter = this.value;
         console.log(selectedFilter);
         fetch(`/customers/filterJson?filter=${selectedFilter}`)

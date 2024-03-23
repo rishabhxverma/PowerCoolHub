@@ -64,8 +64,18 @@
             </div>
             <div class="col-sm-3">
               <div class="well">
-                <h4>12</h4>
-                <p>Unscheduled Clients</p>
+                <h4>
+                  Unscheduled Clients:
+                  <span th:text="${unscheduledClientsCount}"></span>
+                </h4>
+                <h4>
+                  Upcoming Clients:
+                  <span th:text="${upcomingClientsCount}"></span>
+                </h4>
+                <h4>
+                  Archived Clients:
+                  <span th:text="${archivedClientsCount}"></span>
+                </h4>
               </div>
             </div>
             <div class="col-sm-3">
@@ -237,5 +247,25 @@
         margin-top: 20px;
       }
     </style>
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      document.addEventListener("DOMContentLoaded", function () {
+        function updateCounts() {
+          fetch("/dashboard/counts")
+            .then((response) => response.json())
+            .then((data) => {
+              document.getElementById("unscheduledCount").textContent =
+              data.unscheduledClientsCount;
+              document.getElementById("upcomingCount").textContent =
+              data.upcomingClientsCount;
+              document.getElementById("archivedCount").textContent =
+              data.archivedClientsCount;
+            });
+          }
+        // Update counts every 5 seconds
+        setInterval(updateCounts, 5000);
+      });
+      /*]]>*/
+    </script>
   </body>
 </html>

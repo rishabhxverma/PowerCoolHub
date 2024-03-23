@@ -17,4 +17,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     //customer query
     // has upcoming appointment, CustomerState != CustomerState.ARCHIVED
     List<Customer> findByState(Customer.CustomerState state);
+
+    //count by state
+    int countByState(Customer.CustomerState state);
 }
