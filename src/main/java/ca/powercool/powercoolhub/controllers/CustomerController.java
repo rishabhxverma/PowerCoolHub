@@ -9,6 +9,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.Optional;
 import ca.powercool.powercoolhub.models.Customer;
+import ca.powercool.powercoolhub.models.Job;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
 import ca.powercool.powercoolhub.repositories.JobRepository;
 
@@ -20,6 +21,8 @@ public class CustomerController {
 
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private JobRepository jobRepository;
 
     // View all customers
     @GetMapping("/viewAll")
@@ -111,6 +114,14 @@ public class CustomerController {
         }
 
         customerDetails.setId(id);
+        customerRepository.save(customerDetails);
+
+        List<Job> customersJobs = jobRepository.findByCustomerId(id); // Assuming you have this method in your repository
+        for (Job job : customersJobs) {
+            job.setCustomerName(customerDetails.getName());
+            jobRepository.save(job);
+        }
+
         customerRepository.save(customerDetails);
         redirectAttributes.addFlashAttribute("success", "Customer updated successfully!");
         return "customers/editedCustomer";
