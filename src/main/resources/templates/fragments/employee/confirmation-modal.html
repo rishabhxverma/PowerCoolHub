@@ -1,0 +1,21 @@
+<!-- Bootstrap Modal -->
+<!-- confirmation-modal.html -->
+<div th:fragment="confirmationModal">
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationModalLabel">Confirmation Required</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to <span id="modalText"></span>? Current time: <span id="currentTime"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn btn-primary" id="confirmButton">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

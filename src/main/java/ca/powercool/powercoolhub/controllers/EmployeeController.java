@@ -4,9 +4,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.models.technician.TechnicianWorkLog;
@@ -115,4 +120,17 @@ public class EmployeeController {
 
         return "users/employee/history/details";
     }
+
+    @PostMapping("/employee/clock")
+    @ResponseBody
+    public ResponseEntity<?> clock(@RequestBody TechnicianWorkLog clockData, HttpServletRequest request) {
+    User user = (User) request.getSession().getAttribute("user");
+    if (user == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+    }
+    // Set the user's ID - ideally, this should be from session to avoid spoofing, but you're setting it from postData for now.
+    clockData.setTechnicianId(user.getId());
+    TechnicianWorkLog savedLog = technicianWorkLogRepository.save(clockData);
+    return ResponseEntity.ok(savedLog);
+}
 }
