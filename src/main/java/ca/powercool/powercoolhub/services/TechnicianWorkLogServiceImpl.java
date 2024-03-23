@@ -1,9 +1,6 @@
 package ca.powercool.powercoolhub.services;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -24,9 +21,9 @@ public class TechnicianWorkLogServiceImpl implements TechnicianWorkLogService {
         List<GroupedWorkLogsData> groupedWorkLogsData = groupedLogs.entrySet().stream()
                 .map(entry -> {
                     List<TechnicianWorkLog> logs = entry.getValue();
-                    Long sumOfDurations = calculateSumOfDurations(logs);
+                    // Long sumOfDurations = this.calculateSumOfDurations(logs);
                     LocalDate date = entry.getKey();
-                    return new GroupedWorkLogsData(date, logs, sumOfDurations);
+                    return new GroupedWorkLogsData(date, logs);
                 })
                 .collect(Collectors.toList());
 
@@ -39,26 +36,26 @@ public class TechnicianWorkLogServiceImpl implements TechnicianWorkLogService {
      * @param logs
      * @return Long minutes
      */
-    private Long calculateSumOfDurations(List<TechnicianWorkLog> logs) {
-        List<LocalDateTime> clockInTimes = new ArrayList<>();
-        List<LocalDateTime> clockOutTimes = new ArrayList<>();
+    // private Long calculateSumOfDurations(List<TechnicianWorkLog> logs) {
+    //     List<LocalDateTime> clockInTimes = new ArrayList<>();
+    //     List<LocalDateTime> clockOutTimes = new ArrayList<>();
 
-        // Separate clock-in and clock-out times
-        for (int i = 0; i < logs.size(); i++) {
-            if (logs.get(i).getAction().equals(TechnicianWorkLog.CLOCK_IN)) {
-                clockInTimes.add(logs.get(i).getCreatedAt());
-            } else if (logs.get(i).getAction().equals(TechnicianWorkLog.CLOCK_OUT)) {
-                clockOutTimes.add(logs.get(i).getCreatedAt());
-            }
-        }
+    //     // Separate clock-in and clock-out times
+    //     for (int i = 0; i < logs.size(); i++) {
+    //         if (logs.get(i).getAction().equals(TechnicianWorkLog.CLOCK_IN)) {
+    //             clockInTimes.add(logs.get(i).getCreatedAt());
+    //         } else if (logs.get(i).getAction().equals(TechnicianWorkLog.CLOCK_OUT)) {
+    //             clockOutTimes.add(logs.get(i).getCreatedAt());
+    //         }
+    //     }
 
-        // Calculate sum of durations between clock-in and clock-out times
-        Long sumOfDurations = 0L;
-        for (int i = 0; i < Math.min(clockInTimes.size(), clockOutTimes.size()); i++) {
-            Duration duration = Duration.between(clockInTimes.get(i), clockOutTimes.get(i));
-            sumOfDurations += duration.toMinutes();
-        }
+    //     // Calculate sum of durations between clock-in and clock-out times
+    //     Long sumOfDurations = 0L;
+    //     for (int i = 0; i < Math.min(clockInTimes.size(), clockOutTimes.size()); i++) {
+    //         Duration duration = Duration.between(clockInTimes.get(i), clockOutTimes.get(i));
+    //         sumOfDurations += duration.toMinutes();
+    //     }
 
-        return sumOfDurations;
-    }
+    //     return sumOfDurations;
+    // }
 }
