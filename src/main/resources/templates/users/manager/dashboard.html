@@ -251,7 +251,7 @@
       /*<![CDATA[*/
       document.addEventListener("DOMContentLoaded", function () {
         function updateCounts() {
-          fetch("/dashboard/counts")
+          fetch("./counts")
             .then((response) => response.json())
             .then((data) => {
               document.getElementById("unscheduledCount").textContent =

@@ -1,6 +1,7 @@
 package ca.powercool.powercoolhub.controllers;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import ca.powercool.powercoolhub.forms.LoginForm;
+import ca.powercool.powercoolhub.models.Customer;
 import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.models.UserRole;
 import ca.powercool.powercoolhub.repositories.UserRepository;
@@ -21,12 +23,14 @@ import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 public class UserController {
     @Autowired
     private UserRepository userRepository;
+
 
     @GetMapping("/")
     public RedirectView process() {
