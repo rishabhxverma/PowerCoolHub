@@ -9,7 +9,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.Optional;
 import ca.powercool.powercoolhub.models.Customer;
+import ca.powercool.powercoolhub.models.Job;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
+import ca.powercool.powercoolhub.repositories.JobRepository;
+
 
 
 @Controller
@@ -18,6 +21,8 @@ public class CustomerController {
 
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private JobRepository jobRepository;
 
     // View all customers
     @GetMapping("/viewAll")
@@ -110,6 +115,13 @@ public class CustomerController {
 
         customerDetails.setId(id);
         customerRepository.save(customerDetails);
+
+        List<Job> customersJobs = jobRepository.findByCustomerId(id);
+        for (Job job : customersJobs) {
+            job.setCustomerName(customerDetails.getName());
+            jobRepository.save(job);
+        }
+
         redirectAttributes.addFlashAttribute("success", "Customer updated successfully!");
         return "customers/editedCustomer";
     }

@@ -82,6 +82,10 @@ function fetchJobsAndDisplay(weekDates) {
 
         let jobNameDiv = document.createElement("div");
         jobNameDiv.classList.add("job-name");
+                if(job.customerName == null)
+                    jobNameDiv.textContent = "No Name";
+                else
+                    jobNameDiv.textContent = job.customerName;
 
         let jobTypeDiv = document.createElement("div");
         jobTypeDiv.classList.add("job-type");
@@ -91,8 +95,8 @@ function fetchJobsAndDisplay(weekDates) {
         jobEntry.appendChild(jobNameDiv);
         jobEntry.appendChild(jobTypeDiv);
 
-        // Fetching is customer name is slow, so div doesnt get added to calendar until customer name is fetched
-        addCustomerNameAndDisplay(job, jobNameDiv, jobEntry, dayColumn);
+        // Adds the job to its day column on calendar
+        dayColumn.appendChild(jobEntry);
       });
     })
     .catch((error) => console.error("Error fetching jobs:", error));

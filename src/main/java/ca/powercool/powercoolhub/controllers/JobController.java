@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import ca.powercool.powercoolhub.models.Customer;
 import ca.powercool.powercoolhub.models.Job;
 import ca.powercool.powercoolhub.models.Job.JobType;
+import ca.powercool.powercoolhub.repositories.CustomerRepository;
 import ca.powercool.powercoolhub.repositories.JobRepository;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -26,7 +27,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class JobController {
     @Autowired
     private JobRepository jobRepository;
-
+    @Autowired
+    private CustomerRepository customerRepository;
+    
     @GetMapping("/addJob")
     public String addJob() {
         return "jobs/addJob";
@@ -41,6 +44,19 @@ public class JobController {
             HttpServletResponse stat) {
         Job job = new Job();
         job.setCustomerId(customerIdInfo);
+
+        String customerName;
+        Customer customer = customerRepository.findById(customerIdInfo).orElse(null);
+        if (customer == null) {
+            customerName = "Customer not found";
+        }
+        else{
+            customerName = customer.getName();
+            if(customerName == null){
+                customerName = "Customer unnamed";
+            }
+        }
+
         job.setServiceDate(serviceDate);
         job.setNote(note);
         job.setJobType(jobTypeString);

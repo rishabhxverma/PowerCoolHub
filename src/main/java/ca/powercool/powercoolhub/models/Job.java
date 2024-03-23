@@ -32,6 +32,7 @@ public class Job {
     @Enumerated(jakarta.persistence.EnumType.STRING)
     private JobType jobType;
     private boolean jobDone;
+    private String customerName;
     private boolean paymentReceived;
 
     public enum JobType {
@@ -42,13 +43,15 @@ public class Job {
 
     public Job() {}
 
-    public Job(Integer id, int customerId, Date serviceDate, String note, JobType jobType, boolean jobDone) {
+    public Job(Integer id, int customerId, Date serviceDate, String note, JobType jobType, boolean jobDone,
+            String customerName) {
         this.id = id;
         this.customerId = customerId;
         this.serviceDate = serviceDate;
         this.note = note;
         this.jobType = jobType;
         this.jobDone = jobDone;
+        this.customerName = customerName;
     }
 
 
@@ -128,4 +131,12 @@ public class Job {
     public void setId(Integer id) {
         this.id = id;
     }
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
 }
