@@ -42,18 +42,12 @@ public class EmployeeController {
     public String getEmployeeHistory(HttpServletRequest request, Model model) {
         User user = (User) request.getSession().getAttribute("user");
 
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        LocalDateTime startDateTime = LocalDateTimeUtility.getFirstDayOfMonth(currentDateTime);
-        LocalDateTime endDateTime = LocalDateTimeUtility.getLastDayOfMonth(currentDateTime);
-
-        List<TechnicianWorkLog> workLogs = this.technicianWorkLogRepository.findWorkLogsBetween(user.getId(),
-                startDateTime, endDateTime);
-
-        List<GroupedWorkLogsData> historyData = this.technicianWorkLogService.getTechnicianHistoryData(workLogs);
+        List<GroupedWorkLogsData> workLogs = this.technicianWorkLogService.getTechnicianHistoryData(user,
+                WorkLogsFilter.BY_MONTH);
 
         // Pass model attribute to the view.
         model.addAttribute("user", user);
-        model.addAttribute("workLogs", historyData);
+        model.addAttribute("workLogs", workLogs);
 
         return "users/employee/history";
     }
@@ -69,38 +63,11 @@ public class EmployeeController {
      */
     @GetMapping("/employee/history/filter")
     public String filterHistory(@RequestParam("by") String filter, HttpServletRequest request, Model model) {
-
         User user = (User) request.getSession().getAttribute("user");
-
-        // TODO: Move this business logic to a service.
-        LocalDateTime currentDateTime = LocalDateTime.now();
-
-        LocalDateTime startDateTime = LocalDateTimeUtility.getFirstDayOfMonth(currentDateTime);
-        LocalDateTime endDateTime = LocalDateTimeUtility.getLastDayOfMonth(currentDateTime);
-
-        // Filter by weekly.
-        if (filter.equals(WorkLogsFilter.BY_WEEK)) {
-            startDateTime = LocalDateTimeUtility.getFirstDayOfWeek(currentDateTime);
-            endDateTime = LocalDateTimeUtility.getLastDayOfWeek(currentDateTime);
-        }
-        // Filter by monthly.
-        else if (filter.equals(WorkLogsFilter.BY_MONTH)) {
-            startDateTime = LocalDateTimeUtility.getFirstDayOfMonth(currentDateTime);
-            endDateTime = LocalDateTimeUtility.getLastDayOfMonth(currentDateTime);
-        }
-        // Filter by yearly.
-        else if (filter.equals(WorkLogsFilter.BY_YEAR)) {
-            startDateTime = LocalDateTimeUtility.getFirstDayOfYear(currentDateTime);
-            endDateTime = LocalDateTimeUtility.getLastDayOfYear(currentDateTime);
-        }
-
-        List<TechnicianWorkLog> workLogs = this.technicianWorkLogRepository.findWorkLogsBetween(user.getId(),
-                startDateTime, endDateTime);
-
-        List<GroupedWorkLogsData> historyData = this.technicianWorkLogService.getTechnicianHistoryData(workLogs);
+        List<GroupedWorkLogsData> workLogs = this.technicianWorkLogService.getTechnicianHistoryData(user, filter);
 
         // Add history work log data to the model
-        model.addAttribute("workLogs", historyData);
+        model.addAttribute("workLogs", workLogs);
 
         // Return the HTML template string.
         return "fragments/employee/history/history-table-data :: history-table-data";
