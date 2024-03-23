@@ -14,19 +14,6 @@ function getWeekDates(baseDate) {
   return weekDates;
 }
 
-function addCustomerNameAndDisplay(job, jobNameDiv, jobEntry, dayColumn) {
-  fetch(`/customers/getCustomerNameFromId?customerId=${job.customerId}`)
-    .then((response) => response.text())
-    .then((name) => {
-      jobNameDiv.textContent = name; // Adds the customer name to the jobName div
-      dayColumn.appendChild(jobEntry); // Adds the job to its day column on calendar
-    })
-    .catch((error) => {
-      console.error("Error fetching customer name:", error);
-      dayColumn.appendChild(jobEntry);
-    });
-}
-
 // Create a YYYY-MM-DD string based on local time, not UTC
 function formatDate(date) {
   const year = date.getFullYear();
