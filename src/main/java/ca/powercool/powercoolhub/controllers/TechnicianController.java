@@ -1,6 +1,5 @@
 package ca.powercool.powercoolhub.controllers;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,37 +8,31 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.powercool.powercoolhub.models.User;
-import ca.powercool.powercoolhub.models.technician.TechnicianWorkLog;
 import ca.powercool.powercoolhub.models.technician.data.GroupedWorkLogsData;
 import ca.powercool.powercoolhub.models.technician.data.WorkLogsFilter;
-import ca.powercool.powercoolhub.repositories.TechnicianWorkLogRepository;
 import ca.powercool.powercoolhub.services.TechnicianWorkLogService;
-import ca.powercool.powercoolhub.utilities.LocalDateTimeUtility;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.ui.Model;
 
 @Controller
-public class EmployeeController {
-
-    @Autowired
-    private TechnicianWorkLogRepository technicianWorkLogRepository;
+public class TechnicianController {
 
     @Autowired
     private TechnicianWorkLogService technicianWorkLogService;
 
-    @GetMapping("/employee")
-    public String getEmployeeDashboard(HttpServletRequest request, Model model) {
+    @GetMapping("/technician")
+    public String getTechnicianDashboard(HttpServletRequest request, Model model) {
         User user = (User) request.getSession().getAttribute("user");
 
         // Pass model attribute to the view.
         model.addAttribute("user", user);
 
-        return "users/employee/dashboard";
+        return "users/technician/dashboard";
     }
 
-    @GetMapping("/employee/history")
-    public String getEmployeeHistory(HttpServletRequest request, Model model) {
+    @GetMapping("/technician/history")
+    public String getTechnicianHistory(HttpServletRequest request, Model model) {
         User user = (User) request.getSession().getAttribute("user");
 
         List<GroupedWorkLogsData> workLogs = this.technicianWorkLogService.getTechnicianHistoryData(user,
@@ -49,7 +42,7 @@ public class EmployeeController {
         model.addAttribute("user", user);
         model.addAttribute("workLogs", workLogs);
 
-        return "users/employee/history";
+        return "users/technician/history";
     }
 
     /**
@@ -61,7 +54,7 @@ public class EmployeeController {
      * @param model   The model to which history data will be added.
      * @return The updated part of the template containing history data.
      */
-    @GetMapping("/employee/history/filter")
+    @GetMapping("/technician/history/filter")
     public String filterHistory(@RequestParam("by") String filter, HttpServletRequest request, Model model) {
         User user = (User) request.getSession().getAttribute("user");
         List<GroupedWorkLogsData> workLogs = this.technicianWorkLogService.getTechnicianHistoryData(user, filter);
@@ -70,16 +63,16 @@ public class EmployeeController {
         model.addAttribute("workLogs", workLogs);
 
         // Return the HTML template string.
-        return "fragments/employee/history/history-table-data :: history-table-data";
+        return "fragments/technician/history/history-table-data :: history-table-data";
     }
 
-    @GetMapping("/employee/history/details")
-    public String getEmployeeHistoryDetails(HttpServletRequest request, Model model) {
+    @GetMapping("/technician/history/details")
+    public String getTechnicianHistoryDetails(HttpServletRequest request, Model model) {
         User user = (User) request.getSession().getAttribute("user");
 
         // Pass model attribute to the view.
         model.addAttribute("user", user);
 
-        return "users/employee/history/details";
+        return "users/technician/history/details";
     }
 }

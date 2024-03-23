@@ -20,10 +20,10 @@
                         <th scope="col"></th>
                     </tr>
                 </thead>
-                <tbody th:with="workLogs=${workLogs}" th:replace="~{fragments/employee/history/history-table-data :: history-table-data}"></tbody>
+                <tbody th:with="workLogs=${workLogs}" th:replace="~{fragments/technician/history/history-table-data :: history-table-data}"></tbody>
             </table>
         </div>
     </div>
 
-    <script th:src="@{/js/employee/history-table.js}" defer></script>
+    <script th:src="@{/js/technician/history-table.js}" defer></script>
 </div>

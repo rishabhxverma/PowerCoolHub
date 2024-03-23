@@ -40,7 +40,7 @@ public class UserController {
         // Ensure the user is redirected to a correct dashboard.
         if (user != null) {
             return (user.getRole().equals(UserRole.MANAGER)) ? "redirect:/users/manager/dashboard"
-                    : "redirect:/users/employee/dashboard";
+                    : "redirect:/technician";
         }
 
         // If neither session attribute is present, return the login page
@@ -88,7 +88,7 @@ public class UserController {
         }
         
         return (user.getRole().equals(UserRole.MANAGER)) ? "redirect:/users/manager/dashboard"
-                : "redirect:/employee";
+                : "redirect:/technician";
     }
 
     // Logs user out
