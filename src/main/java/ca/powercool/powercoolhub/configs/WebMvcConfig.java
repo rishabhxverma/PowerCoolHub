@@ -22,7 +22,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(roleAccessInterceptor)
-                .addPathPatterns("/users/manager/**", "/users/employee/**", "/customers/**");
+                .addPathPatterns("/users/manager/**", "/technician/**", "/customers/**");
     }
 
     @Override

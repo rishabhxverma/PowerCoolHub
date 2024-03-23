@@ -30,7 +30,7 @@ public class RoleBasedAccessInterceptor implements HandlerInterceptor {
             return false; // Prevent further processing of the request
         }
 
-        else if (path.startsWith("/users/employee/") && (user == null || !user.getRole().equals(UserRole.EMPLOYEE))) {
+        else if (path.startsWith("/technician") && (user == null || !user.getRole().equals(UserRole.EMPLOYEE))) {
             response.sendRedirect("/login");
             return false; // Prevent further processing of the request
         }

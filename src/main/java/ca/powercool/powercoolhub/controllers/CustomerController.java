@@ -1,6 +1,7 @@
 package ca.powercool.powercoolhub.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -9,8 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import ca.powercool.powercoolhub.models.Customer;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import ca.powercool.powercoolhub.repositories.JobRepository;
+
 
 
 @Controller
@@ -20,11 +21,57 @@ public class CustomerController {
     @Autowired
     private CustomerRepository customerRepository;
 
+    // View all customers
     @GetMapping("/viewAll")
-    public String viewAllCustomers(Model model) {
+    public String viewAllCustomers(@RequestParam(required = false) String filter, Model model) {
         List<Customer> customers = customerRepository.findAll();
+        if (filter != null ) {
+            Customer.CustomerState state = mapFilterToState(filter);
+            customers = customerRepository.findByState(state);
+        } else {
+            customers = customerRepository.findAll();
+        }
         model.addAttribute("customers", customers);
         return "customers/viewAll";
+    }
+
+    // Filter customers by state
+    @GetMapping("/filterJson")
+    @ResponseBody
+    public ResponseEntity<List<Customer>> filterCustomersJson(@RequestParam("filter") String selectedFilter) {
+        if(selectedFilter.equals("all"))
+        {
+            return ResponseEntity.ok(customerRepository.findAll());
+        }
+        else if(selectedFilter.equals("upcoming"))
+        {
+            return ResponseEntity.ok(customerRepository.findByState(mapFilterToState("upcoming")));
+        }
+        else if(selectedFilter.equals("requesting-app"))
+        {
+            return ResponseEntity.ok(customerRepository.findByState(mapFilterToState("requesting-app")));
+        }
+        else if(selectedFilter.equals("archived"))
+        {
+            return ResponseEntity.ok(customerRepository.findByState(mapFilterToState("archived")));
+        }
+
+        Customer.CustomerState state = mapFilterToState(selectedFilter);
+        List<Customer> customers = customerRepository.findByState(state);
+        return ResponseEntity.ok(customers);
+    }
+
+    private Customer.CustomerState mapFilterToState(String filter) {
+        switch (filter) {
+            case "upcoming":
+                return Customer.CustomerState.UPCOMING;
+            case "archived":
+                return Customer.CustomerState.ARCHIVED;
+            case "requesting-app":
+                return Customer.CustomerState.REQUESTING_APPOINTMENT;
+            default:
+                return null;
+        }
     }
 
     @GetMapping("/edit/{id}")
@@ -102,5 +149,7 @@ public class CustomerController {
             return "No customer exists";
         }
     }
-    
+
+    //all mappings for customer queries
+
 }

@@ -1,8 +1,13 @@
 package ca.powercool.powercoolhub.models;
 
 import java.sql.Date;
+import java.util.List;
 
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,12 +24,27 @@ public class Job {
     private int customerId;
     private Date serviceDate;
     private String note;
-    private String jobType;
+    // technician ids assigned to this job
+    @ElementCollection
+    @CollectionTable(name = "job_technicians")
+    @Column(name = "technician_id")
+    private List<Integer> technicianIds;
+    @Enumerated(jakarta.persistence.EnumType.STRING)
+    private JobType jobType;
     private boolean jobDone;
+    private String customerName;
+    private boolean paymentReceived;
 
-    public Job(){}
+    public enum JobType {
+        SERVICE,
+        INSTALL,
+        REPAIR
+    }
 
-    public Job(Integer id, int customerId, Date serviceDate, String note, String jobType, boolean jobDone) {
+    public Job() {}
+
+    public Job(Integer id, int customerId, Date serviceDate, String note, JobType jobType, boolean jobDone,
+            String customerName) {
         this.id = id;
         this.customerId = customerId;
         this.serviceDate = serviceDate;
@@ -33,6 +53,36 @@ public class Job {
         this.jobDone = jobDone;
     }
 
+
+    public boolean isActive() {
+        return !jobDone;
+    }
+
+    public List<Integer> getTechnicianIds() {
+        return technicianIds;
+    }
+
+    public void setTechnicianIds(List<Integer> technicianIds) {
+        this.technicianIds = technicianIds;
+    }
+
+    public void addTechnicianById(int technicianId) {
+        technicianIds.add(technicianId);
+    }
+
+    public boolean isPaymentReceived() {
+        return paymentReceived;
+    }
+
+    public boolean pendingPayment() {
+        return !paymentReceived;
+    }
+
+    public void setPaymentReceived(boolean paymentReceived) {
+        this.paymentReceived = paymentReceived;
+    }
+
+    // Getters and setters
     public int getCustomerId() {
         return customerId;
     }
@@ -56,13 +106,13 @@ public class Job {
     public void setNote(String note) {
         this.note = note;
     }
-
+    //returns the job type as a string, not an enum, no Job
     public String getJobType() {
-        return jobType;
+        return String.valueOf(jobType).toLowerCase();
     }
 
     public void setJobType(String jobType) {
-        this.jobType = jobType;
+        this.jobType = JobType.valueOf(jobType);
     }
 
     public boolean isJobDone() {
@@ -80,4 +130,12 @@ public class Job {
     public void setId(Integer id) {
         this.id = id;
     }
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
 }

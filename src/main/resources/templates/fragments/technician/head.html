@@ -1,7 +1,4 @@
-<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-
-<head>
+<head th:fragment="head">
     <title>PowerCool Hub</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -13,36 +10,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
 
-    <link rel="stylesheet" href="./css/employee/top-navigation.css">
+    <link rel="stylesheet" th:href="@{/css/technician/top-navigation.css}">
+    <script th:src="@{/js/technician/top-navigation.js}"></script>
 </head>
-
-<body>
-    <!-- Navigation bars -->
-    <div th:replace="~{fragments/employee/top-navigation :: top-navigation}"></div>
-
-    <div class="container px-5 mt-4">
-        <!-- <h2 th:text="'Welcome back, ' + ${user.name}"></h2> -->
-
-        <div th:replace="~{fragments/employee/upcoming-jobs :: upcoming-jobs}"></div>
-
-    </div>
-
-
-    <script>
-        function toggle_clock(event, button) {
-            // Prevent the default behavior of the event
-            event.preventDefault();
-
-            let icon = button.querySelector('.clock');
-
-            // Toggle text-danger class
-            icon.classList.toggle('text-danger');
-
-            // Toggle fa-fade class
-            icon.classList.toggle('fa-fade');;
-        }
-    </script>
-</body>
-</head>
-
-</html>

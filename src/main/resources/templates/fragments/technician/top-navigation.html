@@ -5,7 +5,7 @@
         </button>
 
         <div class="d-flex mx-auto ps-5">
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand" th:href="@{/technician}">
                 PowerCool Hub
             </a>
         </div>
@@ -22,8 +22,9 @@
                 >
                 </a>
                 <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="position: absolute;">
-                    <li><a class="dropdown-item" th:href="@{/employee}">Dashboard</a></li>
-                    <li><a class="dropdown-item" href="#">History</a></li>
+                    <li><a class="dropdown-item" th:href="@{/technician}">Dashboard</a></li>
+                    <li><a class="dropdown-item" th:href="@{/technician/history}">History</a></li>
+                    <li><a class="dropdown-item" th:href="@{/technician/history/details}">Details Demo</a></li>
                     <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
                 </ul>
             </li>
