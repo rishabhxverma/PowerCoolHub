@@ -2,6 +2,8 @@
     <tr th:each="workLog : ${workLogs}">
         <td th:text="${workLog.getFormattedDate()}"></td>
         <td th:text="${workLog.getFormattedDuration()}"></td>
-        <td><a th:href="@{'/technician/history/' + ${workLog.getDateURI()}}" class="fa-solid fa-caret-right text-dark text-decoration-none"></a></td>
+        <td>
+            <a th:href="@{'/technician/history/' + ${workLog.getDateURI()}}" class="btn btn-light fa-solid fa-caret-right text-dark text-decoration-none"></a>
+        </td>
     </tr>
 </tbody>
