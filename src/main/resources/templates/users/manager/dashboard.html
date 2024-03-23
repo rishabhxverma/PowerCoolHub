@@ -66,28 +66,42 @@
               <div class="well">
                 <h4>
                   Unscheduled Clients:
-                  <span th:text="${unscheduledClientsCount}"></span>
+                  <span
+                    style="color: red"
+                    id="unscheduledCount"
+                    th:text="${unscheduledClientsCount}"
+                  ></span>
                 </h4>
+                <!-- TODO: add redirect to filter-->
+                <a href="/customers/viewAll">Click here to schedule them!</a>
+              </div>
+            </div>
+            <div class="col-sm-3">
+              <div class="well">
                 <h4>
                   Upcoming Clients:
-                  <span th:text="${upcomingClientsCount}"></span>
+                  <span
+                    style="color: green"
+                    id="upcomingCount"
+                    th:text="${upcomingClientsCount}"
+                  ></span>
                 </h4>
+                <!-- TODO: add redirect to filter-->
+                <a href="/customers/viewAll">Click here to view upcoming!</a>
+              </div>
+            </div>
+            <div class="col-sm-3">
+              <div class="well">
                 <h4>
                   Archived Clients:
-                  <span th:text="${archivedClientsCount}"></span>
+                  <span
+                    style="color: grey"
+                    id="archivedCount"
+                    th:text="${archivedClientsCount}"
+                  ></span>
                 </h4>
-              </div>
-            </div>
-            <div class="col-sm-3">
-              <div class="well">
-                <h4>3</h4>
-                <p>Client Payment pending</p>
-              </div>
-            </div>
-            <div class="col-sm-3">
-              <div class="well">
-                <h4>Company Success</h4>
-                <p>10000000000%</p>
+                <!-- TODO: add redirect to filter-->
+                <a href="/customers/viewAll">Click here for more details!!</a>
               </div>
             </div>
           </div>
@@ -251,19 +265,20 @@
       /*<![CDATA[*/
       document.addEventListener("DOMContentLoaded", function () {
         function updateCounts() {
-          fetch("./counts")
+          fetch("/manager/counts")
             .then((response) => response.json())
             .then((data) => {
               document.getElementById("unscheduledCount").textContent =
-              data.unscheduledClientsCount;
+                data.unscheduledClientsCount;
               document.getElementById("upcomingCount").textContent =
-              data.upcomingClientsCount;
+                data.upcomingClientsCount;
               document.getElementById("archivedCount").textContent =
-              data.archivedClientsCount;
+                data.archivedClientsCount;
             });
-          }
+        }
         // Update counts every 5 seconds
-        setInterval(updateCounts, 5000);
+        updateCounts();
+        setInterval(updateCounts, 10000);
       });
       /*]]>*/
     </script>
