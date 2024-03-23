@@ -82,21 +82,10 @@
         <div class="col">
           <label for="filter">Filter by:</label>
           <select id="filter" class="form-control">
-            <option selected>Choose...</option>
-            <option value="all">All</option>
+            <option selected value="all">All</option>
             <option value="upcoming">Upcoming</option>
-            <option value="recently-serviced">Recently serviced</option>
-            <option value="unscheduled">Unscheduled</option>
-            <option value="payment-pending">Payment pending</option>
-            <option value="payment-received">Payment received</option>
-          </select>
-        </div>
-        <div class="col">
-          <label for="sort">Sort by:</label>
-          <select id="sort" class="form-control">
-            <option selected>Choose...</option>
-            <option value="new-old">Newest First</option>
-            <option value="old-new">Oldest First</option>
+            <option value="archived">Archived</option>
+            <option value="requesting-app">Requesting Appointment</option>
           </select>
         </div>
       </div>
@@ -137,5 +126,60 @@
         </div>
       </div>
     </main>
+    <script>
+      document.getElementById("filter").addEventListener("change", function () {
+        // Get the selected filter, if the filter is all or Choose..., show all customers instead of applying a filter
+
+        var selectedFilter = this.value;
+        console.log(selectedFilter);
+        fetch(`/customers/filterJson?filter=${selectedFilter}`)
+          .then((response) => response.json())
+          .then((data) => {
+            // Clear the table
+            var tbody = document.querySelector("tbody");
+            while (tbody.firstChild) {
+              tbody.removeChild(tbody.firstChild);
+            }
+
+            // Add the filtered customers to the table
+            data.forEach((customer) => {
+              var row = document.createElement("tr");
+
+              var nameCell = document.createElement("td");
+              var nameLink = document.createElement("a");
+              nameLink.href = `/customers/edit/${customer.id}`;
+              nameLink.textContent = customer.name;
+              nameCell.appendChild(nameLink);
+              row.appendChild(nameCell);
+
+              var addressCell = document.createElement("td");
+              addressCell.textContent = customer.address;
+              row.appendChild(addressCell);
+
+              var phoneNumberCell = document.createElement("td");
+              phoneNumberCell.textContent = customer.phoneNumber;
+              row.appendChild(phoneNumberCell);
+
+              var lastServicedCell = document.createElement("td");
+              lastServicedCell.textContent = customer.lastServiced;
+              row.appendChild(lastServicedCell);
+
+              var nextServiceCell = document.createElement("td");
+              nextServiceCell.textContent = customer.nextService;
+              row.appendChild(nextServiceCell);
+
+              var stateCell = document.createElement("td");
+              stateCell.textContent = customer.state;
+              row.appendChild(stateCell);
+
+              var notesCell = document.createElement("td");
+              notesCell.textContent = customer.notes;
+              row.appendChild(notesCell);
+
+              tbody.appendChild(row);
+            });
+          });
+      });
+    </script>
   </body>
 </html>

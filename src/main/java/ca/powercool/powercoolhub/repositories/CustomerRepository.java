@@ -16,7 +16,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
     //customer query
     // has upcoming appointment, CustomerState != CustomerState.ARCHIVED
-
-    List<Customer> findByStateNot(Customer.CustomerState state);
     List<Customer> findByState(Customer.CustomerState state);
 }

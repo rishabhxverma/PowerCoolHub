@@ -95,21 +95,14 @@
             </div>
             <div class="form-group">
               <label for="state">State:</label>
-              <input
-                type="text"
-                class="form-control"
-                id="state"
-                th:field="*{state}"
-              />
+              <select class="form-control" id="state" th:field="*{state}">
+                <option
+                  th:each="state : ${T(ca.powercool.powercoolhub.models.Customer.CustomerState).values()}"
+                  th:value="${state}"
+                  th:text="${state}"
+                ></option>
+              </select>
             </div>
-            <div class="form-group">
-              <label for="paymentReceived">Payment Received:</label>
-              <input
-                type="checkbox"
-                class="form-check-input"
-                id="paymentReceived"
-                th:field="*{paymentReceived}"
-              />
             </div>
             <div class="d-flex justify-content-center">
               <button type="submit" class="btn btn-primary">Submit</button>

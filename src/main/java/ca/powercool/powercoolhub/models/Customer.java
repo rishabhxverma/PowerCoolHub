@@ -21,15 +21,13 @@ public class Customer {
 
     /*
      * The state of the customer, which can be one of the following: ARCHIVED (job finished and no future jobs planned)
-     * UPCOMING_APPOINTMENT_SERVICE, UPCOMING_APPOINTMENT_INSTALL,
-     * UPCOMING_APPOINTMENT_REPAIR
+     * UPCOMING or ARCHIVED or REQUESTING APPOINTMENT
      * 
      */
     public enum CustomerState {
         ARCHIVED,
-        UPCOMING_APPOINTMENT_SERVICE,
-        UPCOMING_APPOINTMENT_INSTALL,
-        UPCOMING_APPOINTMENT_REPAIR
+        UPCOMING,
+        REQUESTING_APPOINTMENT;
     }
 
     @Enumerated(EnumType.STRING)
@@ -50,12 +48,13 @@ public class Customer {
     }
 
     // Constructor for adding a new customer, no id, no last serviced, no next
-    public Customer(String name, String address, String phoneNumber, String notes) {
+    public Customer(String name, String address, String phoneNumber, String email, CustomerState state, String notes) {
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
+        this.email = email;
         this.notes = notes;
-        this.state = CustomerState.UPCOMING_APPOINTMENT_SERVICE; // Default state for new customers
+        this.state = state; // Default state for new customers
     }
 
     // Getters and setters
@@ -67,7 +66,7 @@ public class Customer {
     }
 
     public boolean hasUpcomingAppointment() {
-        return state != CustomerState.ARCHIVED;
+        return state == CustomerState.UPCOMING;
     }
 
     public boolean requestingAppointment() {
@@ -86,12 +85,10 @@ public class Customer {
         switch (state) {
             case ARCHIVED:
                 return "Archived";
-            case UPCOMING_APPOINTMENT_SERVICE:
-                return "Upcoming Service";
-            case UPCOMING_APPOINTMENT_INSTALL:
-                return "Upcoming Install";
-            case UPCOMING_APPOINTMENT_REPAIR:
-                return "Upcoming Repair";
+            case UPCOMING:
+                return "Upcoming";
+            case REQUESTING_APPOINTMENT:
+                return "Requesting Appointment";
             default:
                 return "Unknown";
         }
