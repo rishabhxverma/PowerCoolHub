@@ -1,41 +1,17 @@
 <div class="container" th:fragment="details">
     <div class="row">
-        <h2>Jan 2, 2024 Log <small class="text-muted">(8 hours)</small></h2>
-        <div class="timeline-container">
+        <h2>
+            <span th:text="${workLogsData.getFormattedDate()} + ' Log'"></span>
+            <small class="text-muted" th:text="${'(' + workLogsData.getFormattedDuration() + ')'}"></small>
+        </h2>
+        <div class="timeline-container mb-5">
             <div class="timeline"></div>
-            <div class="time my-4 pb-4">
+            <div th:each="workLog : ${workLogsData.logs}" class="time my-4 pb-4">
                 <div class="indicator"></div>
                 <div class="content">
-                    <h4>8 AM</h4>
-                    <p class="m-0">Clocks In</p>
-                    <p class="m-0">123 St</p>
-                </div>
-            </div>
-
-            <div class="time my-4 pb-4">
-                <div class="indicator"></div>
-                <div class="content">
-                    <h4>12 PM</h4>
-                    <p class="m-0">Clocks Out</p>
-                    <p class="m-0">456 St</p>
-                </div>
-            </div>
-
-            <div class="time my-4 pb-4">
-                <div class="indicator"></div>
-                <div class="content">
-                    <h4>1 PM</h4>
-                    <p class="m-0">Clocks In</p>
-                    <p class="m-0">789 St</p>
-                </div>
-            </div>
-
-            <div class="time my-4 pb-4">
-                <div class="indicator"></div>
-                <div class="content">
-                    <h4>5 PM</h4>
-                    <p class="m-0">Clocks Out</p>
-                    <p class="m-0">147 St</p>
+                    <h4 th:text="${workLog.getFormattedHours()}"></h4>
+                    <p class="m-0" th:text="${workLog.action}"></p>
+                    <p class="m-0" th:text="${workLog.location}"></p>
                 </div>
             </div>
         </div>

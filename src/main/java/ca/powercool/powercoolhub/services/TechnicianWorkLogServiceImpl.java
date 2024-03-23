@@ -2,6 +2,7 @@ package ca.powercool.powercoolhub.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -79,5 +80,30 @@ public class TechnicianWorkLogServiceImpl implements TechnicianWorkLogService {
                 .collect(Collectors.toList());
 
         return groupedWorkLogsData;
+    }
+
+    /**
+     * Retrieves the work logs of a technician for a specific date.
+     *
+     * @param user The user object representing the technician.
+     * @param date The date in string format (ISO-8601) for which work logs are to
+     *             be retrieved.
+     * @return GroupedWorkLogsData object containing the technician's work logs for
+     *         the specified date.
+     * @throws DateTimeParseException if the date string cannot be parsed into a
+     *                                LocalDate object.
+     */
+    @Override
+    public GroupedWorkLogsData getTechnicianWorkLogByDate(User user, String date) {
+        LocalDate localDate = LocalDate.parse(date);
+
+        // Group the work log, since we are getting a specific date.
+        List<TechnicianWorkLog> workLogs = this.technicianWorkLogRepository.findWorkLogsByDate(user.getId(), localDate);
+
+        // Get the first (and only) group of work logs since there exists only one
+        // groupped work logs for a specific date.
+        GroupedWorkLogsData workLogsData = this.groupWorkLogs(workLogs).get(0);
+
+        return workLogsData;
     }
 }

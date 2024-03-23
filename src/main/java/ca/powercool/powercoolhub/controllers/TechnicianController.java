@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import ca.powercool.powercoolhub.models.User;
@@ -66,12 +67,14 @@ public class TechnicianController {
         return "fragments/technician/history/history-table-data :: history-table-data";
     }
 
-    @GetMapping("/technician/history/details")
-    public String getTechnicianHistoryDetails(HttpServletRequest request, Model model) {
+    @GetMapping("/technician/history/{date}")
+    public String getTechnicianHistoryDetails(@PathVariable("date") String date, HttpServletRequest request, Model model) {
         User user = (User) request.getSession().getAttribute("user");
-
+        GroupedWorkLogsData workLogsData = this.technicianWorkLogService.getTechnicianWorkLogByDate(user, date);
+    
         // Pass model attribute to the view.
         model.addAttribute("user", user);
+        model.addAttribute("workLogsData", workLogsData);
 
         return "users/technician/history/details";
     }

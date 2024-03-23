@@ -1,5 +1,6 @@
 package ca.powercool.powercoolhub.repositories;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -19,4 +20,7 @@ public interface TechnicianWorkLogRepository extends JpaRepository<TechnicianWor
             "AND twl.technicianId = :userId")
     List<TechnicianWorkLog> findWorkLogsBetween(Long userId, LocalDateTime startDate,
             LocalDateTime endDate);
+
+    @Query("SELECT twl FROM TechnicianWorkLog twl WHERE DATE(twl.createdAt) = :date AND twl.technicianId = :userId")
+    List<TechnicianWorkLog> findWorkLogsByDate(Long userId, LocalDate date);
 }
