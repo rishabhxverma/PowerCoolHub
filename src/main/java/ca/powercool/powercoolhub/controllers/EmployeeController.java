@@ -151,7 +151,7 @@ public class EmployeeController {
             clockState = latestLog.getAction().equals(TechnicianWorkLog.CLOCK_OUT) ? TechnicianWorkLog.CLOCK_IN
                     : TechnicianWorkLog.CLOCK_OUT;
         }
-
+        model.addAttribute("user", user);
         model.addAttribute("clockButtonState", clockState);
 
         return "users/employee/history/details";
