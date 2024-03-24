@@ -20,8 +20,7 @@ public interface TechnicianWorkLogRepository extends JpaRepository<TechnicianWor
             "AND twl.technicianId = :userId")
     List<TechnicianWorkLog> findWorkLogsBetween(Long userId, LocalDateTime startDate,
             LocalDateTime endDate);
-        
-       
-        @Query("SELECT twl FROM TechnicianWorkLog twl WHERE twl.technicianId = :userId ORDER BY twl.createdAt DESC LIMIT 1")
-        List<TechnicianWorkLog> findLatestWorkLogByUserId(Long userId);
+
+    @Query("SELECT twl FROM TechnicianWorkLog twl WHERE twl.technicianId = :userId ORDER BY twl.createdAt DESC LIMIT 1")
+    TechnicianWorkLog findLatestWorkLogByUserId(Long userId);
 }

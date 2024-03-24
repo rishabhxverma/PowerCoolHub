@@ -38,13 +38,17 @@ public class EmployeeController {
     public String getEmployeeDashboard(HttpServletRequest request, Model model) {
         User user = (User) request.getSession().getAttribute("user");
         model.addAttribute("user", user);
-        List<TechnicianWorkLog> logs = technicianWorkLogRepository.findLatestWorkLogByUserId(user.getId());
-        String clockButtonState = "clock_in"; // Assume default state
-        if (!logs.isEmpty()) {
-            TechnicianWorkLog latestLog = logs.get(0); // Get the latest log
-            clockButtonState = latestLog.getAction().equals(TechnicianWorkLog.CLOCK_OUT) ? "clock_in" : "clock_out";
+
+        TechnicianWorkLog latestLog = this.technicianWorkLogRepository.findLatestWorkLogByUserId(user.getId());
+
+        String clockState = TechnicianWorkLog.CLOCK_IN;
+
+        if (latestLog != null) {
+            clockState = latestLog.getAction().equals(TechnicianWorkLog.CLOCK_OUT) ? TechnicianWorkLog.CLOCK_IN
+                    : TechnicianWorkLog.CLOCK_OUT;
         }
-        model.addAttribute("clockButtonState", clockButtonState);
+
+        model.addAttribute("clockButtonState", clockState);
 
         return "users/employee/dashboard";
     }
@@ -125,12 +129,12 @@ public class EmployeeController {
     @PostMapping("/employee/clock")
     @ResponseBody
     public ResponseEntity<?> clock(@RequestBody TechnicianWorkLog clockData, HttpServletRequest request) {
-    User user = (User) request.getSession().getAttribute("user");
-    if (user == null) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
+        }
+        clockData.setTechnicianId(user.getId());
+        TechnicianWorkLog savedLog = technicianWorkLogRepository.save(clockData);
+        return ResponseEntity.ok(savedLog);
     }
-    clockData.setTechnicianId(user.getId());
-    TechnicianWorkLog savedLog = technicianWorkLogRepository.save(clockData);
-    return ResponseEntity.ok(savedLog);
-}
 }
