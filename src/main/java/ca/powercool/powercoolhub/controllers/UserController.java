@@ -29,6 +29,9 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
     @GetMapping("/")
     public RedirectView process() {
         return new RedirectView("/login");
@@ -80,7 +83,6 @@ public class UserController {
         // Use session to keep track of user data.
         request.getSession().setAttribute("user", user);
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         if (!passwordEncoder.matches(password, user.getPassword())) {
             try {
                 Thread.sleep(250); // Delay to prevent brute force attacks
@@ -134,7 +136,6 @@ public class UserController {
             return "register";
         }
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String hashedPassword = passwordEncoder.encode(employeePassword);
 
         User newUser = new User();
@@ -173,7 +174,6 @@ public class UserController {
 
         User existingUser = userRepository.findByEmail(oldEmail);
         if (existingUser != null) {
-            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
             String hashedPassword = passwordEncoder.encode(newPassword);
 
             existingUser.setName(newName);
