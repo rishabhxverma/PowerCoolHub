@@ -12,7 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // Utility function to get PST date as ISO string
 function getLocalIsoDate() {
     const now = new Date();
-    return now.toISOString().slice(0, -5); // Slice to remove milliseconds and Z, adjust if needed
+    const offsetInMilliseconds = 7 * 60 * 60 * 1000; // 8 hours in milliseconds
+    const pstDate = new Date(now.getTime() - offsetInMilliseconds);
+    return pstDate.toISOString().slice(0, -5); // Slice to remove milliseconds and Z
 }
 
 function confirmAction(callback, modalInstance) {
