@@ -3,7 +3,7 @@
 
 <head th:replace="~{fragments/employee/head :: head}"></head>
 
-<body>
+<body th:attr="tech-id=${user.id}, data-clock-state=${clockButtonState}">
     <!-- Navigation bars -->
     <div th:replace="fragments/employee/top-navigation :: top-navigation(${user.id}, ${clockButtonState})"></div>
 

@@ -65,6 +65,16 @@ public class EmployeeController {
                 startDateTime, endDateTime);
 
         List<GroupedWorkLogsData> historyData = this.technicianWorkLogService.getTechnicianHistoryData(workLogs);
+        TechnicianWorkLog latestLog = this.technicianWorkLogRepository.findLatestWorkLogByUserId(user.getId());
+
+        String clockState = TechnicianWorkLog.CLOCK_IN;
+
+        if (latestLog != null) {
+            clockState = latestLog.getAction().equals(TechnicianWorkLog.CLOCK_OUT) ? TechnicianWorkLog.CLOCK_IN
+                    : TechnicianWorkLog.CLOCK_OUT;
+        }
+
+        model.addAttribute("clockButtonState", clockState);
         model.addAttribute("user", user);
         model.addAttribute("workLogs", historyData);
 
@@ -112,6 +122,17 @@ public class EmployeeController {
 
         List<GroupedWorkLogsData> historyData = this.technicianWorkLogService.getTechnicianHistoryData(workLogs);
 
+        TechnicianWorkLog latestLog = this.technicianWorkLogRepository.findLatestWorkLogByUserId(user.getId());
+
+        String clockState = TechnicianWorkLog.CLOCK_IN;
+
+        if (latestLog != null) {
+            clockState = latestLog.getAction().equals(TechnicianWorkLog.CLOCK_OUT) ? TechnicianWorkLog.CLOCK_IN
+                    : TechnicianWorkLog.CLOCK_OUT;
+        }
+
+        model.addAttribute("clockButtonState", clockState);
+
         // Add history work log data to the model
         model.addAttribute("workLogs", historyData);
 
@@ -122,6 +143,16 @@ public class EmployeeController {
     @GetMapping("/employee/history/details")
     public String getEmployeeHistoryDetails(HttpServletRequest request, Model model) {
         User user = (User) request.getSession().getAttribute("user");
+        TechnicianWorkLog latestLog = this.technicianWorkLogRepository.findLatestWorkLogByUserId(user.getId());
+
+        String clockState = TechnicianWorkLog.CLOCK_IN;
+
+        if (latestLog != null) {
+            clockState = latestLog.getAction().equals(TechnicianWorkLog.CLOCK_OUT) ? TechnicianWorkLog.CLOCK_IN
+                    : TechnicianWorkLog.CLOCK_OUT;
+        }
+
+        model.addAttribute("clockButtonState", clockState);
 
         return "users/employee/history/details";
     }
