@@ -4,7 +4,7 @@ function on_filter_option_changed(dom) {
 
     let selectedOption = dom.value;
     let xhr = new XMLHttpRequest();
-    xhr.open('GET', '/employee/history/filter?by=' + encodeURIComponent(selectedOption));
+    xhr.open('GET', '/technician/history/filter?by=' + encodeURIComponent(selectedOption));
     xhr.setRequestHeader('Content-Type', 'text/html');
     xhr.onreadystatechange = function () {
         // When response is returned.

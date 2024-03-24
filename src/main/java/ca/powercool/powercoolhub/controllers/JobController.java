@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.GetMapping;
 
-
 @RequestMapping("/jobs")
 @Controller
 public class JobController {
@@ -29,12 +28,12 @@ public class JobController {
     private JobRepository jobRepository;
     @Autowired
     private CustomerRepository customerRepository;
-    
+
     @GetMapping("/addJob")
     public String addJob() {
         return "jobs/addJob";
     }
-    
+
     @PostMapping("/addJob")
     public String addJobForTheCustomerIntoDataBase(@RequestParam("customerId") int customerIdInfo,
             @RequestParam("dateService") Date serviceDate,
@@ -44,9 +43,15 @@ public class JobController {
             HttpServletResponse stat) {
         Job job = new Job();
         job.setCustomerId(customerIdInfo);
+        job.setServiceDate(serviceDate);
+        job.setNote(note);
+        job.setJobType(jobTypeString);
+        job.setJobDone(jobIsDone);
+        
+
+        Customer customer = customerRepository.findById(customerIdInfo).orElse(null);
 
         String customerName;
-        Customer customer = customerRepository.findById(customerIdInfo).orElse(null);
         if (customer == null) {
             customerName = "Customer not found";
         }
@@ -56,13 +61,11 @@ public class JobController {
                 customerName = "Customer unnamed";
             }
         }
+        job.setCustomerName(customerName);
 
-        job.setServiceDate(serviceDate);
-        job.setNote(note);
-        job.setJobType(jobTypeString);
-        job.setJobDone(jobIsDone);
         jobRepository.save(job);
         stat.setStatus(HttpServletResponse.SC_OK);
+
         return "jobs/jobSuccess";
     }
 
@@ -77,8 +80,8 @@ public class JobController {
     @GetMapping("/getWeek")
     @ResponseBody
     public List<Job> getJobsForWeek(@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-                                    @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
-        List<Job>  jobs = jobRepository.findJobsBetweenDates(startDate, endDate);                  
+            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+        List<Job> jobs = jobRepository.findJobsBetweenDates(startDate, endDate);
         return jobs;
     }
 }

@@ -124,12 +124,13 @@ public class CustomerController {
         customerDetails.setId(id);
         customerRepository.save(customerDetails);
 
-        List<Job> customersJobs = jobRepository.findByCustomerId(id);
+        List<Job> customersJobs = jobRepository.findByCustomerId(id); // Assuming you have this method in your repository
         for (Job job : customersJobs) {
             job.setCustomerName(customerDetails.getName());
             jobRepository.save(job);
         }
 
+        customerRepository.save(customerDetails);
         redirectAttributes.addFlashAttribute("success", "Customer updated successfully!");
         return "customers/editedCustomer";
     }
