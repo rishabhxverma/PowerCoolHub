@@ -20,17 +20,16 @@ public class RoleBasedAccessInterceptor implements HandlerInterceptor {
 
         String path = request.getRequestURI();
 
-        if (path.startsWith("/users/manager/") && (user == null || !user.getRole().equals(UserRole.MANAGER))) {
+        boolean managerExclusivePath = path.startsWith("/manager") || path.startsWith("/users/manager") || path.startsWith("/customers");
+
+        boolean technicianExclusivePath = path.startsWith("/technician") || path.startsWith("/users/technician");
+
+        if (managerExclusivePath && (user == null || !user.getRole().equals(UserRole.MANAGER))) {
             response.sendRedirect("/login");
             return false; // Prevent further processing of the request
         }
 
-        else if (path.startsWith("/customers/") && (user == null || !user.getRole().equals(UserRole.MANAGER))) {
-            response.sendRedirect("/login");
-            return false; // Prevent further processing of the request
-        }
-
-        else if (path.startsWith("/technician") && (user == null || !user.getRole().equals(UserRole.EMPLOYEE))) {
+        else if (technicianExclusivePath && (user == null || !user.getRole().equals(UserRole.TECHNICIAN))) {
             response.sendRedirect("/login");
             return false; // Prevent further processing of the request
         }

@@ -13,6 +13,7 @@ import ca.powercool.powercoolhub.models.technician.data.GroupedWorkLogsData;
 import ca.powercool.powercoolhub.models.technician.data.WorkLogsFilter;
 import ca.powercool.powercoolhub.services.TechnicianWorkLogService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.ui.Model;
 
@@ -23,7 +24,11 @@ public class TechnicianController {
     private TechnicianWorkLogService technicianWorkLogService;
 
     @GetMapping("/technician")
-    public String getTechnicianDashboard(HttpServletRequest request, Model model) {
+    public String getTechnicianDashboard(HttpServletRequest request, HttpServletResponse response, Model model) {
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
+
         User user = (User) request.getSession().getAttribute("user");
 
         // Pass model attribute to the view.

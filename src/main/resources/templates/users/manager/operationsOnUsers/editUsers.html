@@ -92,7 +92,7 @@
             <label for="role" class="form-label">New Title</label>
             <select class="form-select" aria-label="Default select example" name="role" type="role" for="role"
                 id="role">
-                <option selected="employee">employee</option>
+                <option selected="technician">technician</option>
                 <option select="manager">manager</option>
             </select>
             <br><br>
@@ -129,7 +129,7 @@
     <script>
         function handleBack() {
             alert("Back to dashboard clicked. Redirecting to the dashboard");
-            window.location.href = '/users/manager/dashboard';
+            window.location.href = '/manager';
         }
         function checkPasswordLength() {
             var passLen = document.getElementById('password').value;

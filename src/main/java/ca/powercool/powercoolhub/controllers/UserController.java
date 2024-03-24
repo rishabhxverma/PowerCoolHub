@@ -35,12 +35,16 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public String getLogin(LoginForm loginForm, HttpServletRequest request) {
+    public String getLogin(LoginForm loginForm, HttpServletRequest request, HttpServletResponse response) {
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
+
         User user = (User) request.getSession().getAttribute("user");
 
         // Ensure the user is redirected to a correct dashboard.
         if (user != null) {
-            return (user.getRole().equals(UserRole.MANAGER)) ? "redirect:/users/manager/dashboard"
+            return (user.getRole().equals(UserRole.MANAGER)) ? "redirect:/manager"
                     : "redirect:/technician";
         }
 
@@ -87,7 +91,7 @@ public class UserController {
             return "login";
         }
 
-        return (user.getRole().equals(UserRole.MANAGER)) ? "redirect:/users/manager/dashboard"
+        return (user.getRole().equals(UserRole.MANAGER)) ? "redirect:/manager"
                 : "redirect:/technician";
     }
 
@@ -99,8 +103,11 @@ public class UserController {
     }
 
     // Ensures that the user is logged in as a manager
-    @GetMapping("/users/manager/dashboard")
-    public String getManagerDashboard(HttpServletRequest request) {
+    @GetMapping("/manager")
+    public String getManagerDashboard(HttpServletRequest request, HttpServletResponse response) {
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
         return "users/manager/dashboard";
     }
 
@@ -113,15 +120,6 @@ public class UserController {
     public ResponseEntity<Map<String, Boolean>> checkEmailExists(@RequestParam("email") String email) {
         boolean exists = userRepository.existsByEmail(email);
         return ResponseEntity.ok(Collections.singletonMap("exists", exists));
-    }
-    @GetMapping("/employee")
-    public String getEmployeeDashboard(HttpServletRequest request, Model model) {
-        User user = (User) request.getSession().getAttribute("user");
-
-        // Pass model attribute to the view.
-        model.addAttribute("user", user);
-
-        return "users/employee/dashboard";
     }
 
     @PostMapping("/register")
@@ -183,7 +181,7 @@ public class UserController {
             if (newTitle.toLowerCase().equals("manager")) {
                 existingUser.setRole(UserRole.MANAGER);
             } else {
-                existingUser.setRole(UserRole.EMPLOYEE);
+                existingUser.setRole(UserRole.TECHNICIAN);
             }
             existingUser.setPassword(hashedPassword);
             userRepository.save(existingUser);
