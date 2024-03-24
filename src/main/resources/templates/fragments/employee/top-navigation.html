@@ -1,12 +1,14 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light" th:fragment="top-navigation">
+<nav class="navbar navbar-expand-lg navbar-light bg-light" th:fragment="top-navigation(techId, clockState)">
     <div class="container px-5">
-        <button class="clock-button" onclick="handleClockInOut(event, this)">
-            <i class="fa-solid fa-clock fs-4 clock"></i>
+        <button class="clock-button" th:attr="data-clocked-in=${clockButtonState == 'clock_out'}" 
+            onclick="handleClockInOut(event, this)">
+            <i class="fa-solid fa-clock fs-4"></i><span th:text="${clockButtonState == 'clock_in' ? 'Clock In' : 'Clock Out'}"></span>
         </button>
 
         <div class="d-flex mx-auto ps-5">
             <a class="navbar-brand" href="#">
                 PowerCool Hub
+                <p>Current state: <span th:text="${clockButtonState}"></span></p>
             </a>
         </div>
 

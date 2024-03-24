@@ -1,13 +1,18 @@
 
 let isClockedIn = false; // Flag to track clock-in status
 let currentConfirmAction = null;
-const UTC_TO_PST = 8 * 60 * 60000; // PST is UTC-8 hours
+
+document.addEventListener('DOMContentLoaded', () => {
+    let clockState = document.body.getAttribute('data-clock-state');
+    console.log("Current clock-in state: " + clockState);
+    isClockedIn = clockState === 'clock_out'; 
+    updateClockButton(document.querySelector('.clock-button'), isClockedIn);
+});
 
 // Utility function to get PST date as ISO string
-function getPstIsoDate() {
+function getLocalIsoDate() {
     const now = new Date();
-    const utcOffset = now.getTimezoneOffset() * 60000; // Convert offset to milliseconds
-    return new Date(now.getTime() - utcOffset - UTC_TO_PST).toISOString().slice(0, -5); // Slice to remove milliseconds and Z
+    return now.toISOString().slice(0, -5); // Slice to remove milliseconds and Z, adjust if needed
 }
 
 function confirmAction(callback, modalInstance) {
@@ -98,19 +103,17 @@ function fetchAndProcessLocation(callback) {
 // Function to be called after location is fetched and user confirmed
 function postClockAction(address, button) {
     const technicianId = document.body.getAttribute('tech-id');
-    const isClockedIn = button.getAttribute('data-clocked-in') === 'true';
-    const action = isClockedIn ? "clock_out" : "clock_in";
-    const postData = {
-        technicianId: technicianId,
-        action: action,
-        location: address,
-        createdAt: getPstIsoDate()
-    };
+    const intendedAction = isClockedIn ? "clock_out" : "clock_in";  // The intended action based on current state
 
     fetch('/employee/clock', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(postData)
+        body: JSON.stringify({
+            technicianId: technicianId,
+            action: intendedAction,
+            location: address,
+            createdAt: getLocalIsoDate()
+        })
     })
     .then(response => {
         if (!response.ok) throw new Error('Network response was not ok.');
@@ -118,9 +121,10 @@ function postClockAction(address, button) {
     })
     .then(data => {
         console.log('Success:', data);
-        const newStatus = !isClockedIn;
-        button.setAttribute('data-clocked-in', newStatus.toString());
-        updateClockButton(button, newStatus);
+        // Toggle the state after confirmation from the backend
+        isClockedIn = (intendedAction === "clock_in");  // Update based on the action sent, not the old state
+        button.setAttribute('data-clocked-in', isClockedIn.toString());
+        updateClockButton(button, isClockedIn);
     })
     .catch(error => {
         console.error('Error:', error);
@@ -128,5 +132,11 @@ function postClockAction(address, button) {
 }
 
 function updateClockButton(button, isClockedIn) {
-    button.innerHTML = isClockedIn ? '<i class="fa-solid fa-clock fs-4"></i> Clock Out' : '<i class="fa-solid fa-clock fs-4"></i> Clock In';
+    if (isClockedIn) {
+        button.innerHTML = '<i class="fa-solid fa-clock fs-4"></i> Clock In';
+        button.setAttribute('data-clocked-in', 'false');
+    } else {
+        button.innerHTML = '<i class="fa-solid fa-clock fs-4"></i> Clock Out';
+        button.setAttribute('data-clocked-in', 'true');
+    }
 }

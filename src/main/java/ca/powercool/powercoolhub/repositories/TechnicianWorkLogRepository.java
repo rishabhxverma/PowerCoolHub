@@ -3,6 +3,7 @@ package ca.powercool.powercoolhub.repositories;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -19,4 +20,8 @@ public interface TechnicianWorkLogRepository extends JpaRepository<TechnicianWor
             "AND twl.technicianId = :userId")
     List<TechnicianWorkLog> findWorkLogsBetween(Long userId, LocalDateTime startDate,
             LocalDateTime endDate);
+        
+       
+        @Query("SELECT twl FROM TechnicianWorkLog twl WHERE twl.technicianId = :userId ORDER BY twl.createdAt DESC LIMIT 1")
+        List<TechnicianWorkLog> findLatestWorkLogByUserId(Long userId);
 }

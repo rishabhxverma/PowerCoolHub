@@ -3,9 +3,10 @@
 
 <head th:replace="~{fragments/employee/head :: head}"></head>
 
-<body th:attr="tech-id=${user.id}">
+<body th:attr="tech-id=${user.id}, data-clock-state=${clockButtonState}">
     <!-- Navigation bars -->
-    <div th:replace="~{fragments/employee/top-navigation :: top-navigation}"></div>
+    <div th:replace="fragments/employee/top-navigation :: top-navigation(${user.id}, ${clockButtonState})"></div>
+    <p>Current state: <span th:text="${clockButtonState}"></span></p>
     <div id="coordinates" style="font-size:16px; display:none;"></div>
     <div class="container px-5 mt-4">
         <div th:replace="~{fragments/employee/confirmation-modal :: confirmationModal}"></div>

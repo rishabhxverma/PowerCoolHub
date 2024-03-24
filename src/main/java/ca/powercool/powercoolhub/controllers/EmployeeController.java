@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -36,9 +37,14 @@ public class EmployeeController {
     @GetMapping("/employee")
     public String getEmployeeDashboard(HttpServletRequest request, Model model) {
         User user = (User) request.getSession().getAttribute("user");
-
-        // Pass model attribute to the view.
         model.addAttribute("user", user);
+        List<TechnicianWorkLog> logs = technicianWorkLogRepository.findLatestWorkLogByUserId(user.getId());
+        String clockButtonState = "clock_in"; // Assume default state
+        if (!logs.isEmpty()) {
+            TechnicianWorkLog latestLog = logs.get(0); // Get the latest log
+            clockButtonState = latestLog.getAction().equals(TechnicianWorkLog.CLOCK_OUT) ? "clock_in" : "clock_out";
+        }
+        model.addAttribute("clockButtonState", clockButtonState);
 
         return "users/employee/dashboard";
     }
@@ -55,8 +61,6 @@ public class EmployeeController {
                 startDateTime, endDateTime);
 
         List<GroupedWorkLogsData> historyData = this.technicianWorkLogService.getTechnicianHistoryData(workLogs);
-
-        // Pass model attribute to the view.
         model.addAttribute("user", user);
         model.addAttribute("workLogs", historyData);
 
@@ -115,9 +119,6 @@ public class EmployeeController {
     public String getEmployeeHistoryDetails(HttpServletRequest request, Model model) {
         User user = (User) request.getSession().getAttribute("user");
 
-        // Pass model attribute to the view.
-        model.addAttribute("user", user);
-
         return "users/employee/history/details";
     }
 
@@ -128,7 +129,6 @@ public class EmployeeController {
     if (user == null) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
     }
-    // Set the user's ID - ideally, this should be from session to avoid spoofing, but you're setting it from postData for now.
     clockData.setTechnicianId(user.getId());
     TechnicianWorkLog savedLog = technicianWorkLogRepository.save(clockData);
     return ResponseEntity.ok(savedLog);
