@@ -65,11 +65,11 @@ public class JobController {
             }
         }
         job.setCustomerName(customerName);
-
+        customer.setState(Customer.CustomerState.UPCOMING);
         jobRepository.save(job);
         stat.setStatus(HttpServletResponse.SC_OK);
 
-        return "jobs/jobSuccess";
+        return "redirect:/customers/viewAll";
     }
 
     //get jobs from customer id
