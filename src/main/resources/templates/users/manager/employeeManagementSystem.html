@@ -34,7 +34,8 @@
 
                         <tbody>
                             <tr th:each="user : ${users}">
-                                <td> <a style="text-decoration: none;" th:href="@{/users/manager/operationsOnUsers/editUsers/{id}(id=${user.id})}"
+                                <td> <a style="text-decoration: none;"
+                                        th:href="@{/users/manager/operationsOnUsers/editUsers/{id}(id=${user.id})}"
                                         th:text="${user.name}"></a>
                                 </td>
                                 <td th:text="${user.email}"></td>
@@ -46,7 +47,13 @@
                     </table>
                 </div>
             </div>
+            <br>
+            <button type="button" class="btn btn-success"><a style="text-decoration-line: none; color: #fff;"
+                    href="/register"> Add new
+                    employee</a>
+            </button>
         </div>
+
     </main>
 
     <style>
