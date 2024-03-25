@@ -39,6 +39,7 @@ public class JobController {
             @RequestParam("dateService") Date serviceDate,
             @RequestParam("note") String note,
             @RequestParam("jobType") String jobTypeString,
+            @RequestParam("technicianIds") String technicianIds,
             @RequestParam("jobDone") boolean jobIsDone,
             HttpServletResponse stat) {
         Job job = new Job();
@@ -46,6 +47,8 @@ public class JobController {
         job.setServiceDate(serviceDate);
         job.setNote(note);
         job.setJobType(jobTypeString);
+        List<Integer> techIds = List.of(technicianIds.split(",")).stream().map(Integer::parseInt).toList();
+        job.setTechnicianIds(techIds);
         job.setJobDone(jobIsDone);
         
 

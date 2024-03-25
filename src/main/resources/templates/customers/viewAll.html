@@ -106,7 +106,12 @@
                 <tr th:each="customer : ${customers}">
                   <td>
                     <!-- This column will only display the button when filter is "requesting-app" -->
-                    <button class="btn btn-primary book-appointment" style="display: none;">Book Appointment</button>
+                    <button
+                      class="btn btn-primary book-appointment"
+                      style="display: none"
+                    >
+                      Book Appointment
+                    </button>
                   </td>
                   <td>
                     <a
@@ -220,7 +225,7 @@
                       <input
                         th:id="${'user' + user.id}"
                         th:value="${user.id}"
-                        name="selectedUsers"
+                        name="technicianIds"
                         type="checkbox"
                         class="form-check-input"
                       />

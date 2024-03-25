@@ -43,13 +43,14 @@ public class Job {
 
     public Job() {}
 
-    public Job(Integer id, int customerId, Date serviceDate, String note, JobType jobType, boolean jobDone,
+    public Job(Integer id, int customerId, Date serviceDate, String note, JobType jobType, List<Integer> techIds, boolean jobDone,
             String customerName) {
         this.id = id;
         this.customerId = customerId;
         this.serviceDate = serviceDate;
         this.note = note;
         this.jobType = jobType;
+        this.technicianIds = techIds;
         this.jobDone = jobDone;
     }
 
