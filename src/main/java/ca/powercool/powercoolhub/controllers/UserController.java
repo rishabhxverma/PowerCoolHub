@@ -1,6 +1,7 @@
 package ca.powercool.powercoolhub.controllers;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,13 +39,17 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public String getLogin(LoginForm loginForm, HttpServletRequest request) {
+    public String getLogin(LoginForm loginForm, HttpServletRequest request, HttpServletResponse response) {
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
+
         User user = (User) request.getSession().getAttribute("user");
 
         // Ensure the user is redirected to a correct dashboard.
         if (user != null) {
-            return (user.getRole().equals(UserRole.MANAGER)) ? "redirect:/users/manager/dashboard"
-                    : "redirect:/users/employee/dashboard";
+            return (user.getRole().equals(UserRole.MANAGER)) ? "redirect:/manager"
+                    : "redirect:/technician";
         }
 
         // If neither session attribute is present, return the login page
@@ -61,22 +66,21 @@ public class UserController {
 
         String email = loginForm.getEmail();
         String password = loginForm.getPassword();
-        
 
         model.addAttribute("savedEmail", email);
 
         User user = this.userRepository.findByEmail(email);
         // User does not exist.
         if (user == null) {
-            try { 
+            try {
                 Thread.sleep(250); // Delay to prevent brute force attacks
-            }catch (InterruptedException e) {
-                Thread.currentThread().interrupt();             
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
             bindingResult.addError(new FieldError("loginForm", "email", "No user found with this email."));
             return "login";
         }
-        
+
         // Use session to keep track of user data.
         request.getSession().setAttribute("user", user);
 
@@ -84,15 +88,15 @@ public class UserController {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             try {
                 Thread.sleep(250); // Delay to prevent brute force attacks
-            }catch (InterruptedException e) {
-                Thread.currentThread().interrupt();             
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
             bindingResult.addError(new FieldError("loginForm", "password", "Incorrect password."));
             return "login";
         }
-        
-        return (user.getRole().equals(UserRole.MANAGER)) ? "redirect:/users/manager/dashboard"
-                : "redirect:/employee";
+
+        return (user.getRole().equals(UserRole.MANAGER)) ? "redirect:/manager"
+                : "redirect:/technician";
     }
 
     // Logs user out
@@ -103,8 +107,11 @@ public class UserController {
     }
 
     // Ensures that the user is logged in as a manager
-    @GetMapping("/users/manager/dashboard")
-    public String getManagerDashboard(HttpServletRequest request) {
+    @GetMapping("/manager")
+    public String getManagerDashboard(HttpServletRequest request, HttpServletResponse response) {
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
         return "users/manager/dashboard";
     }
 
@@ -122,7 +129,7 @@ public class UserController {
     @PostMapping("/register")
     public String registerEmployeeIntoDataBase(@RequestParam("email") String employeeEmail,
             @RequestParam("name") String employeeName,
-            @RequestParam("password") String employeePassword, 
+            @RequestParam("password") String employeePassword,
             @RequestParam("role") String userRole,
             HttpServletResponse statusSetter) {
 
@@ -141,5 +148,62 @@ public class UserController {
         newUser.setRole(userRole);
         userRepository.save(newUser);
         return "redirect:/login";
+    }
+
+    @GetMapping("/users/manager/employeeManagementSystem")
+    public String getAllUsers(Model model) {
+        List<User> users = userRepository.findAll();
+        model.addAttribute("users", users);
+        return "users/manager/employeeManagementSystem";
+    }
+
+    @GetMapping("/users/manager/operationsOnUsers/editUsers")
+    public String getPathForUserEdition() {
+        return "users/manager/operationsOnUsers/editUsers";
+    }
+
+    @GetMapping("/users/manager/operationsOnUsers/deleteUsers")
+    public String getPathForUserDeletion() {
+        return "users/manager/operationsOnUsers/deleteUsers";
+    }
+
+    @PostMapping("/users/manager/operationsOnUsers/editUsers")
+    public String updateUserByEmailAddress(
+            @RequestParam("oldEmail") String oldEmail,
+            @RequestParam("name") String newName,
+            @RequestParam("email") String newEmail,
+            @RequestParam("role") String newTitle,
+            @RequestParam("password") String newPassword) {
+
+        User existingUser = userRepository.findByEmail(oldEmail);
+        if (existingUser != null) {
+            BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String hashedPassword = passwordEncoder.encode(newPassword);
+
+            existingUser.setName(newName);
+            existingUser.setEmail(newEmail);
+            if (newTitle.toLowerCase().equals("manager")) {
+                existingUser.setRole(UserRole.MANAGER);
+            } else {
+                existingUser.setRole(UserRole.TECHNICIAN);
+            }
+            existingUser.setPassword(hashedPassword);
+            userRepository.save(existingUser);
+
+            return "users/manager/operationsOnUsers/successMessageOnUpdate";
+        } else {
+            return "users/manager/operationsOnUsers/failedUpdate";
+        }
+    }
+
+    @PostMapping("/users/manager/operationsOnUsers/deleteUsers")
+    public String deleteUserByEmail(@RequestParam("email") String email) {
+        User user = userRepository.findByEmail(email);
+        if (user != null) {
+            userRepository.delete(user);
+            return "users/manager/operationsOnUsers/successfulDeletion";
+        } else {
+            return "users/manager/operationsOnUsers/failedDeletion";
+        }
     }
 }

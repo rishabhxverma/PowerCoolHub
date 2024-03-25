@@ -14,7 +14,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final RoleBasedAccessInterceptor roleAccessInterceptor;
 
-    @Autowired
     public WebMvcConfig(RoleBasedAccessInterceptor roleAccessInterceptor) {
         this.roleAccessInterceptor = roleAccessInterceptor;
     }
@@ -22,7 +21,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(roleAccessInterceptor)
-                .addPathPatterns("/users/manager/**", "/users/employee/**", "/customers/**");
+                .addPathPatterns("/users/manager/**", "/manager/**", "/users/technician/**", "/technician/**", "/customers/**");
     }
 
     @Override

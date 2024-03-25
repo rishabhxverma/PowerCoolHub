@@ -6,12 +6,12 @@ import java.time.temporal.TemporalAdjusters;
 
 public class LocalDateTimeUtility {
     public static LocalDateTime getFirstDayOfWeek(LocalDateTime dateTime) {
-        return dateTime.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+        return dateTime.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
                 .withHour(0).withMinute(0).withSecond(0).withNano(0);
     }
 
     public static LocalDateTime getLastDayOfWeek(LocalDateTime dateTime) {
-        return dateTime.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
+        return dateTime.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY))
                 .withHour(23).withMinute(59).withSecond(59).withNano(999999999);
     }
 

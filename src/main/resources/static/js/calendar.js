@@ -14,19 +14,6 @@ function getWeekDates(baseDate) {
   return weekDates;
 }
 
-function addCustomerNameAndDisplay(job, jobNameDiv, jobEntry, dayColumn) {
-  fetch(`/customers/getCustomerNameFromId?customerId=${job.customerId}`)
-    .then((response) => response.text())
-    .then((name) => {
-      jobNameDiv.textContent = name; // Adds the customer name to the jobName div
-      dayColumn.appendChild(jobEntry); // Adds the job to its day column on calendar
-    })
-    .catch((error) => {
-      console.error("Error fetching customer name:", error);
-      dayColumn.appendChild(jobEntry);
-    });
-}
-
 // Create a YYYY-MM-DD string based on local time, not UTC
 function formatDate(date) {
   const year = date.getFullYear();
@@ -64,21 +51,24 @@ function fetchJobsAndDisplay(weekDates) {
       jobs.forEach((job) => {
         let jobDate = createDateFromString(job.serviceDate);
         jobDate = formatDate(jobDate);
-        let dayColumn;
-        // Finds the column for the job
-        for (let i = 0; i < 7; i++) {
-          if (jobDate === week[i]) {
-            dayColumn = document.querySelector(
-              `.calendar-col:nth-child(${i + 1})`
-            );
-            break;
-          }
-        }
+        let dayColumn = document.querySelector(`.calendar-col[datetime="${jobDate}"]`);
 
         // Make the div for the job
         let jobEntry = document.createElement("div");
         jobEntry.classList.add("job");
-        if (job.jobDone) jobEntry.classList.add("finished");
+        if (job.jobDone) 
+          jobEntry.classList.add("finished");
+        else{
+          let jobtype = job.jobType.toLowerCase();
+          if (job.jobType === "service")
+            jobEntry.classList.add("service-job");
+          else if (job.jobType === "repair")
+            jobEntry.classList.add("repair-job");
+          else if (job.jobType === "install")
+            jobEntry.classList.add("install-job");
+        }
+
+        
 
         let jobNameDiv = document.createElement("div");
         jobNameDiv.classList.add("job-name");
@@ -114,15 +104,19 @@ function displayWeek(weekDates) {
   else weekOffset.textContent = "Current week";
 
   weekDates.forEach((date, index) => {
-    let dateSpan = document.querySelector(
-      `.calendar-top:nth-child(${index + 1}) .week-date`
-    );
-    dateSpan.textContent = `${date.month} ${date.day}`;
+    let dateString = date.date.toISOString().split('T')[0]; // YYYY-MM-DD
+
+    let topDateElement = document.querySelector(`.calendar-top:nth-child(${index + 1}) .week-date`);
+    topDateElement.textContent = `${date.month} ${date.day}`;
+
+    
+    topDateElement.setAttribute("datetime", dateString);
+
+    let dayColumn = document.querySelector(`.calendar-col:nth-child(${index + 1})`);
+    dayColumn.setAttribute("datetime", dateString);
   });
 
-  fetchJobsAndDisplay(weekDates).then(() => {
-    changeJobTypeColor();
-  });
+  fetchJobsAndDisplay(weekDates);
 }
 
 // Changes the week displayed on the calendar
@@ -138,22 +132,9 @@ let currentBaseDate = new Date();
 let currentWeekOffset = 0;
 let currentWeekDates = getWeekDates(currentBaseDate);
 
-//change background colour of div class job depending on job type: service, repair, install
-function changeJobTypeColor() {
-  let jobType = document.querySelectorAll(".job-type");
-  jobType.forEach((job) => {
-    if (job.textContent === "Service")
-      job.parentElement.style.backgroundColor = "lightgreen";
-    else if (job.textContent === "Repair")
-      job.parentElement.style.backgroundColor = "lightcoral";
-    else if (job.textContent === "Install")
-      job.parentElement.style.backgroundColor = "lightblue";
-  });
-}
+
 
 document.addEventListener("DOMContentLoaded", () => {
   // Display the current week
   displayWeek(currentWeekDates);
-  changeJobTypeColor();
-  console.log("changed job type color");
 });

@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Optional;
 import ca.powercool.powercoolhub.models.Customer;
 import ca.powercool.powercoolhub.models.Job;
+import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
 import ca.powercool.powercoolhub.repositories.JobRepository;
+import ca.powercool.powercoolhub.repositories.UserRepository;
 
 
 
@@ -24,6 +26,8 @@ public class CustomerController {
     @Autowired
     private JobRepository jobRepository;
 
+    @Autowired UserRepository userRepository;
+
     // View all customers
     @GetMapping("/viewAll")
     public String viewAllCustomers(@RequestParam(required = false) String filter, Model model) {
@@ -35,6 +39,10 @@ public class CustomerController {
             customers = customerRepository.findAll();
         }
         model.addAttribute("customers", customers);
+        
+        List<User> users = userRepository.findAll();
+        model.addAttribute("users", users);
+
         return "customers/viewAll";
     }
 
@@ -116,12 +124,13 @@ public class CustomerController {
         customerDetails.setId(id);
         customerRepository.save(customerDetails);
 
-        List<Job> customersJobs = jobRepository.findByCustomerId(id);
+        List<Job> customersJobs = jobRepository.findByCustomerId(id); // Assuming you have this method in your repository
         for (Job job : customersJobs) {
             job.setCustomerName(customerDetails.getName());
             jobRepository.save(job);
         }
 
+        customerRepository.save(customerDetails);
         redirectAttributes.addFlashAttribute("success", "Customer updated successfully!");
         return "customers/editedCustomer";
     }

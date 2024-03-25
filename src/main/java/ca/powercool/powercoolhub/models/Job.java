@@ -51,7 +51,6 @@ public class Job {
         this.note = note;
         this.jobType = jobType;
         this.jobDone = jobDone;
-        this.customerName = customerName;
     }
 
 

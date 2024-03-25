@@ -1,21 +1,71 @@
 package ca.powercool.powercoolhub.services;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.models.technician.TechnicianWorkLog;
 import ca.powercool.powercoolhub.models.technician.data.GroupedWorkLogsData;
+import ca.powercool.powercoolhub.models.technician.data.WorkLogsFilter;
+import ca.powercool.powercoolhub.repositories.TechnicianWorkLogRepository;
+import ca.powercool.powercoolhub.utilities.LocalDateTimeUtility;
 
 @Service
 public class TechnicianWorkLogServiceImpl implements TechnicianWorkLogService {
+
+    @Autowired
+    private TechnicianWorkLogRepository technicianWorkLogRepository;
+
+    /**
+     * Retrieves technician history data based on the provided filter.
+     *
+     * @param user   The user for whom to retrieve history data.
+     * @param filter The filter to apply (e.g., "BY_WEEK", "BY_YEAR", "BY_MONTH").
+     * @return A list of grouped work logs data.
+     */
     @Override
-    public List<GroupedWorkLogsData> getTechnicianHistoryData(List<TechnicianWorkLog> workLogs) {
+    public List<GroupedWorkLogsData> getTechnicianHistoryData(User user, String filter) {
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalDateTime startDateTime, endDateTime;
+
+        // Filter by weekly.
+        if (filter.equals(WorkLogsFilter.BY_WEEK)) {
+            startDateTime = LocalDateTimeUtility.getFirstDayOfWeek(currentDateTime);
+            endDateTime = LocalDateTimeUtility.getLastDayOfWeek(currentDateTime);
+        }
+        // Filter by yearly.
+        else if (filter.equals(WorkLogsFilter.BY_YEAR)) {
+            startDateTime = LocalDateTimeUtility.getFirstDayOfYear(currentDateTime);
+            endDateTime = LocalDateTimeUtility.getLastDayOfYear(currentDateTime);
+        }
+        // Filter by monthly.
+        else {
+            startDateTime = LocalDateTimeUtility.getFirstDayOfMonth(currentDateTime);
+            endDateTime = LocalDateTimeUtility.getLastDayOfMonth(currentDateTime);
+        }
+
+        List<TechnicianWorkLog> workLogs = this.technicianWorkLogRepository.findWorkLogsBetween(user.getId(),
+                startDateTime, endDateTime);
+
+        List<GroupedWorkLogsData> historyData = this.groupWorkLogs(workLogs);
+
+        return historyData;
+    }
+
+    /**
+     * Groups the provided technician work logs by date.
+     *
+     * @param workLogs The list of technician work logs to group.
+     * @return A list of grouped work logs data.
+     */
+    private List<GroupedWorkLogsData> groupWorkLogs(List<TechnicianWorkLog> workLogs) {
         // Group work logs by LocalDate
         Map<LocalDate, List<TechnicianWorkLog>> groupedLogs = workLogs.stream()
                 .collect(Collectors.groupingBy(log -> log.getCreatedAt().toLocalDate()));
@@ -24,9 +74,8 @@ public class TechnicianWorkLogServiceImpl implements TechnicianWorkLogService {
         List<GroupedWorkLogsData> groupedWorkLogsData = groupedLogs.entrySet().stream()
                 .map(entry -> {
                     List<TechnicianWorkLog> logs = entry.getValue();
-                    Long sumOfDurations = calculateSumOfDurations(logs);
                     LocalDate date = entry.getKey();
-                    return new GroupedWorkLogsData(date, logs, sumOfDurations);
+                    return new GroupedWorkLogsData(date, logs);
                 })
                 .collect(Collectors.toList());
 
@@ -34,31 +83,27 @@ public class TechnicianWorkLogServiceImpl implements TechnicianWorkLogService {
     }
 
     /**
-     * Sum up the time difference (duration) between `clock-in` and `clock-out`.
-     * 
-     * @param logs
-     * @return Long minutes
+     * Retrieves the work logs of a technician for a specific date.
+     *
+     * @param user The user object representing the technician.
+     * @param date The date in string format (ISO-8601) for which work logs are to
+     *             be retrieved.
+     * @return GroupedWorkLogsData object containing the technician's work logs for
+     *         the specified date.
+     * @throws DateTimeParseException if the date string cannot be parsed into a
+     *                                LocalDate object.
      */
-    private Long calculateSumOfDurations(List<TechnicianWorkLog> logs) {
-        List<LocalDateTime> clockInTimes = new ArrayList<>();
-        List<LocalDateTime> clockOutTimes = new ArrayList<>();
+    @Override
+    public GroupedWorkLogsData getTechnicianWorkLogByDate(User user, String date) {
+        LocalDate localDate = LocalDate.parse(date);
 
-        // Separate clock-in and clock-out times
-        for (int i = 0; i < logs.size(); i++) {
-            if (logs.get(i).getAction().equals(TechnicianWorkLog.CLOCK_IN)) {
-                clockInTimes.add(logs.get(i).getCreatedAt());
-            } else if (logs.get(i).getAction().equals(TechnicianWorkLog.CLOCK_OUT)) {
-                clockOutTimes.add(logs.get(i).getCreatedAt());
-            }
-        }
+        // Group the work log, since we are getting a specific date.
+        List<TechnicianWorkLog> workLogs = this.technicianWorkLogRepository.findWorkLogsByDate(user.getId(), localDate);
 
-        // Calculate sum of durations between clock-in and clock-out times
-        Long sumOfDurations = 0L;
-        for (int i = 0; i < Math.min(clockInTimes.size(), clockOutTimes.size()); i++) {
-            Duration duration = Duration.between(clockInTimes.get(i), clockOutTimes.get(i));
-            sumOfDurations += duration.toMinutes();
-        }
+        // Get the first (and only) group of work logs since there exists only one
+        // groupped work logs for a specific date.
+        GroupedWorkLogsData workLogsData = this.groupWorkLogs(workLogs).get(0);
 
-        return sumOfDurations;
+        return workLogsData;
     }
 }
