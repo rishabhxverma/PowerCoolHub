@@ -171,10 +171,15 @@ public class UserController {
     public String updateEmployee(@PathVariable("id") Long id, @ModelAttribute("user") User userDetails,
             @RequestParam String action,
             RedirectAttributes redirectAttributes) {
+
         boolean success = false;
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
-
+        if ("delete".equals(action)) {
+            userRepository.delete(existingUser);
+            redirectAttributes.addFlashAttribute("message", "User deleted successfully");
+            return "users/manager/operationsOnUsers/successDelete";
+        }
         existingUser.setName(userDetails.getName());
         existingUser.setEmail(userDetails.getEmail());
         existingUser.setRole(userDetails.getRole());
@@ -184,11 +189,7 @@ public class UserController {
 
         redirectAttributes.addFlashAttribute("success", "user updated successfully!");
         success = true;
-        if ("delete".equals(action)) {
-            userRepository.delete(existingUser);
-            redirectAttributes.addFlashAttribute("message", "User deleted successfully");
-            return "users/manager/operationsOnUsers/successDelete";
-        }
+
         if (success) {
             return "users/manager/operationsOnUsers/successMessageOnUpdate";
         }
