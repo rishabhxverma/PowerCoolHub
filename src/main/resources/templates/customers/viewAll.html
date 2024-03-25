@@ -26,13 +26,7 @@
         }
       }
 
-      .modal-body {
-        max-height: calc(100vh - 210px);
-        overflow-y: auto;
-      }
-
       .calender-container {
-        padding: 10px;
       }
     </style>
   </head>
@@ -172,7 +166,6 @@
                   class="form-control"
                   id="dateService"
                   required
-                  hidden
                 />
               </div>
 
@@ -318,6 +311,17 @@
               tbody.appendChild(row);
             });
           });
+      });
+      //TODO: Add event listener for the calendar dates
+      document.addEventListener("DOMContentLoaded", (event) => {
+        // Assuming your calendar fragment has dates with a class of 'date'
+        document.querySelectorAll(".date").forEach((dateElement) => {
+          dateElement.addEventListener("click", (event) => {
+            // Assuming the date is stored in the text content of the date element
+            const clickedDate = event.target.textContent;
+            document.getElementById("dateService").value = clickedDate;
+          });
+        });
       });
     </script>
 
