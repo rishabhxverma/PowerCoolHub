@@ -106,4 +106,24 @@ public class TechnicianWorkLogServiceImpl implements TechnicianWorkLogService {
 
         return workLogsData;
     }
+
+    @Override
+    public String getClockState(User user) {
+        TechnicianWorkLog latestLog = this.technicianWorkLogRepository.findLatestWorkLogByUserId(user.getId());
+
+        String clockState = TechnicianWorkLog.CLOCK_IN;
+
+        if (latestLog != null) {
+            clockState = latestLog.getAction().equals(TechnicianWorkLog.CLOCK_OUT) ? TechnicianWorkLog.CLOCK_IN
+                    : TechnicianWorkLog.CLOCK_OUT;
+        }
+        return clockState;
+    }
+
+    @Override
+    public TechnicianWorkLog saveWorkLog(User user, TechnicianWorkLog clockData) {
+        clockData.setTechnicianId(user.getId());
+        TechnicianWorkLog savedLog = technicianWorkLogRepository.save(clockData);
+        return savedLog;
+    }
 }

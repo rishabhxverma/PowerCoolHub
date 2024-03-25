@@ -10,7 +10,6 @@ import org.springframework.ui.Model;
 
 import ca.powercool.powercoolhub.models.Customer;
 import ca.powercool.powercoolhub.models.Job;
-import ca.powercool.powercoolhub.models.Job.JobType;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
 import ca.powercool.powercoolhub.repositories.JobRepository;
 import jakarta.servlet.http.HttpServletResponse;

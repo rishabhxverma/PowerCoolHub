@@ -14,8 +14,8 @@ import java.time.format.DateTimeFormatter;
 @Table(name = "technician_work_logs")
 public class TechnicianWorkLog {
 
-    public static String CLOCK_IN = "clock-in";
-    public static String CLOCK_OUT = "clock-out";
+    public static String CLOCK_IN = "clock_in";
+    public static String CLOCK_OUT = "clock_out";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

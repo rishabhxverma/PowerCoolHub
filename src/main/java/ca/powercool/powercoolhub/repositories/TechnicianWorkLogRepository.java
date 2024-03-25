@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -21,6 +22,9 @@ public interface TechnicianWorkLogRepository extends JpaRepository<TechnicianWor
     List<TechnicianWorkLog> findWorkLogsBetween(Long userId, LocalDateTime startDate,
             LocalDateTime endDate);
 
+    @Query("SELECT twl FROM TechnicianWorkLog twl WHERE twl.technicianId = :userId ORDER BY twl.createdAt DESC LIMIT 1")
+    TechnicianWorkLog findLatestWorkLogByUserId(Long userId);
+    
     @Query("SELECT twl FROM TechnicianWorkLog twl WHERE DATE(twl.createdAt) = :date AND twl.technicianId = :userId")
     List<TechnicianWorkLog> findWorkLogsByDate(Long userId, LocalDate date);
 }
