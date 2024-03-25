@@ -1,0 +1,33 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light" th:fragment="top-navigation(techId, clockState)">
+    <div class="container px-5">
+        <button class="clock-button" th:attr="data-clocked-in=${clockButtonState == 'clock_in'}" 
+            onclick="handleClockInOut(event, this)">
+            <i class="fa-solid fa-clock fs-4"></i><span th:text="${clockButtonState}"></span>
+        </button>
+
+        <div class="d-flex mx-auto ps-5">
+            <a class="navbar-brand" th:href="@{/technician}">
+                PowerCool Hub
+            </a>
+        </div>
+
+        <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" 
+                    href="#" 
+                    id="navbarDropdownMenuLink" 
+                    role="button" 
+                    data-bs-toggle="dropdown" 
+                    aria-expanded="false"
+                    th:text="${user.name}"
+                >
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="position: absolute;">
+                    <li><a class="dropdown-item" th:href="@{/technician}">Dashboard</a></li>
+                    <li><a class="dropdown-item" th:href="@{/technician/history}">History</a></li>
+                    <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>

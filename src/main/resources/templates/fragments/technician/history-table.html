@@ -1,0 +1,29 @@
+<div class="container" th:fragment="history-table">
+    <div class="row">
+        <h2 class="px-0">Work Hours</h2>
+
+        <div class="filter p-0">
+            <select class="form-select float-end" aria-label="Default select example" style="width: 8rem" onchange="on_filter_option_changed(this)">
+                <option selected>Filter</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+            </select>
+        </div>
+
+        <div class="table-container mt-3">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Time</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody th:with="workLogs=${workLogs}" th:replace="~{fragments/technician/history/history-table-data :: history-table-data}"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script th:src="@{/js/technician/history-table.js}" defer></script>
+</div>
