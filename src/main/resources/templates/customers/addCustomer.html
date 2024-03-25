@@ -20,10 +20,8 @@
         color: red;
       }
     </style>
-
-
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
       <div class="d-flex justify-content-center align-items-center">
         <h1>Add Customer</h1>
@@ -67,6 +65,26 @@
               />
             </div>
             <div class="form-group">
+              <label for="email">Email:</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                th:field="*{email}"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="state">State:</label>
+              <select class="form-control" id="state" th:field="*{state}">
+                <option
+                  th:each="state : ${T(ca.powercool.powercoolhub.models.Customer.CustomerState).values()}"
+                  th:value="${state}"
+                  th:text="${state}"
+                ></option>
+              </select>
+            </div>
+            <div class="form-group">
               <label for="notes">Notes:</label>
               <textarea
                 class="form-control"
@@ -74,10 +92,10 @@
                 th:field="*{notes}"
               ></textarea>
             </div>
-            <button id ="submit" type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
           </div>
         </div>
       </form>
     </div>
-</body>
+  </body>
 </html>

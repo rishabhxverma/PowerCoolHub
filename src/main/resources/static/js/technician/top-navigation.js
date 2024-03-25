@@ -107,7 +107,7 @@ function postClockAction(address, button) {
     const technicianId = document.body.getAttribute('tech-id');
     const intendedAction = isClockedIn ? "clock_out" : "clock_in";  // The intended action based on current state
 
-    fetch('/employee/clock', {
+    fetch('/technician/clock', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

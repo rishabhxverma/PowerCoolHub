@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "technician_work_logs")
@@ -28,6 +29,13 @@ public class TechnicianWorkLog {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    /**
+     * @return fomatted time, ex: 8 A.M.
+     */
+    public String getFormattedHours() {
+        return this.createdAt.format(DateTimeFormatter.ofPattern("h a")).toUpperCase();
+    }
 
     // Getters and setters
     public Long getId() {

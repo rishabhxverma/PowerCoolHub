@@ -1,7 +1,0 @@
-<tbody th:fragment="history-table-data" id="history-table-data">
-    <tr th:each="workLog : ${workLogs}">
-        <td th:text="${#temporals.format(workLog.date, 'MMM d, yyyy')}"></td>
-        <td th:text="${workLog.minutes + '(' + (workLog.minutes / 60) + ' hrs' + ')'}"></td>
-        <td><a href="#" class="fa-solid fa-caret-right text-dark text-decoration-none"></a></td>
-    </tr>
-</tbody>
