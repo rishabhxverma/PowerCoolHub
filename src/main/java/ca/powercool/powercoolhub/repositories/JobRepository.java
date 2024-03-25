@@ -8,27 +8,35 @@ import org.springframework.stereotype.Repository;
 import ca.powercool.powercoolhub.models.Job;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
 public interface JobRepository extends JpaRepository<Job, Integer> {
     @Query("SELECT j FROM Job j WHERE j.serviceDate BETWEEN :startDate AND :endDate")
     List<Job> findJobsBetweenDates(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
-    List<Job> findByCustomerId(int customerId);     // customer's appointments
-    List<Job> findByJobDoneTrue();                  // appointment history
-    List<Job> findByJobDoneFalse();                 // active appointments
-    List<Job> findByPaymentReceivedTrue();          // payment history
-    List<Job> findByPaymentReceivedFalse();         // pending payments
 
-    //find jobs assigned to specific technician ID
+    List<Job> findByCustomerId(int customerId); // customer's appointments
+
+    List<Job> findByJobDoneTrue(); // appointment history
+
+    List<Job> findByJobDoneFalse(); // active appointments
+
+    List<Job> findByPaymentReceivedTrue(); // payment history
+
+    List<Job> findByPaymentReceivedFalse(); // pending payments
+
+    // find jobs assigned to specific technician ID
     @Query("SELECT j FROM Job j JOIN j.technicianIds t WHERE t = :technicianId")
     List<Job> findByTechnicianId(@Param("technicianId") int technicianId);
 
-    //find jobs assigned to specific tech ID within dates
-    // @Query("SELECT j FROM Job j WHERE :technicianId MEMBER OF j.technicianIds AND j.serviceDate BETWEEN :startDate AND :endDate")
-    // List<Job> findByTechnicianIdBetweenDates(@Param("technicianId") int technicianId, @Param("startDate") Date startDate, @Param("endDate") Date endDate);
+    @Query(value = "SELECT * FROM jobs j " +
+            "INNER JOIN job_technicians jt ON j.id = jt.job_id " +
+            "WHERE jt.technician_id = ?1 " +
+            "AND j.service_date BETWEEN ?2 AND ?3", nativeQuery = true)
+    List<Job> findByTechnicianIdBetween(Long userId, LocalDate startDate, LocalDate endDate);
 
-    //find jobs that arent assigned to any techID
+    // find jobs that arent assigned to any techID
     @Query("SELECT j FROM Job j WHERE j.technicianIds IS EMPTY")
     List<Job> findUnassignedJobs();
 }

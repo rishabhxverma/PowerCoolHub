@@ -8,8 +8,10 @@ import ca.powercool.powercoolhub.models.technician.data.GroupedWorkLogsData;
 
 public interface TechnicianWorkLogService {
     List<GroupedWorkLogsData> getTechnicianHistoryData(User user, String filter);
+
     GroupedWorkLogsData getTechnicianWorkLogByDate(User user, String date);
+
     String getClockState(User user);
+
     TechnicianWorkLog saveWorkLog(User user, TechnicianWorkLog clockData);
 }
-

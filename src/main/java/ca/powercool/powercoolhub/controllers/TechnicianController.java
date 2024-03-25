@@ -1,5 +1,7 @@
 package ca.powercool.powercoolhub.controllers;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +15,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import ca.powercool.powercoolhub.models.Job;
 import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.models.technician.TechnicianWorkLog;
 import ca.powercool.powercoolhub.models.technician.data.GroupedWorkLogsData;
 import ca.powercool.powercoolhub.models.technician.data.WorkLogsFilter;
+import ca.powercool.powercoolhub.services.TechnicianService;
 import ca.powercool.powercoolhub.services.TechnicianWorkLogService;
+import ca.powercool.powercoolhub.utilities.LocalDateTimeUtility;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -29,13 +34,22 @@ public class TechnicianController {
     @Autowired
     private TechnicianWorkLogService technicianWorkLogService;
 
+    @Autowired
+    private TechnicianService technicianService;
+
     @GetMapping("/technician")
     public String getTechnicianDashboard(HttpServletRequest request, HttpServletResponse response, Model model) {
         User user = (User) request.getSession().getAttribute("user");
-        
+
+        LocalDate startDate = LocalDateTimeUtility.getFirstDayOfWeek(LocalDateTime.now()).toLocalDate();
+        LocalDate endDate = LocalDateTimeUtility.getLastDayOfWeek(LocalDateTime.now()).toLocalDate();
+
+        List<Job> upcomingJobs = this.technicianService.getUpcomingJobs(user, startDate.toString(), endDate.toString());
         String clockState = technicianWorkLogService.getClockState(user);
-        model.addAttribute("clockButtonState", clockState);
+        
         // Pass model attribute to the view.
+        model.addAttribute("upcomingJobs", upcomingJobs);
+        model.addAttribute("clockButtonState", clockState);
         model.addAttribute("user", user);
 
         return "users/technician/dashboard";
