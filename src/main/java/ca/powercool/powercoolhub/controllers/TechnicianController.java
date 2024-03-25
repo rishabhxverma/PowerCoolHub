@@ -23,20 +23,6 @@ public class TechnicianController {
     @Autowired
     private TechnicianWorkLogService technicianWorkLogService;
 
-    @GetMapping("/technician")
-    public String getTechnicianDashboard(HttpServletRequest request, HttpServletResponse response, Model model) {
-        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-        response.setHeader("Pragma", "no-cache");
-        response.setHeader("Expires", "0");
-
-        User user = (User) request.getSession().getAttribute("user");
-
-        // Pass model attribute to the view.
-        model.addAttribute("user", user);
-
-        return "users/technician/dashboard";
-    }
-
     @GetMapping("/technician/history")
     public String getTechnicianHistory(HttpServletRequest request, Model model) {
         User user = (User) request.getSession().getAttribute("user");

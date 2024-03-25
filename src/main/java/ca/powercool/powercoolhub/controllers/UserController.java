@@ -39,10 +39,6 @@ public class UserController {
 
     @GetMapping("/login")
     public String getLogin(LoginForm loginForm, HttpServletRequest request, HttpServletResponse response) {
-        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-        response.setHeader("Pragma", "no-cache");
-        response.setHeader("Expires", "0");
-
         User user = (User) request.getSession().getAttribute("user");
 
         // Ensure the user is redirected to a correct dashboard.
@@ -104,13 +100,19 @@ public class UserController {
         return "redirect:/login";
     }
 
-    // Ensures that the user is logged in as a manager
     @GetMapping("/manager")
     public String getManagerDashboard(HttpServletRequest request, HttpServletResponse response) {
-        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-        response.setHeader("Pragma", "no-cache");
-        response.setHeader("Expires", "0");
         return "users/manager/dashboard";
+    }
+
+    @GetMapping("/technician")
+    public String getTechnicianDashboard(HttpServletRequest request, HttpServletResponse response, Model model) {
+        User user = (User) request.getSession().getAttribute("user");
+
+        // Pass model attribute to the view.
+        model.addAttribute("user", user);
+
+        return "users/technician/dashboard";
     }
 
     @GetMapping("/register")
