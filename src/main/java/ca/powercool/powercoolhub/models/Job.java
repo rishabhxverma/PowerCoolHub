@@ -96,8 +96,8 @@ public class Job {
         return serviceDate;
     }
 
-    public void setServiceDate(Date serviceDate) {
-        this.serviceDate = serviceDate;
+    public void setServiceDate(java.util.Date serviceDate2) {
+        this.serviceDate = (Date) serviceDate2;
     }
 
     public String getNote() {

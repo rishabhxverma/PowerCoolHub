@@ -7,13 +7,13 @@ import org.springframework.stereotype.Repository;
 
 import ca.powercool.powercoolhub.models.Job;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 @Repository
 public interface JobRepository extends JpaRepository<Job, Integer> {
     @Query("SELECT j FROM Job j WHERE j.serviceDate BETWEEN :startDate AND :endDate")
-    List<Job> findJobsBetweenDates(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+    List<Job> findJobsBetweenDates(@Param("startDate") java.util.Date startDate, @Param("endDate") java.util.Date endDate);
     List<Job> findByCustomerId(int customerId);     // customer's appointments
     List<Job> findByJobDoneTrue();                  // appointment history
     List<Job> findByJobDoneFalse();                 // active appointments
@@ -31,4 +31,15 @@ public interface JobRepository extends JpaRepository<Job, Integer> {
     //find jobs that arent assigned to any techID
     @Query("SELECT j FROM Job j WHERE j.technicianIds IS EMPTY")
     List<Job> findUnassignedJobs();
+
+    //find tech ids from jobs on a date, get number of jobs the tech that day
+    @Query("SELECT j.technicianIds FROM Job j WHERE j.serviceDate = :date")
+    List<Integer> findTechIdsByDate(@Param("date") Date date);
+
+    //find jobs per tech id on a given date
+    @Query("SELECT j FROM Job j WHERE :technicianId MEMBER OF j.technicianIds AND j.serviceDate = :date")
+    List<Job> findJobsByTechIdAndDate(@Param("technicianId") int technicianId, @Param("date") Date date);
+
+
+
 }

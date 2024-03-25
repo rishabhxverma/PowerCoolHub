@@ -220,23 +220,7 @@
               <div class="form-group">
                 <label for="users">Select employees to assign:</label>
                 <div class="row" id="users">
-                  <div th:each="user : ${users}" class="col-md-2">
-                    <div class="user-box form-check">
-                      <input
-                        th:id="${'user' + user.id}"
-                        th:value="${user.id}"
-                        name="technicianIds"
-                        type="checkbox"
-                        class="form-check-input"
-                      />
-                      <label
-                        th:for="${'user' + user.id}"
-                        class="form-check-label"
-                      >
-                        <span th:text="${user.name}"></span>
-                      </label>
-                    </div>
-                  </div>
+                  <!-- This will be populated by the javascript -->
                 </div>
               </div>
 

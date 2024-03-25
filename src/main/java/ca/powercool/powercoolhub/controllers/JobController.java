@@ -1,17 +1,24 @@
 package ca.powercool.powercoolhub.controllers;
 
-import java.sql.Date;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 import ca.powercool.powercoolhub.models.Customer;
 import ca.powercool.powercoolhub.models.Job;
+import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
 import ca.powercool.powercoolhub.repositories.JobRepository;
+import ca.powercool.powercoolhub.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,6 +34,8 @@ public class JobController {
     private JobRepository jobRepository;
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @GetMapping("/addJob")
     public String addJob() {
@@ -85,5 +94,16 @@ public class JobController {
             @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
         List<Job> jobs = jobRepository.findJobsBetweenDates(startDate, endDate);
         return jobs;
+    }
+
+    @GetMapping("/getJobsCount")
+    public ResponseEntity<Map<User, Long>> getJobsCountForTechnicians(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+        List<User> technicians = userRepository.findByRole("technician");
+        Map<User,  Long> techJobs = new HashMap<>();
+        for (User tech : technicians) {
+            List<Job> jobs = jobRepository.findJobsByTechIdAndDate(tech.getId().intValue(), date);
+            techJobs.put(tech, (long) jobs.size());
+        }
+        return new ResponseEntity<>(techJobs, HttpStatus.OK);
     }
 }

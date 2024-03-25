@@ -156,4 +156,70 @@ var checkboxes = document.querySelectorAll('input[name="selectedUsers"]');
 checkboxes.forEach(function (checkbox) {
   checkbox.checked = false;
 });
-// Enables clicking on user boxes to check them..........................................
+//gets user name from userId
+function getUserName(userId) {
+  fetch(`/users/getUserName?userId=${userId}`)
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+    });
+}
+
+function handleDateChange(date) {
+  const usersDiv = document.getElementById("users");
+  usersDiv.innerHTML = ""; // Clear the div
+
+  const formattedDate = new Date(date).toISOString().split("T")[0]; // Format the date as 'yyyy-mm-dd'
+
+  fetch("/jobs/getJobsCount?date=" + formattedDate) // Change the endpoint to match your backend endpoint
+    .then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      for (const userId of Object.keys(data)) {
+        const userName = data[userId].name;
+        const jobsCount = data[userId].jobsCount;
+
+        const userDiv = document.createElement("div");
+        userDiv.className = "col-md-2";
+
+        const checkBoxDiv = document.createElement("div");
+        checkBoxDiv.className = "user-box form-check";
+
+        const input = document.createElement("input");
+        input.id = "user" + userId;
+        input.value = userId;
+        input.name = "technicianIds";
+        input.type = "checkbox";
+        input.className = "form-check-input";
+
+        const label = document.createElement("label");
+        label.htmlFor = "user" + userId;
+        label.className = "form-check-label";
+
+        const span = document.createElement("span");
+        span.textContent = userName;
+
+        const small = document.createElement("small");
+        small.className = "text-muted";
+        small.textContent = jobsCount + " jobs today";
+        label.appendChild(span);
+        label.appendChild(small);
+        checkBoxDiv.appendChild(input);
+        checkBoxDiv.appendChild(label);
+        userDiv.appendChild(checkBoxDiv);
+        usersDiv.appendChild(userDiv);
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+}
+
+document.querySelectorAll(".calendar-col").forEach((col) => {
+  col.addEventListener("click", (event) => {
+    let date = col.getAttribute("datetime");
+    document.querySelector("#dateService").value = date;
+    handleDateChange(date);
+    console.log("the date is: " + date);
+  });
+});
