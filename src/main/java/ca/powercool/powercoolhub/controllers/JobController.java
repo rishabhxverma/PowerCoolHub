@@ -2,6 +2,7 @@ package ca.powercool.powercoolhub.controllers;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RequestMapping("/jobs")
 @Controller
@@ -83,4 +85,18 @@ public class JobController {
         List<Job> jobs = jobRepository.findJobsBetweenDates(startDate, endDate);
         return jobs;
     }
+
+    // @GetMapping("/{id}")
+    // public String showJobPage(@PathVariable("id") Integer id, Model model) {
+    //     Optional<Job> job = this.jobRepository.findById(id);
+
+    //     if (!job.isPresent()) {
+    //         model.addAttribute("error", "Error: Job not found.");
+    //         return "jobs/job";
+    //     }
+
+    //     model.addAttribute("job", job);
+
+    //     return "jobs/job";
+    // }
 }

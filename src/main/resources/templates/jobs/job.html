@@ -1,0 +1,19 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/technician/head :: head}"></head>
+
+<body>
+    <!-- Navigation bars -->
+    <div class="container px-5 mt-4">
+        <div class="container">
+            <div class="row">
+                <h2 class="px-0" th:text="'Customer Name: ' + ${job.customerName}"></h2>
+            </div>
+        </div>
+    </div>
+</body>
+</head>
+
+</html>

@@ -2,15 +2,17 @@
     <div class="row">
         <h2 class="px-0">Upcoming Jobs</h2>
         <ul class="list-group mt-3">
-            <a th:each="upcomingJob : ${upcomingJobs}" class="list-group-item list-group-item-action p-3" href="#">
+            <div th:each="upcomingJob : ${upcomingJobs}" class="list-group-item p-3" href="#" disabled>
+            <!-- <a th:each="upcomingJob : ${upcomingJobs}" class="list-group-item list-group-item-action p-3" th:href="@{'/jobs/' + ${upcomingJob.id}}"> -->
                 <span>
                     <b th:text="${upcomingJob.customerName}"></b>
                     <span th:text="'(' + ${upcomingJob.jobType} + ')'"></span>
                 </span>
-                <span href="#" class="text-dark float-end me-2">
+                <!-- <span th:href="@{'/jobs/' + ${upcomingJob.id}}" class="text-dark float-end me-2"> -->
+                <!-- <span href="#" class="text-dark float-end me-2">
                     <i class="fa-solid fa-caret-right"></i>
-                </span>
-            </a>
+                </span> -->
+            </div>
         </ul>
     </div>
 </div>
