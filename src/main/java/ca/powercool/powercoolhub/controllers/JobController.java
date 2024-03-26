@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -44,10 +43,10 @@ public class JobController {
 
     @PostMapping("/addJob")
     public String addJobForTheCustomerIntoDataBase(@RequestParam("customerId") int customerIdInfo,
-            @RequestParam("dateService") Date serviceDate,
+            @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") Date serviceDate,
             @RequestParam("note") String note,
             @RequestParam("jobType") String jobTypeString,
-            @RequestParam("technicianIds") String technicianIds,
+            @RequestParam("technicianIds") List<Integer> technicianIds,
             @RequestParam("jobDone") boolean jobIsDone,
             HttpServletResponse stat) {
         Job job = new Job();
@@ -55,8 +54,7 @@ public class JobController {
         job.setServiceDate(serviceDate);
         job.setNote(note);
         job.setJobType(jobTypeString);
-        List<Integer> techIds = List.of(technicianIds.split(",")).stream().map(Integer::parseInt).toList();
-        job.setTechnicianIds(techIds);
+        job.setTechnicianIds(technicianIds);
         job.setJobDone(jobIsDone);
         
 

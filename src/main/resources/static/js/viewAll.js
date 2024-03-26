@@ -166,48 +166,38 @@ function getUserName(userId) {
 }
 
 function handleDateChange(date) {
-  const usersDiv = document.getElementById("users");
-  usersDiv.innerHTML = ""; // Clear the div
+  const techCheckboxDiv = document.getElementById("tech-checkbox");
+  techCheckboxDiv.innerHTML = ""; // Clear the div
 
-  const formattedDate = new Date(date).toISOString().split("T")[0]; // Format the date as 'yyyy-mm-dd'
-
-  fetch("/jobs/getJobsCount?date=" + formattedDate) // Change the endpoint to match your backend endpoint
+  fetch("/jobs/getJobsCount?date=" + date)
     .then((response) => response.json())
     .then((data) => {
-      console.log(data);
-      for (const userId of Object.keys(data)) {
-        const userName = data[userId].name;
-        const jobsCount = data[userId].jobsCount;
+      for (const userKey of Object.keys(data)) {
+        console.log(userKey);
+        const nameMatch = userKey.match(/name='(.*?)'/);
+        const userName = nameMatch ? nameMatch[1] : "";
 
-        const userDiv = document.createElement("div");
-        userDiv.className = "col-md-2";
+        const user = { name: userName };
 
-        const checkBoxDiv = document.createElement("div");
-        checkBoxDiv.className = "user-box form-check";
-
-        const input = document.createElement("input");
-        input.id = "user" + userId;
-        input.value = userId;
-        input.name = "technicianIds";
-        input.type = "checkbox";
-        input.className = "form-check-input";
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.name = "technicianIds";
+        checkbox.classList.add("form-check-input");
+        const idMatch = userKey.match(/id=(\d+)/);
+        if (idMatch) {
+          checkbox.value = idMatch[1];
+        } else {
+          console.error("No ID found in userKey:", userKey);
+        }
 
         const label = document.createElement("label");
-        label.htmlFor = "user" + userId;
-        label.className = "form-check-label";
+        label.textContent = `${user.name} - Jobs: ${data[userKey]}`;
 
-        const span = document.createElement("span");
-        span.textContent = userName;
-
-        const small = document.createElement("small");
-        small.className = "text-muted";
-        small.textContent = jobsCount + " jobs today";
-        label.appendChild(span);
-        label.appendChild(small);
-        checkBoxDiv.appendChild(input);
-        checkBoxDiv.appendChild(label);
-        userDiv.appendChild(checkBoxDiv);
-        usersDiv.appendChild(userDiv);
+        const divWrapper = document.createElement("div");
+        divWrapper.classList.add("col-6");
+        divWrapper.appendChild(checkbox);
+        divWrapper.appendChild(label);
+        techCheckboxDiv.appendChild(divWrapper);
       }
     })
     .catch((error) => {

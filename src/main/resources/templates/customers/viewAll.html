@@ -154,7 +154,7 @@
           </div>
           <div class="modal-body">
             <!-- Content from addJob.html -->
-            <form action="/jobs/addJob" method="post">
+            <form id="jobForm" action="/jobs/addJob" method="post">
               <!-- hidden customer id -->
               <div class="form-group">
                 <label for="customerId" hidden></label>
@@ -198,7 +198,7 @@
               </div>
 
               <div class="form-group">
-                <label for="jobType">Job Type</label><br />
+                <label for="jobType" required>Job Type</label><br />
                 <input
                   type="radio"
                   id="install"
@@ -219,7 +219,7 @@
 
               <div class="form-group">
                 <label for="users">Select employees to assign:</label>
-                <div class="row" id="users">
+                <div class="row" id="tech-checkbox">
                   <!-- This will be populated by the javascript -->
                 </div>
               </div>

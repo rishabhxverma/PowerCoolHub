@@ -1,6 +1,6 @@
 package ca.powercool.powercoolhub.models;
 
-import java.sql.Date;
+import java.util.*;
 import java.util.List;
 
 import jakarta.persistence.CollectionTable;
@@ -96,7 +96,7 @@ public class Job {
         return serviceDate;
     }
 
-    public void setServiceDate(java.util.Date serviceDate2) {
+    public void setServiceDate(Date serviceDate2) {
         this.serviceDate = (Date) serviceDate2;
     }
 
