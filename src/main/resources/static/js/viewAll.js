@@ -210,6 +210,5 @@ document.querySelectorAll(".calendar-col").forEach((col) => {
     let date = col.getAttribute("datetime");
     document.querySelector("#dateService").value = date;
     handleDateChange(date);
-    console.log("the date is: " + date);
   });
 });

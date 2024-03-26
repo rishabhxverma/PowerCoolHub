@@ -7,13 +7,13 @@ import org.springframework.stereotype.Repository;
 
 import ca.powercool.powercoolhub.models.Job;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 @Repository
 public interface JobRepository extends JpaRepository<Job, Integer> {
     @Query("SELECT j FROM Job j WHERE j.serviceDate BETWEEN :startDate AND :endDate")
-    List<Job> findJobsBetweenDates(@Param("startDate") java.util.Date startDate, @Param("endDate") java.util.Date endDate);
+    List<Job> findJobsBetweenDates(@Param("startDate") java.sql.Date startDate, @Param("endDate") java.sql.Date endDate);
     List<Job> findByCustomerId(int customerId);     // customer's appointments
     List<Job> findByJobDoneTrue();                  // appointment history
     List<Job> findByJobDoneFalse();                 // active appointments

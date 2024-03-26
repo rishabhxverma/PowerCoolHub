@@ -1,6 +1,6 @@
 package ca.powercool.powercoolhub.controllers;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
