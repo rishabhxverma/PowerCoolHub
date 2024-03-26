@@ -12,26 +12,18 @@
     <link rel="stylesheet" href="/css/customer/viewAll.css" />
     <title>View Customers</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
-  <title>View Customers</title>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-    crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/calendar.css" />
+    <script src="/js/calendar.js" defer></script>
 
-  <style>
-    /* On small screens, set height to 'auto' for the grid */
-    @media screen and (max-width: 767px) {
-      #sidebarMenu {
-        width: 100%;
-      }
-    }
-  </style>
-</head>
+    <link rel="stylesheet" href="/css/viewAll.css" />
+    <script src="/js/viewAll.js" defer></script>
+  </head>
 
   <body>
     <div th:replace="fragments/top-navigation :: top-navigation"></div>
@@ -40,37 +32,47 @@
       <div class="d-flex">
         <h1 class="m-4">All Customers</h1>
       </div>
-    </div>
-    <div class="container mt-5">
-      <div class="row">
-        <div class="col">
-          <table class="table table-bordered table-hover">
-            <thead class="thead-light">
-              <tr>
-                <th scope="col">Name</th>
-                <th scope="col">Address</th>
-                <th scope="col">Phone Number</th>
-                <th scope="col">Last Serviced</th>
-                <th scope="col">Next Service</th>
-                <th scope="col">Payment State</th>
-                <th scope="col">Notes</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr th:each="customer : ${customers}">
-                <td>
-                  <a th:href="@{/customers/edit/{id}(id=${customer.id})}" th:text="${customer.name}"
-                    class="link-dark text-decoration-none"></a>
-                </td>
-                <td th:text="${customer.address}"></td>
-                <td th:text="${customer.phoneNumber}"></td>
-                <td th:text="${customer.lastServiced}"></td>
-                <td th:text="${customer.nextService}"></td>
-                <td th:text="${customer.state}"></td>
-                <td th:text="${customer.notes}"></td>
-              </tr>
-            </tbody>
-          </table>
+      <div class="d-flex justify-content-center mt-4 mb-4">
+        <div class="col-sm-6 col-md-6 col-lg-6">
+          <form
+            action="/customers/searchCustomer"
+            method="GET"
+            class="input-group"
+          >
+            <button
+              class="btn rounded-circle"
+              type="button"
+              title="Add Customer"
+              style="width: 40px; height: 40px; padding: 0; margin-right: 15px"
+              onclick="window.location.href='/customers/addCustomer'"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="35"
+                height="35"
+                fill="currentColor"
+                class="bi bi-plus-circle"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"
+                />
+                <path
+                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"
+                />
+              </svg>
+            </button>
+            <input
+              type="search"
+              class="form-control"
+              placeholder="Search by name"
+              aria-label="Search"
+              name="customerName"
+            />
+            <button class="btn btn-outline-success" type="submit">
+              Search
+            </button>
+          </form>
         </div>
       </div>
       <div class="row">
@@ -90,6 +92,7 @@
             <table class="table table-bordered table-hover">
               <thead class="thead-light">
                 <tr>
+                  <th scope="col">Actions</th>
                   <th scope="col">Name</th>
                   <th scope="col">Address</th>
                   <th scope="col">Phone Number</th>
@@ -101,6 +104,15 @@
               </thead>
               <tbody>
                 <tr th:each="customer : ${customers}">
+                  <td>
+                    <!-- This column will only display the button when filter is "requesting-app" -->
+                    <button
+                      class="btn btn-primary book-appointment"
+                      style="display: none"
+                    >
+                      Book Appointment
+                    </button>
+                  </td>
                   <td>
                     <a
                       th:href="@{/customers/edit/{id}(id=${customer.id})}"
@@ -121,60 +133,130 @@
         </div>
       </div>
     </main>
-    <script>
-      document.getElementById("filter").addEventListener("change", function () {
-        // Get the selected filter, if the filter is all or Choose..., show all customers instead of applying a filter
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="jobModal"
+      tabindex="-1"
+      aria-labelledby="jobModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="jobModalLabel">Book Appointment</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <!-- Content from addJob.html -->
+            <form id="jobForm" action="/jobs/addJob" method="post">
+              <!-- hidden customer id -->
+              <div class="form-group">
+                <label for="customerId" hidden></label>
+                <input
+                  type="number"
+                  name="customerId"
+                  class="form-control"
+                  id="customerId"
+                  required
+                  hidden
+                />
+              </div>
 
-        var selectedFilter = this.value;
-        console.log(selectedFilter);
-        fetch(`/customers/filterJson?filter=${selectedFilter}`)
-          .then((response) => response.json())
-          .then((data) => {
-            // Clear the table
-            var tbody = document.querySelector("tbody");
-            while (tbody.firstChild) {
-              tbody.removeChild(tbody.firstChild);
-            }
+              <!-- add calender fragment -->
+              <div class="form-group">
+                <div
+                  class="row"
+                  th:replace="/fragments/calendar :: calendar-fragment"
+                ></div>
+              </div>
+              <div class="form-group">
+                <label for="dateService">Date Service</label>
+                <input
+                  type="date"
+                  name="dateService"
+                  class="form-control"
+                  id="dateService"
+                  required
+                />
+              </div>
 
-            // Add the filtered customers to the table
-            data.forEach((customer) => {
-              var row = document.createElement("tr");
+              <div class="form-group">
+                <label for="note">Note</label>
+                <textarea
+                  class="form-control"
+                  name="note"
+                  id="note"
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
 
-              var nameCell = document.createElement("td");
-              var nameLink = document.createElement("a");
-              nameLink.href = `/customers/edit/${customer.id}`;
-              nameLink.textContent = customer.name;
-              nameCell.appendChild(nameLink);
-              row.appendChild(nameCell);
+              <div class="form-group">
+                <label for="jobType" required>Job Type</label><br />
+                <input
+                  type="radio"
+                  id="install"
+                  name="jobType"
+                  value="INSTALL"
+                />
+                <label for="install">Install</label><br />
+                <input
+                  type="radio"
+                  id="service"
+                  name="jobType"
+                  value="SERVICE"
+                />
+                <label for="service">Service</label><br />
+                <input type="radio" id="repair" name="jobType" value="REPAIR" />
+                <label for="repair">Repair</label><br />
+              </div>
 
-              var addressCell = document.createElement("td");
-              addressCell.textContent = customer.address;
-              row.appendChild(addressCell);
+              <div class="form-group">
+                <label for="users">Select employees to assign:</label>
+                <div class="row" id="tech-checkbox">
+                  <!-- This will be populated by the javascript -->
+                </div>
+              </div>
 
-              var phoneNumberCell = document.createElement("td");
-              phoneNumberCell.textContent = customer.phoneNumber;
-              row.appendChild(phoneNumberCell);
+              <div class="form-group">
+                <label for="jobDone">Job Done?</label>
+                <div class="custom-control custom-switch">
+                  <input type="hidden" name="jobDone" value="false" />
+                  <input
+                    type="checkbox"
+                    class="custom-control-input"
+                    name="jobDone"
+                    id="jobDone"
+                    value="true"
+                  />
+                  <label class="custom-control-label" for="jobDone"></label>
+                </div>
+              </div>
 
-              var lastServicedCell = document.createElement("td");
-              lastServicedCell.textContent = customer.lastServiced;
-              row.appendChild(lastServicedCell);
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <!-- Additional buttons if needed -->
+          </div>
+        </div>
+      </div>
+    </div>
 
-              var nextServiceCell = document.createElement("td");
-              nextServiceCell.textContent = customer.nextService;
-              row.appendChild(nextServiceCell);
-
-              var stateCell = document.createElement("td");
-              stateCell.textContent = customer.state;
-              row.appendChild(stateCell);
-
-              var notesCell = document.createElement("td");
-              notesCell.textContent = customer.notes;
-              row.appendChild(notesCell);
-
-              tbody.appendChild(row);
-            });
-          });
-      });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
   </body>
 </html>

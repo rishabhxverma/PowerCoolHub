@@ -2,6 +2,7 @@ package ca.powercool.powercoolhub.controllers;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import ca.powercool.powercoolhub.forms.LoginForm;
+import ca.powercool.powercoolhub.models.Customer;
 import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.models.UserRole;
 import ca.powercool.powercoolhub.repositories.UserRepository;

@@ -1,0 +1,35 @@
+/* On small screens, set height to 'auto' for the grid */
+@media screen and (max-width: 767px) {
+    #sidebarMenu {
+      width: 100%;
+    }
+  }
+
+  .modal-body {
+    max-height: calc(100vh - 210px);
+    overflow-y: auto;
+  }
+
+
+/* for employee assignment ..................................................*/
+  .user-box input[type="checkbox"] {
+    display: none; /* Hides the checkbox */
+  }
+
+  .user-box {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .user-box label {
+    width: 100%;
+    cursor: pointer;
+  }
+
+  .user-box.checked {
+    background-color: #ddd;
+  }
+/* for employee assignment ..................................................*/

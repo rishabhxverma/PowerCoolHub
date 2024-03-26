@@ -137,8 +137,10 @@ function updateClockButton(button, isClockedIn) {
     if (isClockedIn) {
         button.innerHTML = '<i class="fa-solid fa-clock fs-4"></i> Clock Out';
         button.setAttribute('data-clocked-in', 'false');
+        button.classList.add('blinking');
     } else {
         button.innerHTML = '<i class="fa-solid fa-clock fs-4"></i> Clock In';
         button.setAttribute('data-clocked-in', 'true');
+        button.classList.remove('blinking');
     }
 }

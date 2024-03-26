@@ -77,65 +77,47 @@
             </div>
             <div class="col-sm-3">
               <div class="well">
-                <h4>12</h4>
-                <p>Unscheduled Clients</p>
+                <h4>
+                  Unscheduled Clients:
+                  <span
+                    style="color: red"
+                    id="unscheduledCount"
+                    th:text="${unscheduledClientsCount}"
+                  ></span>
+                </h4>
+                <!-- TODO: add redirect to filter-->
+                <a href="/customers/viewAll">Click here to schedule them!</a>
               </div>
             </div>
             <div class="col-sm-3">
               <div class="well">
-                <h4>3</h4>
-                <p>Client Payment pending</p>
+                <h4>
+                  Upcoming Clients:
+                  <span
+                    style="color: green"
+                    id="upcomingCount"
+                    th:text="${upcomingClientsCount}"
+                  ></span>
+                </h4>
+                <!-- TODO: add redirect to filter-->
+                <a href="/customers/viewAll">Click here to view upcoming!</a>
               </div>
             </div>
             <div class="col-sm-3">
               <div class="well">
-                <h4>Company Success</h4>
-                <p>10000000000%</p>
+                <h4>
+                  Archived Clients:
+                  <span
+                    style="color: grey"
+                    id="archivedCount"
+                    th:text="${archivedClientsCount}"
+                  ></span>
+                </h4>
+                <!-- TODO: add redirect to filter-->
+                <a href="/customers/viewAll">Click here for more details!</a>
               </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-sm-4">
-              <div class="well">
-                <!-- sample graphic -->
-                <img
-                  width="100%"
-                  src="https://previews.123rf.com/images/cofkocof/cofkocof0803/cofkocof080300056/2724814-illustration-of-a-business-chart-showing-success-growth-achievement-rising.jpg"
-                  alt="Sample Chart"
-                />
-              </div>
-            </div>
-            <div class="col-sm-4">
-              <div class="well">
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam
-                </p>
-              </div>
-            </div>
-            <div class="col-sm-4">
-              <div class="well">
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-8"></div>
-            <div class="col-sm-4">
-              <div class="well">
-                <p>
-                  Here, you'll be able to view your employee's schedules, assign
-                  employees to specific clients, and find their time-sheets in
-                  the employees tab!
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </main>
     <style>
@@ -241,15 +223,35 @@
       box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
     }
 
-    /* well */
-    .well {
-      background-color: #f8f9fa;
-      border: 1px solid #e7e7e7;
-      border-radius: 5px;
-      padding: 10px;
-      margin-top: 20px;
-    }
-  </style>
-</body>
-
+      /* well */
+      .well {
+        background-color: #f8f9fa;
+        border: 1px solid #e7e7e7;
+        border-radius: 5px;
+        padding: 10px;
+        margin-top: 20px;
+      }
+    </style>
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      document.addEventListener("DOMContentLoaded", function () {
+        function updateCounts() {
+          fetch("/manager/counts")
+            .then((response) => response.json())
+            .then((data) => {
+              document.getElementById("unscheduledCount").textContent =
+                data.unscheduledClientsCount;
+              document.getElementById("upcomingCount").textContent =
+                data.upcomingClientsCount;
+              document.getElementById("archivedCount").textContent =
+                data.archivedClientsCount;
+            });
+        }
+        // Update counts every 5 seconds
+        updateCounts();
+        setInterval(updateCounts, 10000);
+      });
+      /*]]>*/
+    </script>
+  </body>
 </html>
