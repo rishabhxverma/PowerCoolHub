@@ -48,8 +48,8 @@
 
 <body>
   <!-- Navigation bars -->
-  <div th:replace="fragments/top-navigation :: top-navigation"></div>
-  <div th:replace="fragments/left-navigation :: left-navigation"></div>
+  <div th:replace="~{/fragments/top-navigation :: top-navigation}"></div>
+  <div th:replace="~{/fragments/left-navigation :: left-navigation}"></div>
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
       <!-- Bootstrap 5 Dashboard Code -->
       <div class="container">
@@ -63,7 +63,7 @@
             </p>
           </div>
           <div class="well">
-            <div th:replace="/fragments/calendar :: calendar-fragment"></div>
+            <div th:replace="~{/fragments/calendar :: calendar-fragment}"></div>
           </div>
           <div class="row">
             <div class="col-sm-3">
