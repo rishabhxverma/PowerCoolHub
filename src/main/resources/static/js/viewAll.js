@@ -93,19 +93,19 @@ function resetColumnBackgrounds() {
   document.querySelectorAll(".calendar-top, .calendar-col").forEach((col) => {
     col.style.backgroundColor = ""; // Reset background color of .calendar-top
   });
-  // document.querySelectorAll('.calendar-col').forEach(col => {
-  //   col.style.backgroundColor = ""; // Reset background color of .calendar-col
-  // });
 }
 
 function changeColumnColor(date) {
   resetColumnBackgrounds();
-  let top = document.querySelector(
-    `.week-date[datetime="${date}"]`
-  ).parentElement;
+  let top = document.querySelector(`.week-date[datetime="${date}"]`);
+  if(top == null) return;
+  top = top.parentElement;
+
   let column = document.querySelector(`.calendar-col[datetime="${date}"]`);
 
-  top.style.backgroundColor = "#e0e0e0";
+  if(top == null || column == null) return;
+
+  top.style.backgroundColor = "#ebebeb";
   column.style.backgroundColor = "#f0f0f0";
 }
 
@@ -136,11 +136,46 @@ document.querySelectorAll(".job").forEach((job) => {
   });
 });
 
+// Updates the calendar to display the week provided (overwrites the existing function in calendar.js)
+function displayWeek(weekDates) {
+  resetColumnBackgrounds();
+
+  let weekOffset = document.querySelector(`#week-offset`);
+  if (weekOffset === null) return;
+
+  if (currentWeekOffset > 0)
+    weekOffset.textContent = "Current week +" + currentWeekOffset;
+  else if (currentWeekOffset < 0)
+    weekOffset.textContent = "Current week -" + currentWeekOffset * -1;
+  else weekOffset.textContent = "Current week";
+
+  weekDates.forEach((date, index) => {
+    let dateString = date.date.toISOString().split('T')[0]; // YYYY-MM-DD
+
+    let topDateElement = document.querySelector(`.calendar-top:nth-child(${index + 1}) .week-date`);
+    topDateElement.textContent = `${date.month} ${date.day}`;
+
+    
+    topDateElement.setAttribute("datetime", dateString);
+
+    let dayColumn = document.querySelector(`.calendar-col:nth-child(${index + 1})`);
+    if(dayColumn == null) return;
+    dayColumn.setAttribute("datetime", dateString);
+  });
+
+  let chosenDate = document.querySelector("#dateService").value;
+  if (chosenDate !== "") {
+    changeColumnColor(chosenDate);
+  }
+
+  fetchJobsAndDisplay(weekDates);
+}
+
 // Calendar clicking for job date.....................................................
 
 // Enables clicking on user boxes to check them..................
-let userBoxes = document.querySelectorAll(".user-box");
-userBoxes.forEach(function (box) {
+let techBoxes = document.querySelectorAll(".tech-box");
+techBoxes.forEach(function (box) {
   box
     .querySelector('input[type="checkbox"]')
     .addEventListener("change", function () {
@@ -151,11 +186,13 @@ userBoxes.forEach(function (box) {
       }
     });
 });
+
 // Uncheck all checkboxes when page is refreshed
-var checkboxes = document.querySelectorAll('input[name="selectedUsers"]');
+var checkboxes = document.querySelectorAll('input[name="technicianIds"]');
 checkboxes.forEach(function (checkbox) {
   checkbox.checked = false;
 });
+
 //gets user name from userId
 function getUserName(userId) {
   fetch(`/users/getUserName?userId=${userId}`)
@@ -165,45 +202,95 @@ function getUserName(userId) {
     });
 }
 
+
+// ....... This function handles given a SimpleEntity<User, Integer> (where user is a technician and integer is their jobCount) .......
+// function handleDateChange(date) {
+//   const techCheckboxDiv = document.getElementById("tech-checkbox");
+//   techCheckboxDiv.innerHTML = ""; // Clear the div
+
+//   fetch("/jobs/getJobsCount?date=" + date)
+//     .then((response) => response.json())
+//     .then((data) => {
+//       data.forEach(item => {
+//         // Extracting data from the json object
+//         const userString = Object.keys(item)[0];
+
+//         const idMatch = userString.match(/id=(\d+),/);
+//         const techId = idMatch ? idMatch[1] : "Unknown";
+
+//         const nameMatch = userString.match(/name='([^']+)'/);
+//         const name = nameMatch ? nameMatch[1] : "Unknown";
+
+//         const jobCount = item[userString];
+
+//         const column = document.createElement("div");
+//         column.classList.add("col-md-2");
+//           const container = document.createElement("div");
+//           container.classList.add("user-box");
+//           container.classList.add("form-check");
+
+//             const checkbox = document.createElement("input");
+//             checkbox.id = `tech${techId}`;
+//             checkbox.value = techId;
+//             checkbox.name = "technicianIds";
+//             checkbox.type = "checkbox";
+//             checkbox.classList.add("form-check-input");
+//             checkbox.addEventListener("change", function () { // Allows clicking on the user box to check it
+//               if (this.checked) {
+//                 checkbox.classList.add("checked");
+//               } else {
+//                 checkbox.classList.remove("checked");
+//               }
+//             });
+//             container.appendChild(checkbox);
+
+//             const label = document.createElement("label");
+//             label.htmlFor = `tech${techId}`;
+//             label.classList.add("form-check-label");
+//               const nameDiv = document.createElement("div");
+//               nameDiv.textContent = name;
+//               label.appendChild(nameDiv);
+
+//               const jobCountDiv = document.createElement("div");
+//               jobCountDiv.textContent = `Jobs: ${jobCount}`;
+//               label.appendChild(jobCountDiv);
+//             container.appendChild(label);
+//           column.appendChild(container);
+//         techCheckboxDiv.appendChild(column);
+//       });
+//     })
+//     .catch((error) => {
+//       console.error('Error:', error);
+//     });
+
+// }
+
 function handleDateChange(date) {
   const techCheckboxDiv = document.getElementById("tech-checkbox");
-  techCheckboxDiv.innerHTML = ""; // Clear the div
 
   fetch("/jobs/getJobsCount?date=" + date)
     .then((response) => response.json())
-    .then((data) => {
-      for (const userKey of Object.keys(data)) {
-        console.log(userKey);
-        const nameMatch = userKey.match(/name='(.*?)'/);
-        const userName = nameMatch ? nameMatch[1] : "";
+    .then((jobCounts) => { // hashmap of userId->jobCount
+      console.log(jobCounts);
+      const techBoxes = document.querySelectorAll('.tech-box');
 
-        const user = { name: userName };
+      techBoxes.forEach(techBox => {
+        const checkbox = techBox.querySelector('input[name="technicianIds"]');
 
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.name = "technicianIds";
-        checkbox.classList.add("form-check-input");
-        const idMatch = userKey.match(/id=(\d+)/);
-        if (idMatch) {
-          checkbox.value = idMatch[1];
-        } else {
-          console.error("No ID found in userKey:", userKey);
-        }
+        const userId = checkbox.value;
 
-        const label = document.createElement("label");
-        label.textContent = `${user.name} - Jobs: ${data[userKey]}`;
+        const jobCountDiv = techBox.querySelector('.job-count');
 
-        const divWrapper = document.createElement("div");
-        divWrapper.classList.add("col-6");
-        divWrapper.appendChild(checkbox);
-        divWrapper.appendChild(label);
-        techCheckboxDiv.appendChild(divWrapper);
-      }
+        const count = jobCounts[userId];
+        jobCountDiv.textContent = `Jobs: ${count}`;
+      });
     })
     .catch((error) => {
-      console.error("Error:", error);
+      console.error('Error:', error);
     });
+
 }
+
 
 document.querySelectorAll(".calendar-col").forEach((col) => {
   col.addEventListener("click", (event) => {

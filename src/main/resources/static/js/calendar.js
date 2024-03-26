@@ -52,6 +52,7 @@ function fetchJobsAndDisplay(weekDates) {
         let jobDate = createDateFromString(job.serviceDate);
         jobDate = formatDate(jobDate);
         let dayColumn = document.querySelector(`.calendar-col[datetime="${jobDate}"]`);
+        if(dayColumn == null) return;
 
         // Make the div for the job
         let jobEntry = document.createElement("div");
@@ -113,6 +114,7 @@ function displayWeek(weekDates) {
     topDateElement.setAttribute("datetime", dateString);
 
     let dayColumn = document.querySelector(`.calendar-col:nth-child(${index + 1})`);
+    if(dayColumn == null) return;
     dayColumn.setAttribute("datetime", dateString);
   });
 

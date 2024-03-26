@@ -12,11 +12,11 @@
 
 
 /* for employee assignment ..................................................*/
-  .user-box input[type="checkbox"] {
-    display: none; /* Hides the checkbox */
+  .tech-box input[type="checkbox"] {
+    display: block; /* Hides the checkbox */
   }
 
-  .user-box {
+  .tech-box {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -24,12 +24,12 @@
     margin-bottom: 10px;
   }
 
-  .user-box label {
+  .tech-box label {
     width: 100%;
     cursor: pointer;
   }
 
-  .user-box.checked {
+  .tech-box.checked {
     background-color: #ddd;
   }
 /* for employee assignment ..................................................*/
