@@ -2,7 +2,7 @@
 function getWeekDates(baseDate) {
   let weekDates = [];
   for (let i = 0; i < 7; i++) {
-    let date = new Date(baseDate);
+    let date = new Date(baseDate.toLocaleString("en-US", { timeZone: "America/Vancouver" }));
     date.setDate(date.getDate() - date.getDay() + i); // First loop this is Sunday, then Monday, etc.
     weekDates.push({
       day: date.getDate(),
@@ -130,7 +130,8 @@ function changeWeek(weeksToAdd) {
 }
 
 // Initialize with current date
-let currentBaseDate = new Date();
+let currentBaseDate = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Vancouver" }));
+
 let currentWeekOffset = 0;
 let currentWeekDates = getWeekDates(currentBaseDate);
 
