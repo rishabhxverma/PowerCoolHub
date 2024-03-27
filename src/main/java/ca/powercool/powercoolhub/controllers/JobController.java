@@ -75,6 +75,7 @@ public class JobController {
         }
         job.setCustomerName(customerName);
         customer.setState(Customer.CustomerState.UPCOMING);
+        customer.setNextService(serviceDate);
         jobRepository.save(job);
         stat.setStatus(HttpServletResponse.SC_OK);
 
