@@ -2,7 +2,7 @@
 function getWeekDates(baseDate) {
   let weekDates = [];
   for (let i = 0; i < 7; i++) {
-    let date = new Date(baseDate);
+    let date = new Date(baseDate.toLocaleString("en-US", { timeZone: "America/Vancouver" }));
     date.setDate(date.getDate() - date.getDay() + i); // First loop this is Sunday, then Monday, etc.
     weekDates.push({
       day: date.getDate(),
@@ -52,6 +52,7 @@ function fetchJobsAndDisplay(weekDates) {
         let jobDate = createDateFromString(job.serviceDate);
         jobDate = formatDate(jobDate);
         let dayColumn = document.querySelector(`.calendar-col[datetime="${jobDate}"]`);
+        if(dayColumn == null) return;
 
         // Make the div for the job
         let jobEntry = document.createElement("div");
@@ -103,16 +104,18 @@ function displayWeek(weekDates) {
     weekOffset.textContent = "Current week -" + currentWeekOffset * -1;
   else weekOffset.textContent = "Current week";
 
-  weekDates.forEach((date, index) => {
-    let dateString = date.date.toISOString().split('T')[0]; // YYYY-MM-DD
+  weekDates.forEach((weekDay, index) => {
+    let dateString = formatDate(weekDay.date); // YYYY-MM-DD
+    console.log(dateString);
 
     let topDateElement = document.querySelector(`.calendar-top:nth-child(${index + 1}) .week-date`);
-    topDateElement.textContent = `${date.month} ${date.day}`;
+    topDateElement.textContent = `${weekDay.month} ${weekDay.day}`;
 
     
     topDateElement.setAttribute("datetime", dateString);
 
     let dayColumn = document.querySelector(`.calendar-col:nth-child(${index + 1})`);
+    if(dayColumn == null) return;
     dayColumn.setAttribute("datetime", dateString);
   });
 
@@ -128,7 +131,8 @@ function changeWeek(weeksToAdd) {
 }
 
 // Initialize with current date
-let currentBaseDate = new Date();
+let currentBaseDate = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Vancouver" }));
+
 let currentWeekOffset = 0;
 let currentWeekDates = getWeekDates(currentBaseDate);
 

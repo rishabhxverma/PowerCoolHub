@@ -95,10 +95,12 @@ function fetchAndProcessLocation(callback) {
                 });
         }, error => {
             console.error('Geolocation error:', error);
+            alert('Please enable location services to use this feature.');
         });
     //Error message if the browser does not support geolocation
     } else {
         console.error('Geolocation is not supported by this browser.');
+        alert('Geolocation is not supported by this browser.');
     }
 }
 

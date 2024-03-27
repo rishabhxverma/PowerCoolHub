@@ -19,15 +19,15 @@
     ></script>
 
     <link rel="stylesheet" href="/css/calendar.css" />
-    <script src="/js/calendar.js" defer></script>
+    <script src="/js/calendar.js" defer></script> <!-- calendar.js needs to be above viewAll.js -->
 
     <link rel="stylesheet" href="/css/viewAll.css" />
     <script src="/js/viewAll.js" defer></script>
   </head>
 
   <body>
-    <div th:replace="fragments/top-navigation :: top-navigation"></div>
-    <div th:replace="fragments/left-navigation :: left-navigation"></div>
+    <div th:replace="~{fragments/top-navigation :: top-navigation}"></div>
+    <div th:replace="~{fragments/left-navigation :: left-navigation}"></div>
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
       <div class="d-flex">
         <h1 class="m-4">All Customers</h1>
@@ -171,7 +171,7 @@
               <div class="form-group">
                 <div
                   class="row"
-                  th:replace="/fragments/calendar :: calendar-fragment"
+                  th:replace="~{fragments/calendar :: calendar-fragment}"
                 ></div>
               </div>
               <div class="form-group">
@@ -218,13 +218,21 @@
               </div>
 
               <div class="form-group">
-                <label for="users">Select employees to assign:</label>
-                <div class="row" id="tech-checkbox">
-                  <!-- This will be populated by the javascript -->
+                <label for="tech-checkbox">Select employees to assign:</label>
+                <div id="tech-checkbox" class="row" >
+                  <div th:each="tech : ${techs}" class="col-md-2">
+                    <div class="tech-box form-check">
+                      <input th:id="${'tech' + tech.id}" th:value="${tech.id}" name="technicianIds" type="checkbox" class="form-check-input" />
+                      <label th:for="${'tech' + tech.id}" class="form-check-label">
+                        <div th:text="${tech.name}"></div>
+                        <div class="job-count">Jobs: </div>
+                      </label>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <label for="jobDone">Job Done?</label>
                 <div class="custom-control custom-switch">
                   <input type="hidden" name="jobDone" value="false" />
@@ -237,7 +245,7 @@
                   />
                   <label class="custom-control-label" for="jobDone"></label>
                 </div>
-              </div>
+              </div> -->
 
               <button type="submit" class="btn btn-primary">Submit</button>
             </form>

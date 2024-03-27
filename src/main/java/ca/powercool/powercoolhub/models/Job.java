@@ -139,4 +139,19 @@ public class Job {
         this.customerName = customerName;
     }
 
+    @Override
+    public String toString() {
+        return "Job{" +
+                "id=" + id +
+                ", customerId=" + customerId +
+                ", serviceDate=" + serviceDate +
+                ", note='" + note + '\'' +
+                ", technicianIds=" + technicianIds +
+                ", jobType=" + jobType +
+                ", jobDone=" + jobDone +
+                ", customerName='" + customerName + '\'' +
+                ", paymentReceived=" + paymentReceived +
+                '}';
+    }
+
 }

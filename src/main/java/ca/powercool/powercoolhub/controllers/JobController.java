@@ -1,8 +1,11 @@
 package ca.powercool.powercoolhub.controllers;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.ui.Model;
 import ca.powercool.powercoolhub.models.Customer;
 import ca.powercool.powercoolhub.models.Job;
 import ca.powercool.powercoolhub.models.User;
+import ca.powercool.powercoolhub.models.UserRole;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
 import ca.powercool.powercoolhub.repositories.JobRepository;
 import ca.powercool.powercoolhub.repositories.UserRepository;
@@ -25,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RequestMapping("/jobs")
 @Controller
@@ -47,7 +52,6 @@ public class JobController {
             @RequestParam("note") String note,
             @RequestParam("jobType") String jobTypeString,
             @RequestParam("technicianIds") List<Integer> technicianIds,
-            @RequestParam("jobDone") boolean jobIsDone,
             HttpServletResponse stat) {
         Job job = new Job();
         job.setCustomerId(customerIdInfo);
@@ -55,7 +59,6 @@ public class JobController {
         job.setNote(note);
         job.setJobType(jobTypeString);
         job.setTechnicianIds(technicianIds);
-        job.setJobDone(jobIsDone);
         
 
         Customer customer = customerRepository.findById(customerIdInfo).orElse(null);
@@ -94,13 +97,35 @@ public class JobController {
         return jobs;
     }
 
+    // @GetMapping("/{id}")
+    // public String showJobPage(@PathVariable("id") Integer id, Model model) {
+    //     Optional<Job> job = this.jobRepository.findById(id);
+
+    //     if (!job.isPresent()) {
+    //         model.addAttribute("error", "Error: Job not found.");
+    //         return "jobs/job";
+    //     }
+
+    //     model.addAttribute("job", job);
+
+    //     return "jobs/job";
+    // }
+
     @GetMapping("/getJobsCount")
-    public ResponseEntity<Map<User, Long>> getJobsCountForTechnicians(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
-        List<User> technicians = userRepository.findByRole("technician");
-        Map<User,  Long> techJobs = new HashMap<>();
+    public ResponseEntity<Map<Integer,  Integer>> getJobsCountForTechnicians(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+        List<User> technicians = userRepository.findByRole(UserRole.TECHNICIAN);
+        Map<Integer,  Integer> techJobs = new HashMap<>(); // techId, jobCount
+        List<Job> jobsOnDate = jobRepository.findByServiceDate(date);
+
         for (User tech : technicians) {
-            List<Job> jobs = jobRepository.findJobsByTechIdAndDate(tech.getId().intValue(), date);
-            techJobs.put(tech, (long) jobs.size());
+            int techId = tech.getId().intValue();
+            int jobCount = 0;
+            for(Job job : jobsOnDate){
+                if(job.getTechnicianIds().contains(techId)){
+                    jobCount++;
+                }
+            }
+            techJobs.put(techId, jobCount);
         }
         return new ResponseEntity<>(techJobs, HttpStatus.OK);
     }

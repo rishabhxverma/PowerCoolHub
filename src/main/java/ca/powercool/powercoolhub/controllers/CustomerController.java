@@ -11,6 +11,7 @@ import java.util.Optional;
 import ca.powercool.powercoolhub.models.Customer;
 import ca.powercool.powercoolhub.models.Job;
 import ca.powercool.powercoolhub.models.User;
+import ca.powercool.powercoolhub.models.UserRole;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
 import ca.powercool.powercoolhub.repositories.JobRepository;
 import ca.powercool.powercoolhub.repositories.UserRepository;
@@ -40,8 +41,8 @@ public class CustomerController {
         }
         model.addAttribute("customers", customers);
         
-        List<User> users = userRepository.findAll();
-        model.addAttribute("users", users);
+        List<User> techs = userRepository.findByRole(UserRole.TECHNICIAN);
+        model.addAttribute("techs", techs);
 
         return "customers/viewAll";
     }

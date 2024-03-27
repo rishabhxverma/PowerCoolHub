@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ca.powercool.powercoolhub.models.Customer;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import ca.powercool.powercoolhub.models.Customer.CustomerState;
 
 @Controller
@@ -21,12 +22,11 @@ import ca.powercool.powercoolhub.models.Customer.CustomerState;
 public class ManagerController {
     @Autowired
     private CustomerRepository customerRepository;
-    
-    @GetMapping("/dashboard")
-    public String getManagerDashboard(HttpServletRequest request) {
+
+    @GetMapping("")
+    public String getManagerDashboard(HttpServletRequest request, HttpServletResponse response) {
         return "users/manager/dashboard";
     }
-
 
     @GetMapping("/counts")
     public ResponseEntity<Map<String, Integer>> getClientCounts() {
