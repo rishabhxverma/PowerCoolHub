@@ -117,7 +117,6 @@
                     <a
                       th:href="@{/customers/edit/{id}(id=${customer.id})}"
                       th:text="${customer.name}"
-                      class="link-dark text-decoration-none"
                     ></a>
                   </td>
                   <td th:text="${customer.address}"></td>
@@ -204,6 +203,7 @@
                   id="install"
                   name="jobType"
                   value="INSTALL"
+                  required
                 />
                 <label for="install">Install</label><br />
                 <input
