@@ -149,11 +149,11 @@ function displayWeek(weekDates) {
     weekOffset.textContent = "Current week -" + currentWeekOffset * -1;
   else weekOffset.textContent = "Current week";
 
-  weekDates.forEach((date, index) => {
-    let dateString = date.date.toISOString().split('T')[0]; // YYYY-MM-DD
+  weekDates.forEach((weekDay, index) => {
+    let dateString = formatDate(weekDay.date); // YYYY-MM-DD
 
     let topDateElement = document.querySelector(`.calendar-top:nth-child(${index + 1}) .week-date`);
-    topDateElement.textContent = `${date.month} ${date.day}`;
+    topDateElement.textContent = `${weekDay.month} ${weekDay.day}`;
 
     
     topDateElement.setAttribute("datetime", dateString);
