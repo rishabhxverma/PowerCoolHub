@@ -1,6 +1,8 @@
 package ca.powercool.powercoolhub.models;
 
-import java.util.*;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import jakarta.persistence.CollectionTable;
@@ -22,7 +24,7 @@ public class Job {
     private Integer id;
 
     private int customerId;
-    private Date serviceDate;
+    private LocalDate serviceDate;
     private String note;
     // technician ids assigned to this job
     @ElementCollection
@@ -43,7 +45,7 @@ public class Job {
 
     public Job() {}
 
-    public Job(Integer id, int customerId, Date serviceDate, String note, JobType jobType, List<Integer> techIds, boolean jobDone,
+    public Job(Integer id, int customerId, LocalDate serviceDate, String note, JobType jobType, List<Integer> techIds, boolean jobDone,
             String customerName) {
         this.id = id;
         this.customerId = customerId;
@@ -92,12 +94,12 @@ public class Job {
         this.customerId = customerId;
     }
 
-    public Date getServiceDate() {
-        return serviceDate;
+    public LocalDate getServiceDate() {
+        return this.serviceDate;
     }
 
-    public void setServiceDate(Date serviceDate2) {
-        this.serviceDate = (Date) serviceDate2;
+    public void setServiceDate(LocalDate date) {
+        this.serviceDate = date;
     }
 
     public String getNote() {
@@ -137,6 +139,13 @@ public class Job {
 
     public void setCustomerName(String customerName) {
         this.customerName = customerName;
+    }
+
+    /**
+     * @return formatted date string, ex: "March 23, 2024"
+     */
+    public String getFormattedDate() {
+        return this.serviceDate.format(DateTimeFormatter.ofPattern("MMMM d, yyyy"));
     }
 
     @Override

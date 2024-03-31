@@ -15,12 +15,18 @@ import java.util.List;
 public interface JobRepository extends JpaRepository<Job, Integer> {
     @Query("SELECT j FROM Job j WHERE j.serviceDate BETWEEN :startDate AND :endDate")
     List<Job> findJobsBetweenDates(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
-    List<Job> findByCustomerId(int customerId);     // customer's appointments
-    List<Job> findByJobDoneTrue();                  // appointment history
-    List<Job> findByJobDoneFalse();                 // active appointments
-    List<Job> findByPaymentReceivedTrue();          // payment history
-    List<Job> findByPaymentReceivedFalse();         // pending payments
-    List<Job> findByServiceDate(Date date);         
+
+    List<Job> findByCustomerId(int customerId); // customer's appointments
+
+    List<Job> findByJobDoneTrue(); // appointment history
+
+    List<Job> findByJobDoneFalse(); // active appointments
+
+    List<Job> findByPaymentReceivedTrue(); // payment history
+
+    List<Job> findByPaymentReceivedFalse(); // pending payments
+
+    List<Job> findByServiceDate(Date date);
 
     // find jobs assigned to specific technician ID
     @Query("SELECT j FROM Job j JOIN j.technicianIds t WHERE t = :technicianId")
@@ -36,14 +42,12 @@ public interface JobRepository extends JpaRepository<Job, Integer> {
     @Query("SELECT j FROM Job j WHERE j.technicianIds IS EMPTY")
     List<Job> findUnassignedJobs();
 
-    //find tech ids from jobs on a date, get number of jobs the tech that day
+    // find tech ids from jobs on a date, get number of jobs the tech that day
     @Query("SELECT j.technicianIds FROM Job j WHERE j.serviceDate = :date")
     List<Integer> findTechIdsByDate(@Param("date") Date date);
 
-    //find jobs per tech id on a given date
+    // find jobs per tech id on a given date
     @Query("SELECT j FROM Job j WHERE :technicianId MEMBER OF j.technicianIds AND j.serviceDate = :date")
     List<Job> findJobsByTechIdAndDate(@Param("technicianId") int technicianId, @Param("date") Date date);
-
-
 
 }

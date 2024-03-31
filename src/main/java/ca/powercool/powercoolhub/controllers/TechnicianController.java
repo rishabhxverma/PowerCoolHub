@@ -45,7 +45,7 @@ public class TechnicianController {
         LocalDate endDate = LocalDateTimeUtility.getLastDayOfWeek(LocalDateTime.now()).toLocalDate();
 
         List<Job> upcomingJobs = this.technicianService.getUpcomingJobs(user, startDate.toString(), endDate.toString());
-        String clockState = technicianWorkLogService.getClockState(user);
+        String clockState = this.technicianWorkLogService.getClockState(user);
         
         // Pass model attribute to the view.
         model.addAttribute("upcomingJobs", upcomingJobs);
@@ -62,7 +62,7 @@ public class TechnicianController {
         List<GroupedWorkLogsData> workLogs = this.technicianWorkLogService.getTechnicianHistoryData(user,
                 WorkLogsFilter.BY_MONTH);
 
-        String clockState = technicianWorkLogService.getClockState(user);
+        String clockState = this.technicianWorkLogService.getClockState(user);
         model.addAttribute("clockButtonState", clockState);
         // Pass model attribute to the view.
         model.addAttribute("user", user);
@@ -87,7 +87,7 @@ public class TechnicianController {
 
         // Add history work log data to the model
         model.addAttribute("workLogs", workLogs);
-        String clockState = technicianWorkLogService.getClockState(user);
+        String clockState = this.technicianWorkLogService.getClockState(user);
         model.addAttribute("clockButtonState", clockState);
 
         // Return the HTML template string.
@@ -98,7 +98,7 @@ public class TechnicianController {
     public String getTechnicianHistoryDetails(@PathVariable("date") String date, HttpServletRequest request, Model model) {
         User user = (User) request.getSession().getAttribute("user");
         GroupedWorkLogsData workLogsData = this.technicianWorkLogService.getTechnicianWorkLogByDate(user, date);
-        String clockState = technicianWorkLogService.getClockState(user);
+        String clockState = this.technicianWorkLogService.getClockState(user);
         model.addAttribute("clockButtonState", clockState);
     
         // Pass model attribute to the view.
@@ -115,7 +115,7 @@ public class TechnicianController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
-        TechnicianWorkLog savedLog = technicianWorkLogService.saveWorkLog(user, clockData);
+        TechnicianWorkLog savedLog = this.technicianWorkLogService.saveWorkLog(user, clockData);
         return ResponseEntity.ok(savedLog);
     }
 }

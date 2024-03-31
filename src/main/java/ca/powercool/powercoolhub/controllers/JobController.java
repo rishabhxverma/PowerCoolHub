@@ -1,9 +1,13 @@
 package ca.powercool.powercoolhub.controllers;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import javax.swing.text.html.Option;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,6 +23,8 @@ import ca.powercool.powercoolhub.models.UserRole;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
 import ca.powercool.powercoolhub.repositories.JobRepository;
 import ca.powercool.powercoolhub.repositories.UserRepository;
+import ca.powercool.powercoolhub.services.TechnicianWorkLogService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,16 +32,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RequestMapping("/jobs")
 @Controller
 public class JobController {
     @Autowired
     private JobRepository jobRepository;
+    
     @Autowired
     private CustomerRepository customerRepository;
+    
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TechnicianWorkLogService technicianWorkLogService;
 
     @GetMapping("/addJob")
     public String addJob() {
@@ -44,7 +56,7 @@ public class JobController {
 
     @PostMapping("/addJob")
     public String addJobForTheCustomerIntoDataBase(@RequestParam("customerId") int customerIdInfo,
-            @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") Date serviceDate,
+            @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate serviceDate,
             @RequestParam("note") String note,
             @RequestParam("jobType") String jobTypeString,
             @RequestParam("technicianIds") List<Integer> technicianIds,
@@ -94,19 +106,36 @@ public class JobController {
         return jobs;
     }
 
-    // @GetMapping("/{id}")
-    // public String showJobPage(@PathVariable("id") Integer id, Model model) {
-    //     Optional<Job> job = this.jobRepository.findById(id);
+    @GetMapping("/{id}")
+    public String showJobPage(@PathVariable("id") Integer id, HttpServletRequest request, Model model) {
+        Optional<Job> existingJob = this.jobRepository.findById(id);
 
-    //     if (!job.isPresent()) {
-    //         model.addAttribute("error", "Error: Job not found.");
-    //         return "jobs/job";
-    //     }
+        if (!existingJob.isPresent()) {
+            model.addAttribute("error", "Error: Job not found.");
+            return "jobs/job";
+        }
 
-    //     model.addAttribute("job", job);
+        Job job = existingJob.get();
+        List<User> assignedTechnicians = this.userRepository.findAssignedTechnicians(job.getId());
+        
+        assignedTechnicians.stream().forEach(System.out::println);
+        User user = (User) request.getSession().getAttribute("user");
+        Optional<Customer> customer = this.customerRepository.findById(job.getCustomerId());
+        
+        String clockState = this.technicianWorkLogService.getClockState(user);
+        
+        model.addAttribute("job", job);
+        model.addAttribute("customer", customer.get());
+        model.addAttribute("assignedTechnicians", assignedTechnicians);
+        model.addAttribute("clockButtonState", clockState);
+        model.addAttribute("user", user);
 
-    //     return "jobs/job";
-    // }
+        if (user.getRole().equals(UserRole.MANAGER)) {
+            return "jobs/job";
+        } else {
+            return "users/technician/job";
+        }
+    }
 
     @GetMapping("/getJobsCount")
     public ResponseEntity<Map<Integer,  Integer>> getJobsCountForTechnicians(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {

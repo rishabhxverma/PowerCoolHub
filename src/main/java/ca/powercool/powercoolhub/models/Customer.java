@@ -1,6 +1,7 @@
 package ca.powercool.powercoolhub.models;
 
-import java.sql.Date;
+import java.time.LocalDate;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -16,8 +17,8 @@ public class Customer {
     private String email;
     private String phoneNumber;
     private String notes;
-    private Date lastServiced;
-    private Date nextService;
+    private LocalDate lastServiced;
+    private LocalDate nextService;
 
     /*
      * The state of the customer, which can be one of the following: ARCHIVED (job finished and no future jobs planned)
@@ -35,8 +36,8 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer(Integer id, String name, String address, String phoneNumber, String notes, Date lastServiced,
-            Date nextService, CustomerState state) {
+    public Customer(Integer id, String name, String address, String phoneNumber, String notes, LocalDate lastServiced,
+    LocalDate nextService, CustomerState state) {
         this.id = id;
         this.name = name;
         this.address = address;
@@ -142,19 +143,19 @@ public class Customer {
         this.notes = notes;
     }
 
-    public Date getLastServiced() {
+    public LocalDate getLastServiced() {
         return lastServiced;
     }
 
-    public void setLastServiced(Date lastServiced) {
+    public void setLastServiced(LocalDate lastServiced) {
         this.lastServiced = lastServiced;
     }
 
-    public Date getNextService() {
+    public LocalDate getNextService() {
         return nextService;
     }
 
-    public void setNextService(Date nextService) {
+    public void setNextService(LocalDate nextService) {
         this.nextService = nextService;
     }
 

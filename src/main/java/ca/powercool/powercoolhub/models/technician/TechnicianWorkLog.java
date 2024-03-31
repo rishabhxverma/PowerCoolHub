@@ -34,7 +34,7 @@ public class TechnicianWorkLog {
      * @return fomatted time, ex: 8 A.M.
      */
     public String getFormattedHours() {
-        return this.createdAt.format(DateTimeFormatter.ofPattern("h a")).toUpperCase();
+        return this.createdAt.format(DateTimeFormatter.ofPattern("h:mm a")).toUpperCase();
     }
 
     // Getters and setters

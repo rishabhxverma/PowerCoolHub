@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/technician/head :: head}"></head>
+
+<body>
+    <!-- Navigation bars -->
+    <div class="container px-0 mt-4 rounded border border-light" th:fragment="details">
+        <div class="container">
+            <div class="row px-4 bg-light position-relative">
+                <div class="col">
+                    <div class="position-relative py-4">
+                        <h2 th:text="${job.customerName}" class="d-inline"></h2>
+
+                        <h3 th:text="'(' + ${#strings.capitalize(job.jobType)} + ')'" class="d-inline text-muted"></h3>
+                        <div class="mt-3">
+                            <p th:text="${customer.address}" class="p-0 m-0"></p>
+                            <i th:text="${job.getFormattedDate()}"></i>
+                        </div>
+                    </div>
+
+                    <div class="status-indicators d-inline position-absolute top-0 end-0 me-4 mt-4">
+                        <i th:class="${job.paymentReceived} ? 'fa-solid fa-file-invoice fs-4 text-primary mx-1' : 'fa-solid fa-file-invoice fs-4 text-muted mx-1'"></i>
+                        <i th:class="${job.jobDone} ? 'fa-solid fa-circle-check fs-4 text-success mx-1' : 'fa-solid fa-circle-check fs-4 text-muted mx-1'"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="row my-3 px-4">
+                <div class="col my-2">
+                    <h4>Note</h4>
+                    <p th:text="${job.note}"></p>
+                </div>
+            </div>
+
+            <div class="row my-2 px-4">
+                <div class="col my-2">
+                    <h4>Technicians</h4>
+                    <div class="card mt-3">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item" th:text="${assignedTechnician.name}" th:each="assignedTechnician : ${assignedTechnicians}"></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row my-2 px-4">
+                <div class="col my-2 d-flex justify-content-center">
+                    <a href="#" th:class="${job.jobDone} ? 'btn btn-primary disabled' : 'btn btn-primary'" th:disabled="${job.jobDone}">Complete</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</head>
+
+</html>
