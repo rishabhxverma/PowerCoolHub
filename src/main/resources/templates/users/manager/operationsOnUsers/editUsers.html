@@ -9,8 +9,8 @@
 </head>
 
 <body>
-    <div th:replace="~{fragments/top-navigation :: top-navigation}"></div>
-    <div th:replace="~{fragments/left-navigation :: left-navigation}"></div>
+    <div th:replace="fragments/top-navigation :: top-navigation"></div>
+    <div th:replace="fragments/left-navigation :: left-navigation"></div>
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <div class="d-flex">
             <h1 class="m-4">Employees</h1>
@@ -45,16 +45,21 @@
                     <div class="form-group">
                         <label for="password" class="form-label">New Password</label>
                         <input type="password" class="form-control" id="password" th:field="*{password}"
-                            placeholder="*****" oninput="checkPasswordLength(); checkEnteredPassword(); ">
-                        <div id="passwordWarningForLength" style="color: red; display: none;">
-                            Password must be at least 5 characters.
-                        </div>
+                            placeholder="*****" oninput="checkPasswordSecurity(); checkEnteredPassword(); "><br>
+                        <div id="passwordWarningForLength" style="display:none; color: red;">Password must be more than
+                            5 characters long.</div>
+                        <div id="passwordWarningForCapital" style="display:none; color: red;">Password must contain at
+                            least one capital letter.</div>
+                        <div id="passwordWarningForNumber" style="display:none; color: red;">Password must contain at
+                            least one number.</div>
+                        <div id="passwordWarningForSpecialChar" style="display:none; color: red;">Password must contain
+                            at least one special character like !, @, or $ etc.</div>
                     </div>
                     <br>
                     <div class="form-group">
                         <label for="confirm_password" class="form-label">Confirm Password</label>
                         <input type="password" name="confirm_password" class="form-control" id="confirm_password"
-                            placeholder="*****" oninput="checkEnteredPassword()">
+                            placeholder="*****" oninput="checkEnteredPassword()"><br>
                         <div id="passwordWarning" style="color: red; display: none;">
                             Passwords do not match.
                         </div>
@@ -66,7 +71,8 @@
                 <div class="row justify-content-center">
                     <div class="col-md-6 d-flex flex-column align-items-center">
                         <input type="hidden" name="action" value="update" id="updateAction">
-                        <button type="submit" class="btn btn-primary mb-2" onclick="confirmUpdate(event)">Update</button>
+                        <button type="submit" id="submitBtn" class="btn btn-primary mb-2"
+                            onclick="confirmUpdate(event)">Update</button>
                     </div>
                 </div>
             </div>
@@ -84,18 +90,48 @@
             </div>
         </div>
     </main>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"> </script>
     <script>
-        function checkPasswordLength() {
-            var passLen = document.getElementById('password').value;
+        function checkPasswordSecurity() {
+            var password = document.getElementById('password').value;
             var submitBtn = document.getElementById('submitBtn');
             var passwordWarningForLength = document.getElementById('passwordWarningForLength');
+            var passwordWarningForCapital = document.getElementById('passwordWarningForCapital');
+            var passwordWarningForNumber = document.getElementById('passwordWarningForNumber');
+            var passwordWarningForSpecialChar = document.getElementById('passwordWarningForSpecialChar');
 
-            if (passLen.length <= 5) {
+            passwordWarningForLength.style.display = 'none';
+            passwordWarningForCapital.style.display = 'none';
+            passwordWarningForNumber.style.display = 'none';
+            passwordWarningForSpecialChar.style.display = 'none';
+            submitBtn.disabled = false;
+
+            var errors = false;
+            if (password.length <= 5) {
                 passwordWarningForLength.style.display = 'block';
-            } else {
-                passwordWarningForLength.style.display = 'none';
+                errors = true;
+            }
+
+            if (!/[A-Z]/.test(password)) {
+                passwordWarningForCapital.style.display = 'block';
+                errors = true;
+            }
+
+            if (!/\d/.test(password)) {
+                passwordWarningForNumber.style.display = 'block';
+                errors = true;
+            }
+
+            if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+                passwordWarningForSpecialChar.style.display = 'block';
+                errors = true;
+            }
+
+            if (errors) {
+                submitBtn.disabled = true;
             }
         }
+
         function checkEnteredPassword() {
             var password = document.getElementById('password').value;
             var confirmPassword = document.getElementById('confirm_password').value;
@@ -111,24 +147,45 @@
             }
         }
         function confirmUpdate(event) {
+            event.preventDefault();
             if (confirm('Are you sure you want to update this user?')) {
-                document.getElementById('updateAction').value = 'update';
-                document.getElementById('editUserForm').submit();
-            }
-            else {
-                event.preventDefault();
+                var form = $('#editUserForm');
+                $.ajax({
+                    url: form.attr('action'),
+                    type: 'POST',
+                    data: form.serialize(),
+                    success: function (response) {
+                        alert(response.message);
+
+                        window.location.href = '/users/manager/employeeManagementSystem';
+                    },
+                    error: function (xhr, status, error) {
+                        var errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : "An error occurred during the update request.";
+                        alert(errorMessage);
+                    }
+                });
             }
         }
         function confirmDelete(event) {
-            if (confirm('Are you sure you want to delete this user?\nThis account will be deleted permanently!')) {
-                document.getElementById('deleteAction').value = 'delete';
-                document.getElementById('deleteUser').submit();
-            }
-            else {
-                event.preventDefault();
+            event.preventDefault();
+            if (confirm('Are you sure you want to delete this user?\nThis account will be lost permanently!')) {
+                var form = $('#deleteUser');
+                var userId = form.find('input[name="id"]').val();
+                $.ajax({
+                    url: form.attr('action'),
+                    type: 'POST',
+                    data: form.serialize(),
+                    success: function (response) {
+                        alert(response.message);
+                        window.location.href = '/users/manager/employeeManagementSystem';
+                    },
+                    error: function (xhr, status, error) {
+                        var errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : "An error occurred during the request.";
+                        alert(errorMessage);
+                    }
+                });
             }
         }
-
     </script>
     <style>
         body {
