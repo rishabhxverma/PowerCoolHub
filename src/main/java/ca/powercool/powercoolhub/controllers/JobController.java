@@ -137,6 +137,23 @@ public class JobController {
         }
     }
 
+    @PostMapping("/{id}/complete")
+    public ResponseEntity<Job> completeJob(@PathVariable("id") Integer id, HttpServletRequest request, Model model) {
+        Optional<Job> existingJob = this.jobRepository.findById(id);
+
+        if (!existingJob.isPresent()) {
+            return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(null);
+        }
+
+        Job completedJob = existingJob.get();
+        completedJob.setJobDone(true);
+        this.jobRepository.save(completedJob);
+
+        return new ResponseEntity<>(completedJob, HttpStatus.OK);
+    }
+
     @GetMapping("/getJobsCount")
     public ResponseEntity<Map<Integer,  Integer>> getJobsCountForTechnicians(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
         List<User> technicians = userRepository.findByRole(UserRole.TECHNICIAN);
