@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.swing.text.html.Option;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -131,7 +129,7 @@ public class JobController {
         model.addAttribute("user", user);
 
         if (user.getRole().equals(UserRole.MANAGER)) {
-            return "jobs/job";
+            return "users/manager/job";
         } else {
             return "users/technician/job";
         }
