@@ -141,7 +141,12 @@ public class UserController {
         newUser.setPassword(hashedPassword);
         newUser.setRole(userRole);
         userRepository.save(newUser);
-        return "redirect:/login";
+        if (isPasswordValid(employeePassword)) {
+            return "redirect:/login";
+        } else {
+            return "loginFailed";
+        }
+
     }
 
     @GetMapping("/users/manager/employeeManagementSystem")
@@ -173,7 +178,12 @@ public class UserController {
         existingUser.setName(userDetails.getName());
         existingUser.setEmail(userDetails.getEmail());
         existingUser.setRole(userDetails.getRole());
-        existingUser.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+        if (isPasswordValid(userDetails.getPassword())) {
+            existingUser.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "Update failed"));
+        }
 
         userRepository.save(existingUser);
 
@@ -185,5 +195,14 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Collections.singletonMap("error", "Update failed"));
         }
+    }
+
+    private boolean isPasswordValid(String password) {
+        boolean isLongEnough = password.length() > 5;
+        boolean hasUppercase = !password.equals(password.toLowerCase());
+        boolean hasNumber = password.matches(".*\\d.*");
+        boolean hasSpecialChar = password.matches(".*[!@#$%^&*(),.?\":{}|<>].*");
+        boolean result = isLongEnough && hasUppercase && hasNumber && hasSpecialChar;
+        return result;
     }
 }
