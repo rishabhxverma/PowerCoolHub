@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -25,7 +26,8 @@ import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
@@ -103,6 +105,11 @@ public class UserController {
         return "redirect:/login";
     }
 
+    @GetMapping("/manager")
+    public String getManagerDashboard(HttpServletRequest request, HttpServletResponse response) {
+        return "users/manager/dashboard";
+    }
+
     @GetMapping("/register")
     public String showRegister(Model model, HttpServletRequest request) {
         return "register";
@@ -134,7 +141,12 @@ public class UserController {
         newUser.setPassword(hashedPassword);
         newUser.setRole(userRole);
         userRepository.save(newUser);
-        return "redirect:/login";
+        if (isPasswordValid(employeePassword)) {
+            return "redirect:/login";
+        } else {
+            return "loginFailed";
+        }
+
     }
 
     @GetMapping("/users/manager/employeeManagementSystem")
@@ -153,31 +165,44 @@ public class UserController {
     }
 
     @PostMapping("/users/manager/operationsOnUsers/editUsers/{id}")
-    public String updateEmployee(@PathVariable("id") Long id, @ModelAttribute("user") User userDetails,
-            @RequestParam String action,
-            RedirectAttributes redirectAttributes) {
-
+    @ResponseBody
+    public ResponseEntity<?> updateEmployee(@PathVariable("id") Long id, @ModelAttribute("user") User userDetails,
+            @RequestParam String action) {
         boolean success = false;
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
         if ("delete".equals(action)) {
             userRepository.delete(existingUser);
-            redirectAttributes.addFlashAttribute("message", "User deleted successfully");
-            return "users/manager/operationsOnUsers/successDelete";
+            return ResponseEntity.ok(Collections.singletonMap("message", "User deleted successfully"));
         }
         existingUser.setName(userDetails.getName());
         existingUser.setEmail(userDetails.getEmail());
         existingUser.setRole(userDetails.getRole());
-        existingUser.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+        if (isPasswordValid(userDetails.getPassword())) {
+            existingUser.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "Update failed"));
+        }
 
         userRepository.save(existingUser);
 
-        redirectAttributes.addFlashAttribute("success", "user updated successfully!");
         success = true;
 
         if (success) {
-            return "users/manager/operationsOnUsers/successMessageOnUpdate";
+            return ResponseEntity.ok(Collections.singletonMap("message", "User updated successfully"));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "Update failed"));
         }
-        return "users/manager/operationsOnUsers/failedUpdate";
+    }
+
+    private boolean isPasswordValid(String password) {
+        boolean isLongEnough = password.length() > 5;
+        boolean hasUppercase = !password.equals(password.toLowerCase());
+        boolean hasNumber = password.matches(".*\\d.*");
+        boolean hasSpecialChar = password.matches(".*[!@#$%^&*(),.?\":{}|<>].*");
+        boolean result = isLongEnough && hasUppercase && hasNumber && hasSpecialChar;
+        return result;
     }
 }
