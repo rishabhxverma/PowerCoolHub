@@ -104,6 +104,8 @@ public class UserController {
         request.getSession().invalidate();
         return "redirect:/login";
     }
+
+
     @GetMapping("/register")
     public String showRegister(Model model, HttpServletRequest request) {
         return "register";
