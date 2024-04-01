@@ -203,6 +203,42 @@ function getUserName(userId) {
 }
 
 
+
+function handleDateChange(date) {
+  const techCheckboxDiv = document.getElementById("tech-checkbox");
+  
+  fetch("/jobs/getJobsCount?date=" + date)
+  .then((response) => response.json())
+  .then((jobCounts) => { // hashmap of userId->jobCount
+    console.log(jobCounts);
+    const techBoxes = document.querySelectorAll('.tech-box');
+    
+    techBoxes.forEach(techBox => {
+      const checkbox = techBox.querySelector('input[name="technicianIds"]');
+      
+      const userId = checkbox.value;
+      
+      const jobCountDiv = techBox.querySelector('.job-count');
+      
+      const count = jobCounts[userId];
+      jobCountDiv.textContent = `Jobs: ${count}`;
+    });
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+  
+}
+
+
+document.querySelectorAll(".calendar-col").forEach((col) => {
+  col.addEventListener("click", (event) => {
+    let date = col.getAttribute("datetime");
+    document.querySelector("#dateService").value = date;
+    handleDateChange(date);
+  });
+});
+
 // ....... This function handles given a SimpleEntity<User, Integer> (where user is a technician and integer is their jobCount) .......
 // function handleDateChange(date) {
 //   const techCheckboxDiv = document.getElementById("tech-checkbox");
@@ -264,38 +300,3 @@ function getUserName(userId) {
 //     });
 
 // }
-
-function handleDateChange(date) {
-  const techCheckboxDiv = document.getElementById("tech-checkbox");
-
-  fetch("/jobs/getJobsCount?date=" + date)
-    .then((response) => response.json())
-    .then((jobCounts) => { // hashmap of userId->jobCount
-      console.log(jobCounts);
-      const techBoxes = document.querySelectorAll('.tech-box');
-
-      techBoxes.forEach(techBox => {
-        const checkbox = techBox.querySelector('input[name="technicianIds"]');
-
-        const userId = checkbox.value;
-
-        const jobCountDiv = techBox.querySelector('.job-count');
-
-        const count = jobCounts[userId];
-        jobCountDiv.textContent = `Jobs: ${count}`;
-      });
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-
-}
-
-
-document.querySelectorAll(".calendar-col").forEach((col) => {
-  col.addEventListener("click", (event) => {
-    let date = col.getAttribute("datetime");
-    document.querySelector("#dateService").value = date;
-    handleDateChange(date);
-  });
-});
