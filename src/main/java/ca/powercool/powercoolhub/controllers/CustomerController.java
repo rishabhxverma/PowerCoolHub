@@ -138,6 +138,7 @@ public class CustomerController {
 
     @PostMapping("/")
     public String createCustomer(@ModelAttribute Customer customer, Model model) {
+        customer.setState(Customer.CustomerState.REQUESTING_APPOINTMENT);
         customerRepository.save(customer);
         return "redirect:/customers/viewAll";
     }
