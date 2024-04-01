@@ -15,7 +15,7 @@ public class Customer {
     private String address;
     private String email;
     private String phoneNumber;
-    private String notes;
+    private String message;
     private Date lastServiced;
     private Date nextService;
 
@@ -35,31 +35,39 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer(Integer id, String name, String address, String phoneNumber, String notes, Date lastServiced,
+    public Customer(Integer id, String name, String address, String phoneNumber, String message, Date lastServiced,
             Date nextService, CustomerState state) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
-        this.notes = notes;
+        this.message = message;
         this.lastServiced = lastServiced;
         this.nextService = nextService;
         this.state = state;
     }
 
     // Constructor for adding a new customer, no id, no last serviced, no next
-    public Customer(String name, String address, String phoneNumber, String email, CustomerState state, String notes) {
+    public Customer(String name, String address, String phoneNumber, String email, CustomerState state, String message) {
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.notes = notes;
+        this.message = message;
         this.state = state; // Default state for new customers
     }
 
     // Getters and setters
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
     // Other methods
+
 
     public boolean isArchived() {
         return state == CustomerState.ARCHIVED;
@@ -133,15 +141,6 @@ public class Customer {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
-
     public Date getLastServiced() {
         return lastServiced;
     }

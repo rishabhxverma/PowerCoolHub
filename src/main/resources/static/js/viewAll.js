@@ -1,6 +1,5 @@
 document.getElementById("filter").addEventListener("change", function () {
   var selectedFilter = this.value;
-  console.log(selectedFilter);
   fetch(`/customers/filterJson?filter=${selectedFilter}`)
     .then((response) => response.json())
     .then((data) => {
@@ -46,7 +45,7 @@ document.getElementById("filter").addEventListener("change", function () {
         appendCell(row, "td", "", "", customer.lastServiced);
         appendCell(row, "td", "", "", customer.nextService);
         appendCell(row, "td", "", "", customer.state);
-        appendCell(row, "td", "", "", customer.notes);
+        appendCell(row, "td", "", "", customer.message);
 
         // Append the row to the table body
         tbody.appendChild(row);
@@ -98,12 +97,12 @@ function resetColumnBackgrounds() {
 function changeColumnColor(date) {
   resetColumnBackgrounds();
   let top = document.querySelector(`.week-date[datetime="${date}"]`);
-  if(top == null) return;
+  if (top == null) return;
   top = top.parentElement;
 
   let column = document.querySelector(`.calendar-col[datetime="${date}"]`);
 
-  if(top == null || column == null) return;
+  if (top == null || column == null) return;
 
   top.style.backgroundColor = "#ebebeb";
   column.style.backgroundColor = "#f0f0f0";
@@ -152,14 +151,17 @@ function displayWeek(weekDates) {
   weekDates.forEach((weekDay, index) => {
     let dateString = formatDate(weekDay.date); // YYYY-MM-DD
 
-    let topDateElement = document.querySelector(`.calendar-top:nth-child(${index + 1}) .week-date`);
+    let topDateElement = document.querySelector(
+      `.calendar-top:nth-child(${index + 1}) .week-date`
+    );
     topDateElement.textContent = `${weekDay.month} ${weekDay.day}`;
 
-    
     topDateElement.setAttribute("datetime", dateString);
 
-    let dayColumn = document.querySelector(`.calendar-col:nth-child(${index + 1})`);
-    if(dayColumn == null) return;
+    let dayColumn = document.querySelector(
+      `.calendar-col:nth-child(${index + 1})`
+    );
+    if (dayColumn == null) return;
     dayColumn.setAttribute("datetime", dateString);
   });
 
@@ -202,34 +204,31 @@ function getUserName(userId) {
     });
 }
 
-
-
 function handleDateChange(date) {
   const techCheckboxDiv = document.getElementById("tech-checkbox");
-  
-  fetch("/jobs/getJobsCount?date=" + date)
-  .then((response) => response.json())
-  .then((jobCounts) => { // hashmap of userId->jobCount
-    console.log(jobCounts);
-    const techBoxes = document.querySelectorAll('.tech-box');
-    
-    techBoxes.forEach(techBox => {
-      const checkbox = techBox.querySelector('input[name="technicianIds"]');
-      
-      const userId = checkbox.value;
-      
-      const jobCountDiv = techBox.querySelector('.job-count');
-      
-      const count = jobCounts[userId];
-      jobCountDiv.textContent = `Jobs: ${count}`;
-    });
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-  });
-  
-}
 
+  fetch("/jobs/getJobsCount?date=" + date)
+    .then((response) => response.json())
+    .then((jobCounts) => {
+      // hashmap of userId->jobCount
+      console.log(jobCounts);
+      const techBoxes = document.querySelectorAll(".tech-box");
+
+      techBoxes.forEach((techBox) => {
+        const checkbox = techBox.querySelector('input[name="technicianIds"]');
+
+        const userId = checkbox.value;
+
+        const jobCountDiv = techBox.querySelector(".job-count");
+
+        const count = jobCounts[userId];
+        jobCountDiv.textContent = `Jobs: ${count}`;
+      });
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+}
 
 document.querySelectorAll(".calendar-col").forEach((col) => {
   col.addEventListener("click", (event) => {

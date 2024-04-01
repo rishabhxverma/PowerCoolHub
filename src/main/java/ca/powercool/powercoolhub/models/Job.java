@@ -23,7 +23,8 @@ public class Job {
 
     private int customerId;
     private Date serviceDate;
-    private String note;
+    private String note;        //job notes
+    private String customerMessage; //customer message
     // technician ids assigned to this job
     @ElementCollection
     @CollectionTable(name = "job_technicians")
@@ -53,7 +54,14 @@ public class Job {
         this.technicianIds = techIds;
         this.jobDone = jobDone;
     }
+    
+    public String getCustomerMessage() {
+        return customerMessage;
+    }
 
+    public void setCustomerMessage(String customerMessage) {
+        this.customerMessage = customerMessage;
+    }
 
     public boolean isActive() {
         return !jobDone;

@@ -45,11 +45,13 @@ public class JobController {
     @PostMapping("/addJob")
     public String addJobForTheCustomerIntoDataBase(@RequestParam("customerId") int customerIdInfo,
             @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") Date serviceDate,
+            @RequestParam("message") String message,
             @RequestParam("note") String note,
             @RequestParam("jobType") String jobTypeString,
             @RequestParam("technicianIds") List<Integer> technicianIds,
             HttpServletResponse stat) {
         Job job = new Job();
+        job.setCustomerMessage(message);
         job.setCustomerId(customerIdInfo);
         job.setServiceDate(serviceDate);
         job.setNote(note);
