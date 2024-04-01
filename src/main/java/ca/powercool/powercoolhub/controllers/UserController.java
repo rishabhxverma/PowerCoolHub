@@ -116,10 +116,6 @@ public class UserController {
         request.getSession().invalidate();
         return "redirect:/login";
     }
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
     @GetMapping("/register")
     public String showRegister(Model model, HttpServletRequest request) {
         return "register";
