@@ -104,12 +104,6 @@ public class UserController {
         request.getSession().invalidate();
         return "redirect:/login";
     }
-
-    @GetMapping("/manager")
-    public String getManagerDashboard(HttpServletRequest request, HttpServletResponse response) {
-        return "users/manager/dashboard";
-    }
-
     @GetMapping("/register")
     public String showRegister(Model model, HttpServletRequest request) {
         return "register";
