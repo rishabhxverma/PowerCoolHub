@@ -18,6 +18,8 @@ import ca.powercool.powercoolhub.models.Customer;
 import ca.powercool.powercoolhub.models.Job;
 import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.models.UserRole;
+import ca.powercool.powercoolhub.models.dto.JobCompletionDTO;
+import ca.powercool.powercoolhub.models.technician.TechnicianWorkLog;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
 import ca.powercool.powercoolhub.repositories.JobRepository;
 import ca.powercool.powercoolhub.repositories.UserRepository;
@@ -26,6 +28,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -136,7 +139,7 @@ public class JobController {
     }
 
     @PostMapping("/{id}/complete")
-    public ResponseEntity<Job> completeJob(@PathVariable("id") Integer id, HttpServletRequest request, Model model) {
+    public <T> ResponseEntity<?> completeJob(@PathVariable("id") Integer id, HttpServletRequest request, @RequestBody JobCompletionDTO jobCompletionDTO) {
         Optional<Job> existingJob = this.jobRepository.findById(id);
 
         if (!existingJob.isPresent()) {
@@ -145,9 +148,18 @@ public class JobController {
                 .body(null);
         }
 
+        User user = (User) request.getSession().getAttribute("user");
+
         Job completedJob = existingJob.get();
         completedJob.setJobDone(true);
         this.jobRepository.save(completedJob);
+
+        // Log the job completion
+        TechnicianWorkLog jobCompletion = new TechnicianWorkLog();
+        jobCompletion.setAction("job_completed");
+        jobCompletion.setLocation(jobCompletionDTO.getAddress());
+
+        this.technicianWorkLogService.saveWorkLog(user, jobCompletion);
 
         return new ResponseEntity<>(completedJob, HttpStatus.OK);
     }

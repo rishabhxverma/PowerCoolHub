@@ -109,7 +109,7 @@ public class TechnicianWorkLogServiceImpl implements TechnicianWorkLogService {
 
     @Override
     public String getClockState(User user) {
-        TechnicianWorkLog latestLog = this.technicianWorkLogRepository.findLatestWorkLogByUserId(user.getId());
+        TechnicianWorkLog latestLog = this.technicianWorkLogRepository.findLatestClockWorkLogByUserId(user.getId());
 
         String clockState = TechnicianWorkLog.CLOCK_IN;
 

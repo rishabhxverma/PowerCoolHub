@@ -25,10 +25,12 @@ public class TechnicianWorkLog {
     private Long technicianId;
 
     private String action;
-    private String location;
+
+    @Column(nullable = true)
+    private String location = "";
 
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     /**
      * @return fomatted time, ex: 8 A.M.
