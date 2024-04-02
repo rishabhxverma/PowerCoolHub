@@ -3,6 +3,7 @@ package ca.powercool.powercoolhub.controllers;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,21 +45,9 @@ public class UserController {
     }
 
     @GetMapping("/login")
-<<<<<<< Updated upstream
     public String getLogin(LoginForm loginForm, HttpServletRequest request, HttpServletResponse response) {
         User user = (User) request.getSession().getAttribute("user");
 
-=======
-    public String getLogin(@RequestParam(value = "email", required = false) Optional<String> email, LoginForm loginForm,
-            HttpServletRequest request, HttpServletResponse response, Model model) {
-        User user = (User) request.getSession().getAttribute("user");
-
-        // Autofill `email` field.
-        if (email.isPresent()) {
-            model.addAttribute("email", email);
-        }
-
->>>>>>> Stashed changes
         // Ensure the user is redirected to a correct dashboard.
         if (user != null) {
             return (user.getRole().equals(UserRole.MANAGER)) ? "redirect:/manager"
