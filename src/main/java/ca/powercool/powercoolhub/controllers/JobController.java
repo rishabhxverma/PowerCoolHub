@@ -119,7 +119,6 @@ public class JobController {
         Job job = existingJob.get();
         List<User> assignedTechnicians = this.userRepository.findAssignedTechnicians(job.getId());
         
-        assignedTechnicians.stream().forEach(System.out::println);
         User user = (User) request.getSession().getAttribute("user");
         Optional<Customer> customer = this.customerRepository.findById(job.getCustomerId());
         
