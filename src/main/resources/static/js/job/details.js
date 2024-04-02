@@ -29,3 +29,20 @@ function on_complete_button_clicked(dom) {
         xhr.send(JSON.stringify({ address: address }));
     })
 }
+
+function on_direction_button_clicked(dom) {
+    let mapUrl;
+    let address = dom.getAttribute('data-address');
+
+    // Apple device, use Apple Maps
+    if (/(iPhone|iPod|iPad)/i.test(navigator.userAgent)) {
+        mapUrl = "https://maps.apple.com/?q=" + encodeURIComponent(address);
+    } 
+    // Non-Apple device, use Google Maps
+    else {
+        mapUrl = "https://maps.google.com/?q=" + encodeURIComponent(address);
+    }
+
+    window.open(mapUrl, '_blank');
+    // window.location.href = mapUrl;
+}
