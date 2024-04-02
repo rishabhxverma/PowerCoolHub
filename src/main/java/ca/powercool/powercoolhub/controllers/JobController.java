@@ -18,7 +18,6 @@ import ca.powercool.powercoolhub.models.Customer;
 import ca.powercool.powercoolhub.models.Job;
 import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.models.UserRole;
-import ca.powercool.powercoolhub.models.dto.JobCompletionDTO;
 import ca.powercool.powercoolhub.models.technician.TechnicianWorkLog;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
 import ca.powercool.powercoolhub.repositories.JobRepository;
@@ -138,7 +137,7 @@ public class JobController {
     }
 
     @PostMapping("/{id}/complete")
-    public <T> ResponseEntity<?> completeJob(@PathVariable("id") Integer id, HttpServletRequest request, @RequestBody JobCompletionDTO jobCompletionDTO) {
+    public ResponseEntity<?> completeJob(@PathVariable("id") Integer id, HttpServletRequest request, @RequestBody String address) {
         Optional<Job> existingJob = this.jobRepository.findById(id);
 
         if (!existingJob.isPresent()) {
@@ -156,11 +155,28 @@ public class JobController {
         // Log the job completion
         TechnicianWorkLog jobCompletion = new TechnicianWorkLog();
         jobCompletion.setAction("job_completed");
-        jobCompletion.setLocation(jobCompletionDTO.getAddress());
+        jobCompletion.setLocation(address);
 
         this.technicianWorkLogService.saveWorkLog(user, jobCompletion);
 
         return new ResponseEntity<>(completedJob, HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/note/update")
+    public ResponseEntity<?> updateNote(@PathVariable("id") Integer id, @RequestBody String note) {
+        Optional<Job> existingJob = this.jobRepository.findById(id);
+        if (!existingJob.isPresent()) {
+            return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(null);
+        }
+
+        Job job = existingJob.get();
+        job.setNote(note);
+
+        this.jobRepository.save(job);
+
+        return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
     @GetMapping("/getJobsCount")
