@@ -20,7 +20,7 @@ public class TechnicianServiceImpl implements TechnicianService {
     public List<Job> getUpcomingJobs(User user, String startDate, String endDate) {
         LocalDate localStartDate = LocalDate.parse(startDate);
         LocalDate localEndDate = LocalDate.parse(endDate);
-        List<Job> upcomingJobs = this.jobRepository.findByTechnicianIdBetween(user.getId(), localStartDate, localEndDate);
+        List<Job> upcomingJobs = this.jobRepository.findIncompleteJobsByTechnicianIdBetween(user.getId(), localStartDate, localEndDate);
         return upcomingJobs;
     }
 
