@@ -34,19 +34,20 @@ function on_complete_button_clicked(dom) {
 
 function on_direction_button_clicked(dom) {
     let mapUrl;
-    let address = dom.getAttribute('customerAddress');
+    let customerLocation = dom.getAttribute('customerAddress');
 
-    // Apple device, use Apple Maps
-    if (/(iPhone|iPod|iPad)/i.test(navigator.userAgent)) {
-        mapUrl = "https://maps.apple.com/?q=" + encodeURIComponent(address);
-    } 
-    // Non-Apple device, use Google Maps
-    else {
-        mapUrl = "https://maps.google.com/?q=" + encodeURIComponent(address);
-    }
+    fetchAndProcessLocation(currentLocation => {
+        // Apple device, use Apple Maps
+        if (/(iPhone|iPod|iPad)/i.test(navigator.userAgent)) {
+            mapUrl = "https://maps.apple.com/?saddr=" + encodeURIComponent(currentLocation) + "&daddr=" + encodeURIComponent(customerLocation);
+        } 
+        // Non-Apple device, use Google Maps
+        else {
+            mapUrl = "https://www.google.com/maps/dir/" + encodeURIComponent(currentLocation) + "/" + encodeURIComponent(customerLocation);
+        }
 
-    window.open(mapUrl, '_blank');
-    // window.location.href = mapUrl;
+        window.open(mapUrl, '_blank');
+    })
 }
 
 function on_note_field_changed(dom) {
