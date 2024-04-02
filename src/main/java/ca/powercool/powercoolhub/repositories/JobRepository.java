@@ -38,6 +38,12 @@ public interface JobRepository extends JpaRepository<Job, Integer> {
             "AND j.service_date BETWEEN ?2 AND ?3", nativeQuery = true)
     List<Job> findByTechnicianIdBetween(Long userId, LocalDate startDate, LocalDate endDate);
 
+    @Query(value = "SELECT * FROM jobs j " +
+        "INNER JOIN job_technicians jt ON j.id = jt.job_id " +
+        "WHERE jt.technician_id = ?1 " +
+        "AND j.service_date BETWEEN ?2 AND ?3 AND j.job_done = false", nativeQuery = true)
+    List<Job> findIncompleteJobsByTechnicianIdBetween(Long userId, LocalDate startDate, LocalDate endDate);
+
     // find jobs that arent assigned to any techID
     @Query("SELECT j FROM Job j WHERE j.technicianIds IS EMPTY")
     List<Job> findUnassignedJobs();
