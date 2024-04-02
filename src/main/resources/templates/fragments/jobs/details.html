@@ -20,6 +20,13 @@
                         th:id="complete-status"
                         th:class="${job.jobDone} ? 'fa-solid fa-circle-check fs-4 text-success mx-1' : 'fa-solid fa-circle-check fs-4 text-muted mx-1'"></i>
                 </div>
+
+                <div class="actions d-inline position-absolute bottom-0 end-0 me-4 mb-4">
+                    <button class="btn btn-secondary" th:attr="data-address=${customer.address}" onclick="on_direction_button_clicked(this)" target="_blank">
+                        <i class="fa-solid fa-map"></i> 
+                        <span>Direction</span>
+                    </button>
+                </div>
             </div>
         </div>
         <div class="row my-3 px-4">
