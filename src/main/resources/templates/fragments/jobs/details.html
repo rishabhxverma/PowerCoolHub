@@ -22,7 +22,12 @@
                 </div>
 
                 <div class="actions d-inline position-absolute bottom-0 end-0 me-4 mb-4">
-                    <button class="btn btn-secondary" th:attr="data-address=${customer.address}" onclick="on_direction_button_clicked(this)" target="_blank">
+                    <button 
+                        class="btn btn-secondary" 
+                        th:attr="customerAddress=${customer.address}" 
+                        onclick="on_direction_button_clicked(this)" 
+                        target="_blank"
+                    >
                         <i class="fa-solid fa-map"></i> 
                         <span>Direction</span>
                     </button>
@@ -32,7 +37,14 @@
         <div class="row my-3 px-4">
             <div class="col my-2">
                 <h4>Note</h4>
-                <p th:text="${job.note}"></p>
+                <textarea 
+                    class="form-control" 
+                    id="editable-note" 
+                    th:text="${job.note}" 
+                    th:attr="jobId=${job.getId()}"
+                    rows="5" 
+                    onchange="on_note_field_changed(this)">
+                </textarea>
             </div>
         </div>
 
