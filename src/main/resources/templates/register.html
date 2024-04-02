@@ -39,17 +39,27 @@
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
                         <input type="password" name="password" class="form-control" id="password" placeholder="*****"
-                            oninput="checkEnteredPassword(); checkPasswordLength();">
+                            oninput="checkEnteredPassword(); checkPasswordSecurity();">
                         <br>
-                        <div id="passwordWarningForLength" style="color: red; display: none;">
-                            Password must be at least 5 characters.
-                        </div>
+                        <div id="passwordWarningForLength" style="display:none; color: red;">Password must be more than
+                            5 characters long.</div>
+                        <div id="passwordWarningForCapital" style="display:none; color: red;">Password must contain at
+                            least one capital letter.</div>
+                        <div id="passwordWarningForNumber" style="display:none; color: red;">Password must contain at
+                            least one number.</div>
+                        <div id="passwordWarningForSpecialChar" style="display:none; color: red;">Password must contain
+                            at least one special character like !, @, or $ etc.</div>
                     </div>
                     <div class="mb-3">
                         <label for="confirm_password" class="form-label">Confirm Password</label>
                         <input type="password" name="confirm_password" class="form-control" id="confirm_password"
                             placeholder="*****" oninput="checkEnteredPassword()">
                     </div>
+
+                    <div class="mb-3">
+                        <label for="login" class="form-label"> <a style="text-decoration-line: none;"
+                                href="/login">Already have an account?</a></label>
+                    </div><br>
                     <div id="passwordWarning" style="color: red; display: none;">
                         Passwords do not match.
                     </div>
@@ -80,18 +90,43 @@
             }
         }
 
-        function checkPasswordLength() {
-            var passLen = document.getElementById('password').value;
+        function checkPasswordSecurity() {
+            var password = document.getElementById('password').value;
             var submitBtn = document.getElementById('submitBtn');
             var passwordWarningForLength = document.getElementById('passwordWarningForLength');
+            var passwordWarningForCapital = document.getElementById('passwordWarningForCapital');
+            var passwordWarningForNumber = document.getElementById('passwordWarningForNumber');
+            var passwordWarningForSpecialChar = document.getElementById('passwordWarningForSpecialChar');
 
-            if (passLen.length <= 5) {
+            passwordWarningForLength.style.display = 'none';
+            passwordWarningForCapital.style.display = 'none';
+            passwordWarningForNumber.style.display = 'none';
+            passwordWarningForSpecialChar.style.display = 'none';
+            submitBtn.disabled = false;
 
-                submitBtn.disabled = true;
+            var errors = false;
+            if (password.length <= 5) {
                 passwordWarningForLength.style.display = 'block';
-            } else {
-                submitBtn.disabled = false;
-                passwordWarningForLength.style.display = 'none';
+                errors = true;
+            }
+
+            if (!/[A-Z]/.test(password)) {
+                passwordWarningForCapital.style.display = 'block';
+                errors = true;
+            }
+
+            if (!/\d/.test(password)) {
+                passwordWarningForNumber.style.display = 'block';
+                errors = true;
+            }
+
+            if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+                passwordWarningForSpecialChar.style.display = 'block';
+                errors = true;
+            }
+
+            if (errors) {
+                submitBtn.disabled = true;
             }
         }
 
