@@ -173,15 +173,13 @@ public class UserController {
         existingUser.setName(userDetails.getName());
         existingUser.setEmail(userDetails.getEmail());
         existingUser.setRole(userDetails.getRole());
-        if (!userDetails.getPassword().isEmpty()) {
-            if (isPasswordValid(userDetails.getPassword())) {
-                existingUser.setPassword(passwordEncoder.encode(userDetails.getPassword()));
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                        .body(Collections.singletonMap("error", "Update failed"));
-            }
+        if (isPasswordValid(userDetails.getPassword())) {
+            existingUser.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "Update failed"));
         }
-
+        
         userRepository.save(existingUser);
 
         success = true;
