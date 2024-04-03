@@ -44,9 +44,21 @@ public class UserController {
     }
 
     @GetMapping("/login")
+<<<<<<< Updated upstream
     public String getLogin(LoginForm loginForm, HttpServletRequest request, HttpServletResponse response) {
         User user = (User) request.getSession().getAttribute("user");
 
+=======
+    public String getLogin(@RequestParam(value = "email", required = false) Optional<String> email, LoginForm loginForm,
+            HttpServletRequest request, HttpServletResponse response, Model model) {
+        User user = (User) request.getSession().getAttribute("user");
+
+        // Autofill `email` field.
+        if (email.isPresent()) {
+            model.addAttribute("email", email);
+        }
+
+>>>>>>> Stashed changes
         // Ensure the user is redirected to a correct dashboard.
         if (user != null) {
             return (user.getRole().equals(UserRole.MANAGER)) ? "redirect:/manager"
@@ -104,6 +116,10 @@ public class UserController {
         request.getSession().invalidate();
         return "redirect:/login";
     }
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
     @GetMapping("/register")
     public String showRegister(Model model, HttpServletRequest request) {
         return "register";
@@ -172,11 +188,13 @@ public class UserController {
         existingUser.setName(userDetails.getName());
         existingUser.setEmail(userDetails.getEmail());
         existingUser.setRole(userDetails.getRole());
-        if (isPasswordValid(userDetails.getPassword())) {
-            existingUser.setPassword(passwordEncoder.encode(userDetails.getPassword()));
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Collections.singletonMap("error", "Update failed"));
+        if (!userDetails.getPassword().isEmpty()) {
+            if (isPasswordValid(userDetails.getPassword())) {
+                existingUser.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(Collections.singletonMap("error", "Update failed"));
+            }
         }
 
         userRepository.save(existingUser);

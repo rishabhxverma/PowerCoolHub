@@ -175,5 +175,4 @@ public class CustomerController {
     }
 
     // all mappings for customer queries
-
 }
