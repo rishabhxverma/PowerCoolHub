@@ -35,7 +35,7 @@
       <div class="d-flex justify-content-center mt-4 mb-4">
         <div class="col-sm-6 col-md-6 col-lg-6">
           <form
-            action="/customers/searchCustomer"
+            action="/customers/viewAll"
             method="GET"
             class="input-group"
           >
@@ -96,9 +96,8 @@
                   <th scope="col">Name</th>
                   <th scope="col">Address</th>
                   <th scope="col">Phone Number</th>
-                  <th scope="col">Last Serviced</th>
                   <th scope="col">Next Service</th>
-                  <th scope="col">Payment State</th>
+                  <th scope="col">State</th>
                   <th scope="col">Message</th>
                 </tr>
               </thead>
@@ -121,7 +120,6 @@
                   </td>
                   <td th:text="${customer.address}"></td>
                   <td th:text="${customer.phoneNumber}"></td>
-                  <td th:text="${customer.lastServiced}"></td>
                   <td th:text="${customer.nextService}"></td>
                   <td th:text="${customer.state}"></td>
                   <td th:text="${customer.message}"></td>

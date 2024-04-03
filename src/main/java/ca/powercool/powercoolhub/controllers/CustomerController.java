@@ -31,9 +31,11 @@ public class CustomerController {
 
     // View all customers
     @GetMapping("/viewAll")
-    public String viewAllCustomers(@RequestParam(required = false) String filter, Model model) {
-        List<Customer> customers = customerRepository.findAll();
-        if (filter != null ) {
+    public String viewAllCustomers(@RequestParam(required = false) String filter, @RequestParam(required = false, value = "customerName", defaultValue = "") String customerName, Model model) {
+        List<Customer> customers;
+        if (customerName != null && !customerName.isEmpty()) {
+            customers = customerRepository.findByNameLikeIgnoreCase(customerName + "%");
+        } else if (filter != null ) {
             Customer.CustomerState state = mapFilterToState(filter);
             customers = customerRepository.findByState(state);
         } else {
@@ -45,6 +47,19 @@ public class CustomerController {
         model.addAttribute("techs", techs);
 
         return "customers/viewAll";
+    }
+    @GetMapping("/searchCustomer")
+    public String searchCustomerByName(@RequestParam(value = "customerName", defaultValue = "") String customerName,
+            Model model) {
+        customerName = customerName.trim();
+        if (customerName == "") {
+            return "redirect:/customers/viewAll";
+        }
+
+        List<Customer> customers = customerRepository.findByNameLikeIgnoreCase(customerName + "%");
+        model.addAttribute("customers", customers);
+        model.addAttribute("searchTerm", customerName);
+        return "customers/searchResults";
     }
 
     // Filter customers by state
@@ -98,20 +113,6 @@ public class CustomerController {
     public String showAddCustomerForm(Model model) {
         model.addAttribute("customer", new Customer());
         return "customers/addCustomer";
-    }
-
-    @GetMapping("/searchCustomer")
-    public String searchCustomerByName(@RequestParam(value = "customerName", defaultValue = "") String customerName,
-            Model model) {
-        customerName = customerName.trim();
-        if (customerName == "") {
-            return "redirect:/customers/viewAll";
-        }
-
-        List<Customer> customers = customerRepository.findByNameLikeIgnoreCase(customerName + "%");
-        model.addAttribute("customers", customers);
-        model.addAttribute("searchTerm", customerName);
-        return "customers/searchResults";
     }
 
     @PostMapping("/update/{id}")

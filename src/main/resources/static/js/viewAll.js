@@ -27,7 +27,7 @@ document.getElementById("filter").addEventListener("change", function () {
           buttonCell.appendChild(button);
           row.appendChild(buttonCell);
         } else {
-          // If filter is not "requesting-app", add an empty cell for the actions column
+          // If filter is not "requesting-app", hide the first column including title
           var emptyCell = document.createElement("td");
           row.appendChild(emptyCell);
         }
@@ -42,7 +42,6 @@ document.getElementById("filter").addEventListener("change", function () {
         );
         appendCell(row, "td", "", "", customer.address);
         appendCell(row, "td", "", "", customer.phoneNumber);
-        appendCell(row, "td", "", "", customer.lastServiced);
         appendCell(row, "td", "", "", customer.nextService);
         appendCell(row, "td", "", "", customer.state);
         appendCell(row, "td", "", "", customer.message);
@@ -52,23 +51,6 @@ document.getElementById("filter").addEventListener("change", function () {
       });
     });
 });
-
-// Function to append cells
-function appendCell(row, element, className, href, textContent) {
-  var cell = document.createElement(element);
-  if (className !== "") {
-    cell.className = className;
-  }
-  if (href !== "") {
-    var link = document.createElement("a");
-    link.href = href;
-    link.textContent = textContent;
-    cell.appendChild(link);
-  } else {
-    cell.textContent = textContent;
-  }
-  row.appendChild(cell);
-}
 
 // Function to append cells
 function appendCell(row, element, className, href, textContent) {
