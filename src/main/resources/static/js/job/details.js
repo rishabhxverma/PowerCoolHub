@@ -36,18 +36,24 @@ function on_direction_button_clicked(dom) {
     let mapUrl;
     let customerLocation = dom.getAttribute('customerAddress');
 
-    fetchAndProcessLocation(currentLocation => {
-        // Apple device, use Apple Maps
-        if (/(iPhone|iPod|iPad)/i.test(navigator.userAgent)) {
-            mapUrl = "https://maps.apple.com/?saddr=" + encodeURIComponent(currentLocation) + "&daddr=" + encodeURIComponent(customerLocation);
-        } 
-        // Non-Apple device, use Google Maps
-        else {
-            mapUrl = "https://www.google.com/maps/dir/" + encodeURIComponent(currentLocation) + "/" + encodeURIComponent(customerLocation);
-        }
-
-        window.open(mapUrl, '_blank');
-    })
+    if (navigator.geolocation) {
+        //Requests the current location of the device
+        navigator.geolocation.getCurrentPosition(position => {
+            let {latitude, longitude} = position.coords;
+            let currentLocation = latitude + ", " + longitude;
+        
+            // Apple device, use Apple Maps
+            if (/(iPhone|iPod|iPad)/i.test(navigator.userAgent)) {
+                mapUrl = "https://maps.apple.com/?saddr=" + encodeURIComponent(currentLocation) + "&daddr=" + encodeURIComponent(customerLocation);
+            } 
+            // Non-Apple device, use Google Maps
+            else {
+                mapUrl = "https://www.google.com/maps/dir/" + encodeURIComponent(currentLocation) + "/" + encodeURIComponent(customerLocation);
+            }
+        
+            window.open(mapUrl, '_blank');
+        });
+    }
 }
 
 function on_note_field_changed(dom) {
