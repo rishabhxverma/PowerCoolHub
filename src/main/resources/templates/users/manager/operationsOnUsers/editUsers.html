@@ -12,10 +12,10 @@
     <div th:replace="fragments/top-navigation :: top-navigation"></div>
     <div th:replace="fragments/left-navigation :: left-navigation"></div>
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-        <div class="d-flex">
-            <h1 class="m-4">Employees</h1>
-        </div>
+
         <div class="d-flex justify-content-center align-items-center">
+            <br>
+            <br>
             <b>
                 <h1 th:text="'Edit ' + ${user.name}">Edit Employees</h1>
             </b>
@@ -25,17 +25,17 @@
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="name" class="form-label">Name</label>
+                        <label for="name" class="form-label"><b>Name</b></label>
                         <input type="text" class="form-control" id="name" th:field="*{name}" required>
                     </div>
                     <br>
                     <div class="form-group">
-                        <label for="email" class="form-label">Email</label>
+                        <label for="email" class="form-label"><b>Email</b></label>
                         <input type="email" class="form-control" id="email" th:field="*{email}" required>
                     </div>
                     <br>
                     <div class="form-group">
-                        <label for="role" class="form-label">Title</label>
+                        <label for="role" class="form-label"><b>Title</b></label>
                         <select class="form-select" id="role" th:field="*{role}">
                             <option value="technician">Technician</option>
                             <option value="manager">Manager</option>
@@ -43,7 +43,7 @@
                     </div>
                     <br>
                     <div class="form-group">
-                        <label for="password" class="form-label">New Password</label>
+                        <label for="password" class="form-label"><b>New Password</b></label>
                         <input type="password" class="form-control" id="password" th:field="*{password}"
                             placeholder="*****" oninput="checkPasswordSecurity(); checkEnteredPassword(); "><br>
                         <div id="passwordWarningForLength" style="display:none; color: red;">Password must be more than
@@ -57,7 +57,7 @@
                     </div>
                     <br>
                     <div class="form-group">
-                        <label for="confirm_password" class="form-label">Confirm Password</label>
+                        <label for="confirm_password" class="form-label"><b>Confirm Password</b></label>
                         <input type="password" name="confirm_password" class="form-control" id="confirm_password"
                             placeholder="*****" oninput="checkEnteredPassword()"><br>
                         <div id="passwordWarning" style="color: red; display: none;">
@@ -107,29 +107,29 @@
             submitBtn.disabled = false;
 
             var errors = false;
-            if (password.length <= 5) {
-                passwordWarningForLength.style.display = 'block';
-                errors = true;
-            }
+                if (password.length <= 5) {
+                    passwordWarningForLength.style.display = 'block';
+                    errors = true;
+                }
 
-            if (!/[A-Z]/.test(password)) {
-                passwordWarningForCapital.style.display = 'block';
-                errors = true;
-            }
+                if (!/[A-Z]/.test(password)) {
+                    passwordWarningForCapital.style.display = 'block';
+                    errors = true;
+                }
 
-            if (!/\d/.test(password)) {
-                passwordWarningForNumber.style.display = 'block';
-                errors = true;
-            }
+                if (!/\d/.test(password)) {
+                    passwordWarningForNumber.style.display = 'block';
+                    errors = true;
+                }
 
-            if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-                passwordWarningForSpecialChar.style.display = 'block';
-                errors = true;
-            }
+                if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+                    passwordWarningForSpecialChar.style.display = 'block';
+                    errors = true;
+                }
 
-            if (errors) {
-                submitBtn.disabled = true;
-            }
+                if (errors) {
+                    submitBtn.disabled = true;
+                }
         }
 
         function checkEnteredPassword() {
