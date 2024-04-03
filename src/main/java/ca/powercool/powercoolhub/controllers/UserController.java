@@ -45,14 +45,15 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public String getLogin(@RequestParam(value="email", required = false) Optional<String> email, LoginForm loginForm, HttpServletRequest request, HttpServletResponse response, Model model) {
+    public String getLogin(@RequestParam(value = "email", required = false) Optional<String> email, LoginForm loginForm,
+            HttpServletRequest request, HttpServletResponse response, Model model) {
         User user = (User) request.getSession().getAttribute("user");
 
         // Autofill `email` field.
         if (email.isPresent()) {
             model.addAttribute("email", email);
         }
-        
+
         // Ensure the user is redirected to a correct dashboard.
         if (user != null) {
             return (user.getRole().equals(UserRole.MANAGER)) ? "redirect:/manager"
@@ -111,7 +112,6 @@ public class UserController {
         return "redirect:/login";
     }
 
-
     @GetMapping("/register")
     public String showRegister(Model model, HttpServletRequest request) {
         return "register";
@@ -119,7 +119,7 @@ public class UserController {
 
     @GetMapping("/check-email")
     public ResponseEntity<Map<String, Boolean>> checkEmailExists(@RequestParam("email") String email) {
-        boolean exists = userRepository.existsByEmail(email);
+        boolean exists = userRepository.existsByEmail(email.toLowerCase());
         return ResponseEntity.ok(Collections.singletonMap("exists", exists));
     }
 
@@ -130,7 +130,7 @@ public class UserController {
             @RequestParam("role") String userRole,
             HttpServletResponse statusSetter) {
 
-        if (userRepository.existsByEmail(employeeEmail)) {
+        if (userRepository.existsByEmail(employeeEmail.toLowerCase())) {
             statusSetter.setStatus(HttpServletResponse.SC_CONFLICT);
             return "register";
         }
@@ -138,8 +138,8 @@ public class UserController {
         String hashedPassword = passwordEncoder.encode(employeePassword);
 
         User newUser = new User();
-        newUser.setName(employeeName);
-        newUser.setEmail(employeeEmail);
+        newUser.setName(employeeName.toLowerCase());
+        newUser.setEmail(employeeEmail.toLowerCase());
         newUser.setPassword(hashedPassword);
         newUser.setRole(userRole);
         userRepository.save(newUser);
@@ -177,11 +177,11 @@ public class UserController {
             userRepository.delete(existingUser);
             return ResponseEntity.ok(Collections.singletonMap("message", "User deleted successfully"));
         }
-        existingUser.setName(userDetails.getName());
-        existingUser.setEmail(userDetails.getEmail());
+        existingUser.setName(userDetails.getName().toLowerCase());
+        existingUser.setEmail(userDetails.getEmail().toLowerCase());
         existingUser.setRole(userDetails.getRole());
 
-        if(!userDetails.getPassword().isEmpty()) {
+        if (!userDetails.getPassword().isEmpty()) {
             if (isPasswordValid(userDetails.getPassword())) {
                 existingUser.setPassword(passwordEncoder.encode(userDetails.getPassword()));
             } else {
@@ -189,7 +189,7 @@ public class UserController {
                         .body(Collections.singletonMap("error", "Update failed"));
             }
         }
-        
+
         userRepository.save(existingUser);
 
         success = true;
