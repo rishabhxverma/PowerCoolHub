@@ -58,7 +58,7 @@
                         </thead>
                         <tbody>
                             <tr th:each="customer : ${customers}">
-                                <td><a th:href="@{/customers/edit/{id}(id=${customer.id})}" th:text="${customer.name}" class="link-dark text-decoration-none"></a></td>
+                                <td><a style="text-decoration: none;" th:href="@{/customers/edit/{id}(id=${customer.id})}" th:text="${customer.name}" class="link-dark text-decoration-none"></a></td>
                                 <td th:text="${customer.address}"></td>
                                 <td th:text="${customer.phoneNumber}"></td>
                                 <td th:text="${customer.lastServiced}"></td>
