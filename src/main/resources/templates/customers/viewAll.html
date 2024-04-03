@@ -19,7 +19,8 @@
     ></script>
 
     <link rel="stylesheet" href="/css/calendar.css" />
-    <script src="/js/calendar.js" defer></script> <!-- calendar.js needs to be above viewAll.js -->
+    <script src="/js/calendar.js" defer></script>
+    <!-- calendar.js needs to be above viewAll.js -->
 
     <link rel="stylesheet" href="/css/viewAll.css" />
     <script src="/js/viewAll.js" defer></script>
@@ -34,11 +35,7 @@
       </div>
       <div class="d-flex justify-content-center mt-4 mb-4">
         <div class="col-sm-6 col-md-6 col-lg-6">
-          <form
-            action="/customers/viewAll"
-            method="GET"
-            class="input-group"
-          >
+          <form action="/customers/viewAll" method="GET" class="input-group">
             <button
               class="btn rounded-circle"
               type="button"
@@ -101,17 +98,17 @@
                   <th scope="col">Message</th>
                 </tr>
               </thead>
+              <tbody></tbody>
               <tbody>
                 <tr th:each="customer : ${customers}">
-                  <td>
-                    <!-- This column will only display the button when filter is "requesting-app" -->
-                    <button
-                      class="btn btn-primary book-appointment"
-                      style="display: none"
-                    >
+                  <!-- Conditionally render the "Book Appointment" button based on the selected filter -->
+                  <td th:if="${selectedFilter == 'requesting-app'}">
+                    <button class="btn btn-primary book-appointment">
                       Book Appointment
                     </button>
                   </td>
+                  <td th:unless="${selectedFilter == 'requesting-app'}"></td>
+                  <!-- Render customer details -->
                   <td>
                     <a
                       th:href="@{/customers/edit/{id}(id=${customer.id})}"
@@ -217,13 +214,22 @@
 
               <div class="form-group">
                 <label for="tech-checkbox">Select employees to assign:</label>
-                <div id="tech-checkbox" class="row" >
+                <div id="tech-checkbox" class="row">
                   <div th:each="tech : ${techs}" class="col-md-2">
                     <div class="tech-box form-check">
-                      <input th:id="${'tech' + tech.id}" th:value="${tech.id}" name="technicianIds" type="checkbox" class="form-check-input" />
-                      <label th:for="${'tech' + tech.id}" class="form-check-label">
+                      <input
+                        th:id="${'tech' + tech.id}"
+                        th:value="${tech.id}"
+                        name="technicianIds"
+                        type="checkbox"
+                        class="form-check-input"
+                      />
+                      <label
+                        th:for="${'tech' + tech.id}"
+                        class="form-check-label"
+                      >
                         <div th:text="${tech.name}"></div>
-                        <div class="job-count">Jobs: </div>
+                        <div class="job-count">Jobs:</div>
                       </label>
                     </div>
                   </div>

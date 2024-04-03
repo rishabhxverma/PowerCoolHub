@@ -45,7 +45,7 @@ public class JobController {
     @PostMapping("/addJob")
     public String addJobForTheCustomerIntoDataBase(@RequestParam("customerId") int customerIdInfo,
             @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") Date serviceDate,
-            @RequestParam("message") String message,
+            @RequestParam(required = false, value = "message") String message,
             @RequestParam("note") String note,
             @RequestParam("jobType") String jobTypeString,
             @RequestParam("technicianIds") List<Integer> technicianIds,

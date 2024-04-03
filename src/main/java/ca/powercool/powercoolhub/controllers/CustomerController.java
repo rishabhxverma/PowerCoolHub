@@ -31,23 +31,34 @@ public class CustomerController {
 
     // View all customers
     @GetMapping("/viewAll")
-    public String viewAllCustomers(@RequestParam(required = false) String filter, @RequestParam(required = false, value = "customerName", defaultValue = "") String customerName, Model model) {
+    public String viewAllCustomers(@RequestParam(required = false) String filter,
+                                   @RequestParam(required = false, value = "customerName", defaultValue = "") String customerName,
+                                   Model model) {
         List<Customer> customers;
+    
         if (customerName != null && !customerName.isEmpty()) {
             customers = customerRepository.findByNameLikeIgnoreCase(customerName + "%");
-        } else if (filter != null ) {
-            Customer.CustomerState state = mapFilterToState(filter);
-            customers = customerRepository.findByState(state);
         } else {
-            customers = customerRepository.findAll();
+            // Filter customers based on the selected filter
+            if (filter != null && !filter.isEmpty()) {
+                Customer.CustomerState state = mapFilterToState(filter);
+                customers = customerRepository.findByState(state);
+            } else {
+                // If no filter is provided, return all customers
+                customers = customerRepository.findAll();
+            }
         }
+    
         model.addAttribute("customers", customers);
-        
+        model.addAttribute("selectedFilter", filter);
+    
         List<User> techs = userRepository.findByRole(UserRole.TECHNICIAN);
         model.addAttribute("techs", techs);
-
+    
         return "customers/viewAll";
     }
+    
+    
     @GetMapping("/searchCustomer")
     public String searchCustomerByName(@RequestParam(value = "customerName", defaultValue = "") String customerName,
             Model model) {
