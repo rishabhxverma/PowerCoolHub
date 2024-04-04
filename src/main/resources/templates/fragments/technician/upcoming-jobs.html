@@ -1,7 +1,7 @@
 <div class="container" th:fragment="upcoming-jobs">
     <div class="row">
         <h2 class="px-0">Upcoming Jobs</h2>
-        <ul class="list-group mt-3">
+        <ul class="list-group mt-3 px-0">
             <a th:each="upcomingJob : ${upcomingJobs}" class="list-group-item list-group-item-action p-3" th:href="@{'/jobs/' + ${upcomingJob.id}}">
                 <span>
                     <b th:text="${upcomingJob.customerName}"></b>

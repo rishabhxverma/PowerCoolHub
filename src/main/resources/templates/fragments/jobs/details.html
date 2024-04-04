@@ -1,6 +1,6 @@
-<div class="container px-0 mt-4 rounded border border-light" th:fragment="details">
+<div class="container px-0 mt-md-4 mt-2 rounded border border-light" th:fragment="details">
     <div class="container">
-        <div class="row px-4 bg-light position-relative">
+        <div class="row px-md-5 px-2 bg-light position-relative">
             <div class="col">
                 <div class="position-relative py-4">
                     <h2 th:text="${job.customerName}" class="d-inline"></h2>
@@ -11,8 +11,7 @@
                         <i th:text="${job.getFormattedDate()}"></i>
                     </div>
                 </div>
-
-                <div class="status-indicators d-inline position-absolute top-0 end-0 me-4 mt-4">
+                <div class="status-indicators d-inline position-absolute top-0 end-0 me-2 me-md-4 mt-4">
                     <i
                         th:id="payment-status" 
                         th:class="${job.paymentReceived} ? 'fa-solid fa-file-invoice fs-4 text-primary mx-1' : 'fa-solid fa-file-invoice fs-4 text-muted mx-1'"></i>
@@ -21,7 +20,7 @@
                         th:class="${job.jobDone} ? 'fa-solid fa-circle-check fs-4 text-success mx-1' : 'fa-solid fa-circle-check fs-4 text-muted mx-1'"></i>
                 </div>
 
-                <div class="actions d-inline position-absolute bottom-0 end-0 me-4 mb-4">
+                <div class="actions d-inline position-absolute bottom-0 end-0 me-2 me-md-4 mb-2 mb-md-4">
                     <button 
                         class="btn btn-secondary" 
                         th:attr="customerAddress=${customer.address}" 
@@ -34,7 +33,7 @@
                 </div>
             </div>
         </div>
-        <div class="row my-3 px-4">
+        <div class="row my-3 px-md-4 px-0">
             <div class="col my-2">
                 <h4>Note</h4>
                 <textarea 
@@ -48,7 +47,7 @@
             </div>
         </div>
 
-        <div class="row my-2 px-4">
+        <div class="row my-2 px-md-4 px-0">
             <div class="col my-2">
                 <h4>Technicians</h4>
                 <div class="card mt-3">
@@ -59,7 +58,7 @@
             </div>
         </div>
 
-        <div class="row my-2 px-4" th:if="${user.getRole() == 'technician'}">
+        <div class="row my-2 px-md-4 px-0" th:if="${user.getRole() == 'technician'}">
             <div class="col my-2 d-flex justify-content-center">
                 <button 
                     th:attr="jobId=${job.getId()}"

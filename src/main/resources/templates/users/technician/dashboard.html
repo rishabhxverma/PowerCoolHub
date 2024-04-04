@@ -15,7 +15,7 @@
 <body th:attr="tech-id=${user.id}, data-clock-state=${clockButtonState}">
     <!-- Navigation bars -->
     <div th:replace="~{fragments/technician/top-navigation :: top-navigation(${user.id}, ${clockButtonState})}"></div>
-    <div class="container px-5 mt-4">
+    <div class="container px-md-5 px-2 mt-4">
         <div th:replace="~{fragments/technician/upcoming-jobs :: upcoming-jobs}"></div>
         <div th:replace="~{fragments/technician/confirmation-modal :: confirmationModal}"></div>
     </div>

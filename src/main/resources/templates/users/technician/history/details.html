@@ -16,7 +16,7 @@
     <!-- Navigation bars -->
     <div th:replace="~{fragments/technician/top-navigation :: top-navigation(${user.id}, ${clockButtonState})}"></div>
 
-    <div class="container px-5 mt-4">
+    <div class="container px-2 px-md-5 mt-4">
         <div th:replace="~{fragments/technician/history/details :: details}"></div>
         <div th:replace="~{fragments/technician/confirmation-modal :: confirmationModal}"></div>
     </div>
