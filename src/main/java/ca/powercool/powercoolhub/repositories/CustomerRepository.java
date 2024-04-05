@@ -7,11 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import ca.powercool.powercoolhub.models.Customer;
+import io.micrometer.common.lang.NonNull;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     List<Customer> findByNameLikeIgnoreCase(String namePattern);
 
+    @NonNull
     Optional<Customer> findById(Integer id);
 
     // customer query
@@ -24,4 +26,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     Customer findByEmail(String email);
 
     boolean existsByAddress(String address);
+
 }

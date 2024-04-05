@@ -2,6 +2,7 @@ package ca.powercool.powercoolhub.controllers;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -147,9 +148,11 @@ public class JobController {
         }
 
         User user = (User) request.getSession().getAttribute("user");
+        LocalDateTime now = LocalDateTime.now();
 
         Job completedJob = existingJob.get();
         completedJob.setJobDone(true);
+        completedJob.setJobDoneTime(now);
         this.jobRepository.save(completedJob);
 
         // Log the job completion

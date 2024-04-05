@@ -64,6 +64,9 @@ function closeModal() {
 function handleClockInOut(event, button) {
     console.log("handleClockInOut called")
     event.preventDefault(); // Prevent the default action
+    if(isClockedIn === "true"){
+        checkClockOutLocation(navigator.geolocation.coords);
+    }
     showConfirmationModal(() => {
         // Fetch and process location only after user confirms in the modal
         fetchAndProcessLocation(address => postClockAction(address, button));
@@ -77,7 +80,9 @@ function fetchAndProcessLocation(callback) {
         //Requests the current location of the device
         navigator.geolocation.getCurrentPosition(position => {
             const {latitude, longitude} = position.coords;
-            
+            if(isClockedIn === "true"){
+                checkClockOutLocation(latitude, longitude);
+            }
             //TODO: Change the API key to be hidden in environment variables
             const geocodeApiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyD7W1stQyxkMS1msMvHXRHBPDltzAXZh3g`;
             //Makes an HTTP GET request. fetch returns a promise that resolves with the response to this request
@@ -107,9 +112,27 @@ function fetchAndProcessLocation(callback) {
 
 // Function to be called after location is fetched and user confirmed
 function postClockAction(address, button) {
+    console.log("postClockAction called")
     const technicianId = document.body.getAttribute('tech-id');
     const intendedAction = isClockedIn ? "clock_out" : "clock_in";  // The intended action based on current state
-
+    if(intendedAction === "clock_out"){
+        console.log("isClockedIn is True - going to call GET")
+        fetch(`/technician/getAddress/${technicianId}`, {
+            method: 'GET',
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.text(); // or .text() if the response is plain text
+        })
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Error fetching address:', error);
+        });
+    }
     fetch('/technician/clock', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -146,4 +169,9 @@ function updateClockButton(button, isClockedIn) {
         button.setAttribute('data-clocked-in', 'true');
         button.classList.remove('blinking');
     }
+}
+
+
+function checkClockOutLocation(lat1, long1){
+
 }

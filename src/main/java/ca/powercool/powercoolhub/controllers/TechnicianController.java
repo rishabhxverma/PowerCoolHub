@@ -108,6 +108,24 @@ public class TechnicianController {
         return "users/technician/history/details";
     }
 
+    @GetMapping("/technician/getAddress/{techId}")
+    public ResponseEntity<?> getLatestAddress(@PathVariable("techId") Long techId) {
+        try {
+            String latestAddress = this.technicianService.getLatestCompletedJobAddress(techId);
+            if (latestAddress != null && !latestAddress.isEmpty()) {
+                return ResponseEntity.ok(latestAddress);
+            } else {
+                // Handle the case where the address is null or empty
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            // Log the exception details and return a proper error message or code
+            // Depending on your logging framework, adjust the following line
+            // e.g., log.error("Error fetching latest address", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching latest address");
+        }
+    }
+
     @PostMapping("/technician/clock")
     @ResponseBody
     public ResponseEntity<?> clock(@RequestBody TechnicianWorkLog clockData, HttpServletRequest request) {
@@ -115,6 +133,7 @@ public class TechnicianController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
+
         TechnicianWorkLog savedLog = this.technicianWorkLogService.saveWorkLog(user, clockData);
         return ResponseEntity.ok(savedLog);
     }
