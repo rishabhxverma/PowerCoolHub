@@ -6,7 +6,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -19,7 +19,7 @@ public class MailService {
         this.javaMailSender = javaMailSender;
     }
 
-    public void sendBookingConfirmation(String to, String customerName, Date appointmentDate,
+    public void sendBookingConfirmation(String to, String customerName, LocalDate appointmentDate,
                                         String serviceAddress, String serviceRequest, List<String> technicianAssigned) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 

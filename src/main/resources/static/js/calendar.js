@@ -69,6 +69,8 @@ function fetchJobsAndDisplay(weekDates) {
             jobEntry.classList.add("install-job");
         }
 
+        // create on-click for the job details fragment modal
+
         
 
         let jobNameDiv = document.createElement("div");

@@ -144,13 +144,14 @@ public class CustomerController {
 
     @PostMapping("/")
     public String createCustomer(@ModelAttribute Customer customer, Model model) {
-        Customer existingCustomer = customerRepository.findByEmail(customer.getEmail());
-        boolean addressExists = customerRepository.existsByAddress(customer.getAddress()); 
+        Customer existingCustomer = customerRepository.findByEmail(customer.getEmail());  //look for existing customer with same email
+        boolean addressExists = customerRepository.existsByAddress(customer.getAddress());   //look for existing customer with same address
     
-        if (existingCustomer != null && addressExists) {
+        if (existingCustomer != null && addressExists) { //existing
             existingCustomer.setState(CustomerState.REQUESTING_APPOINTMENT);
             existingCustomer.setNotes(customer.getNotes());
-        } else {
+        } else { //new
+            customer.setState(CustomerState.REQUESTING_APPOINTMENT);
             existingCustomer = customer;
         }
         customerRepository.save(existingCustomer);
