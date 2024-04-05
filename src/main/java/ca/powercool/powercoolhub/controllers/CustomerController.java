@@ -12,11 +12,10 @@ import ca.powercool.powercoolhub.models.Customer;
 import ca.powercool.powercoolhub.models.Job;
 import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.models.UserRole;
+import ca.powercool.powercoolhub.models.Customer.CustomerState;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
 import ca.powercool.powercoolhub.repositories.JobRepository;
 import ca.powercool.powercoolhub.repositories.UserRepository;
-
-
 
 @Controller
 @RequestMapping("/customers")
@@ -27,7 +26,8 @@ public class CustomerController {
     @Autowired
     private JobRepository jobRepository;
 
-    @Autowired UserRepository userRepository;
+    @Autowired
+    UserRepository userRepository;
 
     // View all customers
     @GetMapping("/viewAll")
@@ -77,20 +77,13 @@ public class CustomerController {
     @GetMapping("/filterJson")
     @ResponseBody
     public ResponseEntity<List<Customer>> filterCustomersJson(@RequestParam("filter") String selectedFilter) {
-        if(selectedFilter.equals("all"))
-        {
+        if (selectedFilter.equals("all")) {
             return ResponseEntity.ok(customerRepository.findAll());
-        }
-        else if(selectedFilter.equals("upcoming"))
-        {
+        } else if (selectedFilter.equals("upcoming")) {
             return ResponseEntity.ok(customerRepository.findByState(mapFilterToState("upcoming")));
-        }
-        else if(selectedFilter.equals("requesting-app"))
-        {
+        } else if (selectedFilter.equals("requesting-app")) {
             return ResponseEntity.ok(customerRepository.findByState(mapFilterToState("requesting-app")));
-        }
-        else if(selectedFilter.equals("archived"))
-        {
+        } else if (selectedFilter.equals("archived")) {
             return ResponseEntity.ok(customerRepository.findByState(mapFilterToState("archived")));
         }
 
@@ -137,7 +130,8 @@ public class CustomerController {
         customerDetails.setId(id);
         customerRepository.save(customerDetails);
 
-        List<Job> customersJobs = jobRepository.findByCustomerId(id); // Assuming you have this method in your repository
+        List<Job> customersJobs = jobRepository.findByCustomerId(id); // Assuming you have this method in your
+                                                                      // repository
         for (Job job : customersJobs) {
             job.setCustomerName(customerDetails.getName());
             jobRepository.save(job);
@@ -150,11 +144,20 @@ public class CustomerController {
 
     @PostMapping("/")
     public String createCustomer(@ModelAttribute Customer customer, Model model) {
-        customer.setState(Customer.CustomerState.REQUESTING_APPOINTMENT);
-        customerRepository.save(customer);
-        return "redirect:/customers/viewAll";
+        Customer existingCustomer = customerRepository.findByEmail(customer.getEmail());
+        boolean addressExists = customerRepository.existsByAddress(customer.getAddress()); 
+    
+        if (existingCustomer != null && addressExists) {
+            existingCustomer.setState(CustomerState.REQUESTING_APPOINTMENT);
+            existingCustomer.setNotes(customer.getNotes());
+        } else {
+            existingCustomer = customer;
+        }
+        customerRepository.save(existingCustomer);
+    
+        return "redirect:/customers/viewAll"; 
     }
-
+    
     @PostMapping("/delete/{id}")
     public String deleteCustomer(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         Optional<Customer> customerOptional = customerRepository.findById(id);
@@ -171,7 +174,7 @@ public class CustomerController {
     public String getCalendar() {
         return "customers/calendar";
     }
-    
+
     @GetMapping("/getCustomerNameFromId")
     @ResponseBody
     public String getCustomerNameFromId(@RequestParam("customerId") int customerId) {
@@ -183,6 +186,6 @@ public class CustomerController {
         }
     }
 
-    //all mappings for customer queries
+    // all mappings for customer queries
 
 }

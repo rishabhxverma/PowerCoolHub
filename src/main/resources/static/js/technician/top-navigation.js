@@ -77,6 +77,7 @@ function fetchAndProcessLocation(callback) {
         //Requests the current location of the device
         navigator.geolocation.getCurrentPosition(position => {
             const {latitude, longitude} = position.coords;
+            
             //TODO: Change the API key to be hidden in environment variables
             const geocodeApiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyD7W1stQyxkMS1msMvHXRHBPDltzAXZh3g`;
             //Makes an HTTP GET request. fetch returns a promise that resolves with the response to this request

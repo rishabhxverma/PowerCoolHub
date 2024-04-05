@@ -32,6 +32,11 @@ body {
     top: 5rem;
   }
 }
+@media (max-width: 768px) {
+  table {
+    font-size: 12px;
+  }
+}
 
 .sidebar-sticky {
   position: relative;
@@ -98,4 +103,18 @@ body {
 .form-control-dark:focus {
   border-color: transparent;
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
+}
+.table-responsive table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table td, .table th {
+  white-space: normal; 
+  word-wrap: break-word;
+}
+
+.table img {
+  max-width: 100%;
+  height: auto;
 }

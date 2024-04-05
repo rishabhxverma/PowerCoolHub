@@ -1,4 +1,4 @@
-package ca.powercool.powercoolhub.services;
+package ca.powercool.powercoolhub.technician;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

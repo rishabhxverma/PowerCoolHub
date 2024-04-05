@@ -2,19 +2,26 @@ package ca.powercool.powercoolhub.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ca.powercool.powercoolhub.models.User;
+import ca.powercool.powercoolhub.models.report.TechnicianWorkLogReport;
 import ca.powercool.powercoolhub.models.technician.TechnicianWorkLog;
 import ca.powercool.powercoolhub.models.technician.data.GroupedWorkLogsData;
 import ca.powercool.powercoolhub.models.technician.data.WorkLogsFilter;
 import ca.powercool.powercoolhub.repositories.TechnicianWorkLogRepository;
+import ca.powercool.powercoolhub.repositories.UserRepository;
 import ca.powercool.powercoolhub.utilities.LocalDateTimeUtility;
 
 @Service
@@ -22,6 +29,9 @@ public class TechnicianWorkLogServiceImpl implements TechnicianWorkLogService {
 
     @Autowired
     private TechnicianWorkLogRepository technicianWorkLogRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     /**
      * Retrieves technician history data based on the provided filter.
@@ -79,6 +89,8 @@ public class TechnicianWorkLogServiceImpl implements TechnicianWorkLogService {
                 })
                 .collect(Collectors.toList());
 
+        Collections.sort(groupedWorkLogsData, Comparator.comparing(GroupedWorkLogsData::getDate).reversed());
+
         return groupedWorkLogsData;
     }
 
@@ -109,7 +121,7 @@ public class TechnicianWorkLogServiceImpl implements TechnicianWorkLogService {
 
     @Override
     public String getClockState(User user) {
-        TechnicianWorkLog latestLog = this.technicianWorkLogRepository.findLatestWorkLogByUserId(user.getId());
+        TechnicianWorkLog latestLog = this.technicianWorkLogRepository.findLatestClockWorkLogByUserId(user.getId());
 
         String clockState = TechnicianWorkLog.CLOCK_IN;
 
@@ -125,5 +137,88 @@ public class TechnicianWorkLogServiceImpl implements TechnicianWorkLogService {
         clockData.setTechnicianId(user.getId());
         TechnicianWorkLog savedLog = technicianWorkLogRepository.save(clockData);
         return savedLog;
+    }
+
+    /**
+     * Retrieves technician history data based on the start date and end date.
+     *
+     * @param user      The user for whom to retrieve history data.
+     * @param startDate The start date (inclusive)
+     * @param endDate   The end date (inclusive)
+     * 
+     * @return A list of grouped work logs data.
+     */
+    @Override
+    public List<GroupedWorkLogsData> getTechnicianHistoryData(User user, String startDate, String endDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime startDateTime = LocalDateTime.parse(startDate + " 00:00:00", formatter);
+        LocalDateTime endDateTime = LocalDateTime.parse(endDate + " 23:59:59", formatter);
+
+        List<TechnicianWorkLog> workLogs = this.technicianWorkLogRepository.findWorkLogsBetween(user.getId(),
+                startDateTime, endDateTime);
+
+        List<GroupedWorkLogsData> historyData = this.groupWorkLogs(workLogs);
+
+        return historyData;
+    }
+
+    /**
+     * Retrieves a list of TechnicianWorkLogReport objects for a given user within a
+     * specified date range.
+     * 
+     * @param user      The user for whom the work log reports are to be retrieved.
+     * @param startDate The start date of the range for which the work log reports
+     *                  are to be retrieved.
+     * @param endDate   The end date of the range for which the work log reports are
+     *                  to be retrieved.
+     * @return A list of TechnicianWorkLogReport objects representing the work log
+     *         reports
+     *         within the specified date range for the given user.
+     */
+    @Override
+    public List<TechnicianWorkLogReport> getTechnicianWorkLogReport(User user, String startDate, String endDate) {
+
+        // Retrieve the grouped work logs data for the given user and date range
+        List<GroupedWorkLogsData> workLogs = this.getTechnicianHistoryData(user, startDate, endDate);
+        List<TechnicianWorkLogReport> worklogReports = new ArrayList<TechnicianWorkLogReport>();
+
+        for (GroupedWorkLogsData groupedWorkLog : workLogs) {
+            Optional<TechnicianWorkLog> clockinWorkLogOptional = groupedWorkLog.getLogs()
+                    .stream()
+                    .filter(log -> log.getAction().equals(TechnicianWorkLog.CLOCK_IN))
+                    .findFirst();
+
+            Optional<TechnicianWorkLog> clockoutWorkLogOptional = groupedWorkLog.getLogs()
+                    .stream()
+                    .filter(log -> log.getAction().equals(TechnicianWorkLog.CLOCK_OUT))
+                    .reduce((first, second) -> second);
+
+            // Check if both clock-in and clock-out work logs are present
+            if (clockinWorkLogOptional.isPresent() && clockoutWorkLogOptional.isPresent()) {
+                TechnicianWorkLog clockinWorkLog = clockinWorkLogOptional.get();
+                TechnicianWorkLog clockoutWorkLog = clockoutWorkLogOptional.get();
+
+                Optional<User> existingTechnician = this.userRepository.findById(clockinWorkLog.getTechnicianId());
+
+                // If the technician exists, create a TechnicianWorkLogReport object and add it
+                // to the list
+                if (existingTechnician.isPresent()) {
+                    User technician = existingTechnician.get();
+
+                    TechnicianWorkLogReport report = new TechnicianWorkLogReport(
+                            technician.getName(),
+                            groupedWorkLog.getDate(),
+                            clockinWorkLog.getFormattedHours(),
+                            clockoutWorkLog.getFormattedHours(),
+                            groupedWorkLog.getFormattedDuration());
+
+                    worklogReports.add(report);
+                }
+            }
+        }
+
+        Collections.sort(worklogReports);
+
+        return worklogReports;
     }
 }

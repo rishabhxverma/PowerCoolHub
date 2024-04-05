@@ -1,4 +1,5 @@
 package ca.powercool.powercoolhub.services;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -12,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,8 +28,10 @@ public class JobRepositoryTest {
     public void testSaveJobWithTechnicianIds() {
         // Create a new Job instance
         Job job = new Job();
+        LocalDate serviceDate = LocalDate.of(2024, 3, 24);
+
         job.setCustomerId(1); // Set customer ID
-        job.setServiceDate(Date.valueOf("2024-03-24")); // Set service date
+        job.setServiceDate(serviceDate); // Set service date
         job.setNote("Test job"); // Set note
         job.setJobType("SERVICE"); // Set job type (assuming string representation)
         job.setJobDone(false); // Set job done status
@@ -44,12 +47,14 @@ public class JobRepositoryTest {
         assertNotNull(savedJob.getId()); // Ensure the job ID is assigned after save
     }
 
-        @Test
+    @Test
     public void testJobCreation() {
         Job job = new Job();
         job.setId(1);
         job.setCustomerId(1);
-        job.setServiceDate(new Date(2024-03-26));
+        LocalDate serviceDate = LocalDate.of(2024, 3, 26);
+
+        job.setServiceDate(serviceDate);
         job.setNote("Test note");
         job.setJobType("SERVICE");
         job.setTechnicianIds(Arrays.asList(1, 2, 3));
@@ -69,75 +74,71 @@ public class JobRepositoryTest {
     }
 
     @Test
-public void testJobUpdate() {
-    Job job = new Job();
-    job.setId(1);
-    job.setJobType("SERVICE");
-    job.setJobDone(false);
+    public void testJobUpdate() {
+        Job job = new Job();
+        job.setId(1);
+        job.setJobType("SERVICE");
+        job.setJobDone(false);
 
-    // Save the initial state
-    Job savedJob = jobRepository.save(job);
+        // Save the initial state
+        Job savedJob = jobRepository.save(job);
 
-    // Update the job
-    savedJob.setJobType("REPAIR");
-    savedJob.setJobDone(true);
-    Job updatedJob = jobRepository.save(savedJob);
+        // Update the job
+        savedJob.setJobType("REPAIR");
+        savedJob.setJobDone(true);
+        Job updatedJob = jobRepository.save(savedJob);
 
-    // Assert that the job is updated correctly
-    assertEquals("repair", updatedJob.getJobType());
-    assertTrue(updatedJob.isJobDone());
-}
+        // Assert that the job is updated correctly
+        assertEquals("repair", updatedJob.getJobType());
+        assertTrue(updatedJob.isJobDone());
+    }
 
-@Test
-public void testFindJobByCustomerId() {
-    Job job = new Job();
-    job.setId(1);
-    job.setCustomerId(1);
-    jobRepository.save(job);
+    @Test
+    public void testFindJobByCustomerId() {
+        Job job = new Job();
+        job.setId(1);
+        job.setCustomerId(1);
+        jobRepository.save(job);
 
-    List<Job> jobs = jobRepository.findByCustomerId(1);
-    assertFalse(jobs.isEmpty());
-}
+        List<Job> jobs = jobRepository.findByCustomerId(1);
+        assertFalse(jobs.isEmpty());
+    }
 
-@Test
-public void testDeleteJob() {
-    Job job = new Job();
-    job.setId(1);
-    jobRepository.save(job);
+    @Test
+    public void testDeleteJob() {
+        Job job = new Job();
+        job.setId(1);
+        jobRepository.save(job);
 
-    jobRepository.delete(job);
-    Optional<Job> deletedJob = jobRepository.findById(1);
+        jobRepository.delete(job);
+        Optional<Job> deletedJob = jobRepository.findById(1);
 
-    assertFalse(deletedJob.isPresent());
-}
+        assertFalse(deletedJob.isPresent());
+    }
 
-@Test
-public void testFindAllJobs() {
-    Job job1 = new Job();
-    job1.setId(1);
-    jobRepository.save(job1);
+    @Test
+    public void testFindAllJobs() {
+        Job job1 = new Job();
+        job1.setId(1);
+        jobRepository.save(job1);
 
-    Job job2 = new Job();
-    job2.setId(2);
-    jobRepository.save(job2);
+        Job job2 = new Job();
+        job2.setId(2);
+        jobRepository.save(job2);
 
-    List<Job> jobs = jobRepository.findAll();
-    assertEquals(2, jobs.size());
-}
+        List<Job> jobs = jobRepository.findAll();
+        assertEquals(2, jobs.size());
+    }
 
-@Test
-public void testFindJobByTechnicianId() {
-    Job job = new Job();
-    job.setId(1);
-    job.setTechnicianIds(Arrays.asList(1, 2, 3));
-    jobRepository.save(job);
+    @Test
+    public void testFindJobByTechnicianId() {
+        Job job = new Job();
+        job.setId(1);
+        job.setTechnicianIds(Arrays.asList(1, 2, 3));
+        jobRepository.save(job);
 
-    List<Job> jobs = jobRepository.findByTechnicianId(1);
-    assertFalse(jobs.isEmpty());
-}
-
-
-
-
+        List<Job> jobs = jobRepository.findByTechnicianId(1);
+        assertFalse(jobs.isEmpty());
+    }
 
 }

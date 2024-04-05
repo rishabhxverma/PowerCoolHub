@@ -2,9 +2,11 @@ package ca.powercool.powercoolhub.controllers;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,25 +19,32 @@ import ca.powercool.powercoolhub.models.Customer;
 import ca.powercool.powercoolhub.models.Job;
 import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.models.UserRole;
+import ca.powercool.powercoolhub.models.technician.TechnicianWorkLog;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
 import ca.powercool.powercoolhub.repositories.JobRepository;
 import ca.powercool.powercoolhub.repositories.UserRepository;
+import ca.powercool.powercoolhub.services.TechnicianWorkLogService;
+import jakarta.servlet.http.HttpServletRequest;
 import ca.powercool.powercoolhub.services.MailService;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RequestMapping("/jobs")
 @Controller
 public class JobController {
     @Autowired
     private JobRepository jobRepository;
+    
     @Autowired
     private CustomerRepository customerRepository;
+    
     @Autowired
     private UserRepository userRepository;
 
@@ -50,6 +59,9 @@ public class JobController {
     }
 
 
+    @Autowired
+    private TechnicianWorkLogService technicianWorkLogService;
+
     @GetMapping("/addJob")
     public String addJob() {
         return "jobs/addJob";
@@ -57,7 +69,7 @@ public class JobController {
 
     @PostMapping("/addJob")
     public String addJobForTheCustomerIntoDataBase(@RequestParam("customerId") int customerIdInfo,
-            @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") Date serviceDate,
+            @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate serviceDate,
             @RequestParam(required = false, value = "message") String message,
             @RequestParam("note") String note,
             @RequestParam("jobType") String jobTypeString,
@@ -115,19 +127,78 @@ public class JobController {
         return jobs;
     }
 
-    // @GetMapping("/{id}")
-    // public String showJobPage(@PathVariable("id") Integer id, Model model) {
-    //     Optional<Job> job = this.jobRepository.findById(id);
+    @GetMapping("/{id}")
+    public String showJobPage(@PathVariable("id") Integer id, HttpServletRequest request, Model model) {
+        Optional<Job> existingJob = this.jobRepository.findById(id);
 
-    //     if (!job.isPresent()) {
-    //         model.addAttribute("error", "Error: Job not found.");
-    //         return "jobs/job";
-    //     }
+        if (!existingJob.isPresent()) {
+            model.addAttribute("error", "Error: Job not found.");
+            return "jobs/job";
+        }
 
-    //     model.addAttribute("job", job);
+        Job job = existingJob.get();
+        List<User> assignedTechnicians = this.userRepository.findAssignedTechnicians(job.getId());
+        
+        User user = (User) request.getSession().getAttribute("user");
+        Optional<Customer> customer = this.customerRepository.findById(job.getCustomerId());
+        
+        String clockState = this.technicianWorkLogService.getClockState(user);
+        
+        model.addAttribute("job", job);
+        model.addAttribute("customer", customer.get());
+        model.addAttribute("assignedTechnicians", assignedTechnicians);
+        model.addAttribute("clockButtonState", clockState);
+        model.addAttribute("user", user);
 
-    //     return "jobs/job";
-    // }
+        if (user.getRole().equals(UserRole.MANAGER)) {
+            return "users/manager/job";
+        } else {
+            return "users/technician/job";
+        }
+    }
+
+    @PostMapping("/{id}/complete")
+    public ResponseEntity<?> completeJob(@PathVariable("id") Integer id, HttpServletRequest request, @RequestBody String address) {
+        Optional<Job> existingJob = this.jobRepository.findById(id);
+
+        if (!existingJob.isPresent()) {
+            return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(null);
+        }
+
+        User user = (User) request.getSession().getAttribute("user");
+
+        Job completedJob = existingJob.get();
+        completedJob.setJobDone(true);
+        this.jobRepository.save(completedJob);
+
+        // Log the job completion
+        TechnicianWorkLog jobCompletion = new TechnicianWorkLog();
+        jobCompletion.setAction("job_completed");
+        jobCompletion.setLocation(address);
+
+        this.technicianWorkLogService.saveWorkLog(user, jobCompletion);
+
+        return new ResponseEntity<>(completedJob, HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/note/update")
+    public ResponseEntity<?> updateNote(@PathVariable("id") Integer id, @RequestBody String note) {
+        Optional<Job> existingJob = this.jobRepository.findById(id);
+        if (!existingJob.isPresent()) {
+            return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(null);
+        }
+
+        Job job = existingJob.get();
+        job.setNote(note);
+
+        this.jobRepository.save(job);
+
+        return new ResponseEntity<>(true, HttpStatus.OK);
+    }
 
     @GetMapping("/getJobsCount")
     public ResponseEntity<Map<Integer,  Integer>> getJobsCountForTechnicians(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
