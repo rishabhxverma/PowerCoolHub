@@ -19,6 +19,7 @@ import ca.powercool.powercoolhub.models.UserRole;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
 import ca.powercool.powercoolhub.repositories.JobRepository;
 import ca.powercool.powercoolhub.repositories.UserRepository;
+import ca.powercool.powercoolhub.services.MailService;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,6 +37,17 @@ public class JobController {
     private CustomerRepository customerRepository;
     @Autowired
     private UserRepository userRepository;
+
+    private final MailService mailService;
+
+    public JobController(MailService mailService) {     this.mailService = mailService;}
+
+    @RequestMapping("/sendTestEmail")
+    public String sendTestEmail() {        
+        
+        return "email sent";
+    }
+
 
     @GetMapping("/addJob")
     public String addJob() {
@@ -76,7 +88,13 @@ public class JobController {
         customer.setNextService(serviceDate);
         jobRepository.save(job);
         stat.setStatus(HttpServletResponse.SC_OK);
-
+        //send confirmation email
+        //get list of technicians by their ids
+        List<String> technicians = new java.util.ArrayList<>();
+        for(Integer i : technicianIds){
+            technicians.add(userRepository.findById((long)i).get().getName());
+        }
+        //mailService.sendBookingConfirmation(customer.getEmail(), customerName, serviceDate, customer.getAddress(), jobTypeString, technicians);
         return "redirect:/customers/viewAll";
     }
 
