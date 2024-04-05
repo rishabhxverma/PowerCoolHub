@@ -102,7 +102,8 @@ public class GroupedWorkLogsData {
             sumOfDurations += duration.toMinutes();
         }
 
-        return sumOfDurations - BREAK_TIME;
+        // Ensures sumOfDurations > 0
+        return (Long) ((sumOfDurations - BREAK_TIME > 0) ? sumOfDurations - BREAK_TIME > 0 : 0);
     }
 
     @Override
