@@ -2,6 +2,7 @@ package ca.powercool.powercoolhub.models;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -36,6 +37,7 @@ public class Job {
     private boolean jobDone;
     private String customerName;
     private boolean paymentReceived;
+    private LocalDateTime jobDoneTime = null;
 
     public enum JobType {
         SERVICE,
@@ -56,6 +58,13 @@ public class Job {
         this.jobDone = jobDone;
     }
 
+    public LocalDateTime getJobDoneTime() {
+        return jobDoneTime;
+    }
+
+    public void setJobDoneTime(LocalDateTime jobDoneTime) {
+        this.jobDoneTime = jobDoneTime;
+    }
 
     public boolean isActive() {
         return !jobDone;
