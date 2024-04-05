@@ -1,6 +1,5 @@
 package ca.powercool.powercoolhub.controllers;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -68,13 +67,22 @@ public class JobController {
     }
 
     @PostMapping("/addJob")
-    public String addJobForTheCustomerIntoDataBase(@RequestParam("customerId") int customerIdInfo,
+    public ResponseEntity<String> addJobForTheCustomerIntoDataBase(
+            @RequestParam("customerId") int customerIdInfo,
             @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate serviceDate,
             @RequestParam(required = false, value = "message") String message,
             @RequestParam("note") String note,
             @RequestParam("jobType") String jobTypeString,
-            @RequestParam("technicianIds") List<Integer> technicianIds,
-            HttpServletResponse stat) {
+            @RequestParam("technicianIds") List<Integer> technicianIds) {
+    
+        Optional<Customer> optionalCustomer = customerRepository.findById(customerIdInfo);
+        if (!optionalCustomer.isPresent()) {
+            return new ResponseEntity<>("Customer not found", HttpStatus.NOT_FOUND);
+        }
+    
+        Customer customer = optionalCustomer.get();
+        String customerName = customer.getName() != null ? customer.getName() : "Customer unnamed";
+    
         Job job = new Job();
         job.setCustomerMessage(message);
         job.setCustomerId(customerIdInfo);
@@ -82,33 +90,26 @@ public class JobController {
         job.setNote(note);
         job.setJobType(jobTypeString);
         job.setTechnicianIds(technicianIds);
-        
-
-        Customer customer = customerRepository.findById(customerIdInfo).orElse(null);
-
-        String customerName;
-        if (customer == null) {
-            customerName = "Customer not found";
-        }
-        else{
-            customerName = customer.getName();
-            if(customerName == null){
-                customerName = "Customer unnamed";
-            }
-        }
         job.setCustomerName(customerName);
+    
         customer.setState(Customer.CustomerState.UPCOMING);
         customer.setNextService(serviceDate);
+        customerRepository.save(customer);
+    
         jobRepository.save(job);
-        stat.setStatus(HttpServletResponse.SC_OK);
-        //send confirmation email
-        //get list of technicians by their ids
-        List<String> technicians = new java.util.ArrayList<>();
-        for(Integer i : technicianIds){
-            technicians.add(userRepository.findById((long)i).get().getName());
+    
+        List<String> technicians = new ArrayList<>();
+        for (Integer i : technicianIds) {
+            Optional<User> optionalUser = userRepository.findById((long) i);
+            if (!optionalUser.isPresent()) {
+                return new ResponseEntity<>("Technician not found", HttpStatus.NOT_FOUND);
+            }
+            technicians.add(optionalUser.get().getName());
         }
+    
         //mailService.sendBookingConfirmation(customer.getEmail(), customerName, serviceDate, customer.getAddress(), jobTypeString, technicians);
-        return "redirect:/customers/viewAll";
+    
+        return new ResponseEntity<>("Job added successfully", HttpStatus.OK);
     }
 
     //get jobs from customer id
@@ -252,10 +253,11 @@ public class JobController {
         if (customer != null) {
             customer.setState(Customer.CustomerState.UPCOMING);
             customer.setNextService(serviceDate);
+            customerRepository.save(customer);
+        } else {
+            // Handle case where customer is not found
+            return NullPointerException.class.getName();
         }
-
-        // Save the updated customer
-        customerRepository.save(customer);
 
         stat.setStatus(HttpServletResponse.SC_OK);
         //send confirmation email

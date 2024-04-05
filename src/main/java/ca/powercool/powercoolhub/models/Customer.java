@@ -38,7 +38,7 @@ public class Customer {
     }
 
     public Customer(Integer id, String name, String address, String phoneNumber, String notes, LocalDate lastServiced,
-    LocalDate nextService, CustomerState state) {
+    LocalDate nextService, CustomerState state, String message) {
         this.id = id;
         this.name = name;
         this.address = address;
