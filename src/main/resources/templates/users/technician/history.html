@@ -2,11 +2,11 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="~{fragments/technician/head :: head}"></head>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 <style>
     @keyframes blinker {
         50% { color: red; }
     }
+
     .blinking {
         animation: blinker 1.5s linear infinite;
     }
@@ -15,7 +15,6 @@
 <body th:attr="tech-id=${user.id}, data-clock-state=${clockButtonState}">
     <!-- Navigation bars -->
     <div th:replace="~{fragments/technician/top-navigation :: top-navigation(${user.id}, ${clockButtonState})}"></div>
-
     <div class="container px-2 px-md-5 mt-4">
         <div th:replace="~{fragments/technician/history-table :: history-table}"></div>
         <div th:replace="~{fragments/technician/confirmation-modal :: confirmationModal}"></div>
