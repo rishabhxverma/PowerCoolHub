@@ -10,6 +10,7 @@ import java.util.List;
 import ca.powercool.powercoolhub.models.technician.TechnicianWorkLog;
 
 public class GroupedWorkLogsData {
+    public final int BREAK_TIME = 45;
     private LocalDate date;
     private List<TechnicianWorkLog> logs;
     private float minutes;
@@ -101,7 +102,7 @@ public class GroupedWorkLogsData {
             sumOfDurations += duration.toMinutes();
         }
 
-        return sumOfDurations;
+        return sumOfDurations - BREAK_TIME;
     }
 
     @Override

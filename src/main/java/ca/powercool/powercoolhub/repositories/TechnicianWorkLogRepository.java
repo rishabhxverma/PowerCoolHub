@@ -24,6 +24,7 @@ public interface TechnicianWorkLogRepository extends JpaRepository<TechnicianWor
     @Query("SELECT twl FROM TechnicianWorkLog twl WHERE twl.technicianId = :userId AND twl.action IN ('clock_in', 'clock_out') ORDER BY twl.createdAt DESC LIMIT 1")
     TechnicianWorkLog findLatestClockWorkLogByUserId(Long userId);
     
-    @Query("SELECT twl FROM TechnicianWorkLog twl WHERE DATE(twl.createdAt) = :date AND twl.technicianId = :userId")
+    @Query("SELECT twl FROM TechnicianWorkLog twl " + 
+        "WHERE DATE(twl.createdAt) = :date AND twl.technicianId = :userId")
     List<TechnicianWorkLog> findWorkLogsByDate(Long userId, LocalDate date);
 }
