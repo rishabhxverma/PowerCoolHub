@@ -1,46 +1,75 @@
 <div id="calendar-container" th:fragment="calendar-fragment">
-    <div id="calendar-buttons">
-        <button type="button" id="prev-week" onclick="changeWeek(-1)">Prev week</button>
-        <span id="week-offset">Current week</span>
-        <button type="button" id="next-week" onclick="changeWeek(1)">Next week</button>
+  <div id="calendar-buttons">
+    <button type="button" id="prev-week" onclick="changeWeek(-1)">
+      Prev week
+    </button>
+    <span id="week-offset">Current week</span>
+    <button type="button" id="next-week" onclick="changeWeek(1)">
+      Next week
+    </button>
+  </div>
+  <div class="row">
+    <div
+      class="col calendar-top"
+      style="border-left: 2px solid black; border-top-left-radius: 12px"
+    >
+      <span>Sun</span>
+      <time class="week-date"></time>
     </div>
-    <div class="row">
-        <div class="col calendar-top" style="border-left: 2px solid black; border-top-left-radius: 12px;">
-            <span>Sun</span>
-            <time class="week-date"></time>
-        </div>
-        <div class="col calendar-top">
-            <span>Mon</span>
-            <time class="week-date"></time>
-        </div>
-        <div class="col calendar-top">
-            <span>Tue</span>
-            <time class="week-date"></time>
-        </div>
-        <div class="col calendar-top">
-            <span>Wed</span>
-            <time class="week-date"></time>
-        </div>
-        <div class="col calendar-top">
-            <span>Thu</span>
-            <time class="week-date"></time>
-        </div>
-        <div class="col calendar-top">
-            <span>Fri</span>
-            <time class="week-date"></time>
-        </div>
-        <div class="col calendar-top" style="border-right: 2px solid black; border-top-right-radius: 12px;">
-            <span>Sat</span>
-            <time class="week-date"></time>
-        </div>
+    <div class="col calendar-top">
+      <span>Mon</span>
+      <time class="week-date"></time>
     </div>
-    <div class="row">
-        <time class="col calendar-col" style="border-left: 2px solid black; border-bottom-left-radius: 3px;"></time> <!-- Sunday --> 
-        <time class="col calendar-col"></time> <!-- Monday -->
-        <time class="col calendar-col"></time> <!-- Tuesday -->
-        <time class="col calendar-col"></time> <!-- Wednesday -->
-        <time class="col calendar-col"></time> <!-- Thursday -->
-        <time class="col calendar-col"></time> <!-- Friday -->
-        <time class="col calendar-col" style="border-right: 2px solid black; border-bottom-right-radius: 3px;"></time> <!-- Saturday -->
+    <div class="col calendar-top">
+      <span>Tue</span>
+      <time class="week-date"></time>
     </div>
+    <div class="col calendar-top">
+      <span>Wed</span>
+      <time class="week-date"></time>
+    </div>
+    <div class="col calendar-top">
+      <span>Thu</span>
+      <time class="week-date"></time>
+    </div>
+    <div class="col calendar-top">
+      <span>Fri</span>
+      <time class="week-date"></time>
+    </div>
+    <div
+      class="col calendar-top"
+      style="border-right: 2px solid black; border-top-right-radius: 12px"
+    >
+      <span>Sat</span>
+      <time class="week-date"></time>
+    </div>
+  </div>
+  <div class="row">
+    <time
+      class="col calendar-col"
+      style="border-left: 2px solid black; border-bottom-left-radius: 3px"
+    ></time>
+    <!-- Sunday -->
+    <time class="col calendar-col"></time>
+    <!-- Monday -->
+    <time class="col calendar-col"></time>
+    <!-- Tuesday -->
+    <time class="col calendar-col"></time>
+    <!-- Wednesday -->
+    <time class="col calendar-col"></time>
+    <!-- Thursday -->
+    <time class="col calendar-col"></time>
+    <!-- Friday -->
+    <time
+      class="col calendar-col"
+      style="border-right: 2px solid black; border-bottom-right-radius: 3px"
+    ></time>
+    <!-- Saturday -->
+  </div>
 </div>
+<!--  Modal  -->
+<div
+  th:replace="~{fragments/jobDetailsFragment :: job-details-fragment-modal}"
+></div>
+<script th:src="@{/js/job/details.js}" defer></script>
+<script th:src="@{/js/utilities/location.js}" defer></script>
