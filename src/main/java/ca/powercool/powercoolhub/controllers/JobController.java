@@ -121,8 +121,8 @@ public class JobController {
 
     @GetMapping("/getWeek")
     @ResponseBody
-    public List<Job> getJobsForWeek(@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+    public List<Job> getJobsForWeek(@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
         List<Job> jobs = jobRepository.findJobsBetweenDates(startDate, endDate);
         return jobs;
     }
@@ -201,7 +201,7 @@ public class JobController {
     }
 
     @GetMapping("/getJobsCount")
-    public ResponseEntity<Map<Integer,  Integer>> getJobsCountForTechnicians(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+    public ResponseEntity<Map<Integer,  Integer>> getJobsCountForTechnicians(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         List<User> technicians = userRepository.findByRole(UserRole.TECHNICIAN);
         Map<Integer,  Integer> techJobs = new HashMap<>(); // techId, jobCount
         List<Job> jobsOnDate = jobRepository.findByServiceDate(date);
@@ -222,7 +222,7 @@ public class JobController {
 
     @PostMapping("/updateJob")
     public String updateJobInDatabase(@RequestParam("jobId") int jobId,
-                                    @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") Date serviceDate,
+                                    @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate serviceDate,
                                     @RequestParam(required = false, value = "message") String message,
                                     @RequestParam("note") String note,
                                     @RequestParam("jobType") String jobTypeString,

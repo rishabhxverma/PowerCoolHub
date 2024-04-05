@@ -20,8 +20,6 @@ public class Customer {
     private LocalDate lastServiced;
     private LocalDate nextService;
     private String message;
-    private Date lastServiced;
-    private Date nextService;
 
     /*
      * The state of the customer, which can be one of the following: ARCHIVED (job finished and no future jobs planned)

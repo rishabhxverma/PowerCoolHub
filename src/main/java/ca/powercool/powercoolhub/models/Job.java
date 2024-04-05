@@ -26,8 +26,6 @@ public class Job {
     private int customerId;
     private LocalDate serviceDate;
     private String note;
-    private Date serviceDate;
-    private String note;        //job notes
     private String customerMessage; //customer message
     // technician ids assigned to this job
     @ElementCollection
