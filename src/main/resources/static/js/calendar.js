@@ -137,6 +137,9 @@ let currentWeekOffset = 0;
 let currentWeekDates = getWeekDates(currentBaseDate);
 
 
+// Event listeners
+//event listener for job details
+
 
 document.addEventListener("DOMContentLoaded", () => {
   // Display the current week

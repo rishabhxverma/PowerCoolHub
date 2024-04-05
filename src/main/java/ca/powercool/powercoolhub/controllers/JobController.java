@@ -1,6 +1,7 @@
 package ca.powercool.powercoolhub.controllers;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -146,4 +147,54 @@ public class JobController {
         }
         return new ResponseEntity<>(techJobs, HttpStatus.OK);
     }
+
+
+    @PostMapping("/updateJob")
+    public String updateJobInDatabase(@RequestParam("jobId") int jobId,
+                                    @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") Date serviceDate,
+                                    @RequestParam(required = false, value = "message") String message,
+                                    @RequestParam("note") String note,
+                                    @RequestParam("jobType") String jobTypeString,
+                                    @RequestParam("technicianIds") List<Integer> technicianIds,
+                                    HttpServletResponse stat) {
+        // Fetch the existing job from the database
+        Job job = jobRepository.findById(jobId).orElse(null);
+        if (job == null) {
+            // Handle case where job is not found
+            return "redirect:/error";
+        }
+
+        // Update job details
+        job.setCustomerMessage(message); // Assuming this field can be updated
+        job.setServiceDate(serviceDate);
+        job.setNote(note);
+        job.setJobType(jobTypeString);
+        job.setTechnicianIds(technicianIds);
+
+        // Update job in the database
+        jobRepository.save(job);
+
+        // Update related customer's state and next service date (assuming this logic is the same as in addJobForTheCustomerIntoDataBase method)
+
+        // Update related customer's state and next service date
+        Customer customer = customerRepository.findById(job.getCustomerId()).orElse(null);
+        if (customer != null) {
+            customer.setState(Customer.CustomerState.UPCOMING);
+            customer.setNextService(serviceDate);
+        }
+
+        // Save the updated customer
+        customerRepository.save(customer);
+
+        stat.setStatus(HttpServletResponse.SC_OK);
+        //send confirmation email
+        //get list of technicians by their ids
+        List<String> technicians = new ArrayList<>();
+        for (Integer i : technicianIds) {
+            technicians.add(userRepository.findById((long) i).get().getName());
+        }
+        //mailService.sendBookingConfirmation(customer.getEmail(), customer.getName(), serviceDate, customer.getAddress(), jobTypeString, technicians);
+        return "redirect:/customers/viewAll";
+    }
+
 }
