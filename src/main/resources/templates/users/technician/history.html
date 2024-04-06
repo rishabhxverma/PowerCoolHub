@@ -2,16 +2,6 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="~{fragments/technician/head :: head}"></head>
-<style>
-    @keyframes blinker {
-        50% { color: red; }
-    }
-
-    .blinking {
-        animation: blinker 1.5s linear infinite;
-    }
-</style>
-
 <body th:attr="tech-id=${user.id}, data-clock-state=${clockButtonState}">
     <!-- Navigation bars -->
     <div th:replace="~{fragments/technician/top-navigation :: top-navigation(${user.id}, ${clockButtonState})}"></div>

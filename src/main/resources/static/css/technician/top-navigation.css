@@ -10,8 +10,17 @@
     /* Optionally remove other default styles */
     background-color: transparent;
     cursor: pointer;
+    color: black;
 }
 
 .clock-button .fa-clock { 
     color: black;
+}
+
+@keyframes blinker {
+    50% { color: red; }
+}
+
+.blinking {
+    animation: blinker 1.5s linear infinite;
 }
