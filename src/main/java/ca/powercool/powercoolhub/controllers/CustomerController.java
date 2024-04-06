@@ -130,18 +130,18 @@ public class CustomerController {
         return "customers/editedCustomer";
     }
 
-    @PostMapping("/")
-    public String createCustomer(@ModelAttribute Customer customer, Model model) {
-        Customer existingCustomer = customerRepository.findByEmail(customer.getEmail());
-        boolean addressExists = customerRepository.existsByAddress(customer.getAddress()); 
+   @PostMapping("/")
+    public String createCustomer(@ModelAttribute Customer customersData, Model model) {
+        Customer aCustomer = customerRepository.findByEmail(customersData.getEmail()); // finds and stores the information on an existing customer
+        boolean addressExists = customerRepository.existsByAddress(customersData.getAddress()); // checks if the customer already has email add in the db
     
-        if (existingCustomer != null && addressExists) {
-            existingCustomer.setState(CustomerState.REQUESTING_APPOINTMENT);
-            existingCustomer.setNotes(customer.getNotes());
-        } else {
-            existingCustomer = customer;
+        if (aCustomer != null && addressExists) { // if customer exists in db, it updates its state and notes, prevents duplication 
+            aCustomer.setState(CustomerState.REQUESTING_APPOINTMENT);
+            aCustomer.setNotes(customersData.getNotes());
+        } else { // if not, it stores the data from front-end as a new customer
+            aCustomer = customersData;
         }
-        customerRepository.save(existingCustomer);
+        customerRepository.save(aCustomer);
     
         return "redirect:/customers/viewAll"; 
     }
