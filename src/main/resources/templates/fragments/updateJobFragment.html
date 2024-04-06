@@ -26,6 +26,8 @@
             <!-- Display current customer name -->
             <p>Customer Name: <span th:text="${job.customerName}"></span></p>
 
+            <div th:replace="~{fragments/calendar :: calendar-fragment}"></div>
+
             <!-- Date service -->
             <div class="form-group">
               <label for="dateService">Date Service</label>
@@ -126,4 +128,31 @@
       </div>
     </div>
   </div>
+  <script>
+    function handleDateChange(date) {
+      const techCheckboxDiv = document.getElementById("tech-checkbox");
+
+      fetch("/jobs/getJobsCount?date=" + date)
+        .then((response) => response.json())
+        .then((jobCounts) => {
+          // hashmap of userId->jobCount
+          const techBoxes = document.querySelectorAll(".tech-box");
+
+          techBoxes.forEach((techBox) => {
+            const checkbox = techBox.querySelector('input[name="technicianIds"]');
+
+            const userId = checkbox.value;
+
+            const jobCountDiv = techBox.querySelector(".job-count");
+
+            const count = jobCounts[userId];
+            jobCountDiv.textContent = `Jobs: ${count}`;
+          });
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
+  </script>
+  <script src="/js/calendar/addCalendarColSelect.js"></script>
 </div>

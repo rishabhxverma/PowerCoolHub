@@ -69,93 +69,6 @@ function appendCell(row, element, className, href, textContent) {
   row.appendChild(cell);
 }
 
-// Calendar clicking for job date.....................................................
-function resetColumnBackgrounds() {
-  document.querySelectorAll(".calendar-top, .calendar-col").forEach((col) => {
-    col.style.backgroundColor = ""; // Reset background color of .calendar-top
-  });
-}
-
-function changeColumnColor(date) {
-  resetColumnBackgrounds();
-  let top = document.querySelector(`.week-date[datetime="${date}"]`);
-  if (top == null) return;
-  top = top.parentElement;
-
-  let column = document.querySelector(`.calendar-col[datetime="${date}"]`);
-
-  if (top == null || column == null) return;
-
-  top.style.backgroundColor = "#ebebeb";
-  column.style.backgroundColor = "#f0f0f0";
-}
-
-// Selecting top and col to allow clicking on the calendar
-document.querySelectorAll(".calendar-top").forEach((col) => {
-  col.addEventListener("click", (event) => {
-    let date = col.querySelector(".week-date").getAttribute("datetime");
-    document.querySelector("#dateService").value = date;
-    changeColumnColor(date);
-  });
-});
-
-document.querySelectorAll(".calendar-col").forEach((col) => {
-  col.addEventListener("click", (event) => {
-    let date = col.getAttribute("datetime");
-    document.querySelector("#dateService").value = date;
-    changeColumnColor(date);
-  });
-});
-
-// Event listener for .job elements
-document.querySelectorAll(".job").forEach((job) => {
-  job.addEventListener("click", (event) => {
-    // Stop the event from bubbling up to the column listeners
-    event.stopPropagation();
-
-    // maybe add job click function here
-  });
-});
-
-// Updates the calendar to display the week provided (overwrites the existing function in calendar.js)
-function displayWeek(weekDates) {
-  resetColumnBackgrounds();
-
-  let weekOffset = document.querySelector(`#week-offset`);
-  if (weekOffset === null) return;
-
-  if (currentWeekOffset > 0)
-    weekOffset.textContent = "Current week +" + currentWeekOffset;
-  else if (currentWeekOffset < 0)
-    weekOffset.textContent = "Current week -" + currentWeekOffset * -1;
-  else weekOffset.textContent = "Current week";
-
-  weekDates.forEach((weekDay, index) => {
-    let dateString = formatDate(weekDay.date); // YYYY-MM-DD
-
-    let topDateElement = document.querySelector(
-      `.calendar-top:nth-child(${index + 1}) .week-date`
-    );
-    topDateElement.textContent = `${weekDay.month} ${weekDay.day}`;
-
-    topDateElement.setAttribute("datetime", dateString);
-
-    let dayColumn = document.querySelector(
-      `.calendar-col:nth-child(${index + 1})`
-    );
-    if (dayColumn == null) return;
-    dayColumn.setAttribute("datetime", dateString);
-  });
-
-  let chosenDate = document.querySelector("#dateService").value;
-  if (chosenDate !== "") {
-    changeColumnColor(chosenDate);
-  }
-
-  fetchJobsAndDisplay(weekDates);
-}
-
-// Calendar clicking for job date.....................................................
 
 // Enables clicking on user boxes to check them..................
 let techBoxes = document.querySelectorAll(".tech-box");
@@ -193,7 +106,6 @@ function handleDateChange(date) {
     .then((response) => response.json())
     .then((jobCounts) => {
       // hashmap of userId->jobCount
-      console.log(jobCounts);
       const techBoxes = document.querySelectorAll(".tech-box");
 
       techBoxes.forEach((techBox) => {
@@ -211,14 +123,6 @@ function handleDateChange(date) {
       console.error("Error:", error);
     });
 }
-
-document.querySelectorAll(".calendar-col").forEach((col) => {
-  col.addEventListener("click", (event) => {
-    let date = col.getAttribute("datetime");
-    document.querySelector("#dateService").value = date;
-    handleDateChange(date);
-  });
-});
 
 // ....... This function handles given a SimpleEntity<User, Integer> (where user is a technician and integer is their jobCount) .......
 // function handleDateChange(date) {

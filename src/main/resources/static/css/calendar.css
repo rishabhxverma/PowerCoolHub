@@ -68,11 +68,6 @@
   margin-top: 0px;
 }
 
-/* .job:hover {
-  background-color: #d9e5ff;
-  cursor: pointer;
-} */
-
 .job-name,
 .job-type {
   display: block;
@@ -88,33 +83,40 @@
   border-color: #535353;
 }
 
-/* .finished:hover {
-  background-color: #b3b3b3;
-} */
 
 .service-job {
   background-color: #90ee90;
   border-color: #559955;
 }
 
-/* .service-job:hover {
-  background-color: #b3ffb3;
-} */
-
 .repair-job {
   background-color: #f08080;
   border-color: #995555;
 }
 
-/* .repair-job:hover {
-  background-color: #ffb3b3;
-} */
 
 .install-job {
   background-color: #add8e6;
   border-color: #5599aa;
 }
 
-/* .install-job:hover {
+.job:hover {
+  background-color: #d9e5ff;
+  cursor: pointer;
+}
+
+.finished:hover {
+  background-color: #b3b3b3;
+} 
+
+.service-job:hover {
+  background-color: #b3ffb3;
+}
+
+.repair-job:hover {
+  background-color: #ffb3b3;
+}
+
+.install-job:hover {
   background-color: #b3e6ff;
-} */
+}
