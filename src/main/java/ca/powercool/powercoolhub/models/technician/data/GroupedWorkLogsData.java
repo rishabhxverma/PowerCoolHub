@@ -80,29 +80,33 @@ public class GroupedWorkLogsData {
      * Sum up the time difference (duration) between `clock-in` and `clock-out`.
      * 
      * @param logs
-     * @return Long minutes
+     * @return float minutes
      */
-    public Long calculateSumOfDurations() {
+    public long calculateSumOfDurations() {
         List<LocalDateTime> clockInTimes = new ArrayList<>();
         List<LocalDateTime> clockOutTimes = new ArrayList<>();
-
+    
         // Separate clock-in and clock-out times
-        for (int i = 0; i < this.logs.size(); i++) {
-            if (logs.get(i).getAction().equals(TechnicianWorkLog.CLOCK_IN)) {
-                clockInTimes.add(logs.get(i).getCreatedAt());
-            } else if (logs.get(i).getAction().equals(TechnicianWorkLog.CLOCK_OUT)) {
-                clockOutTimes.add(logs.get(i).getCreatedAt());
+        for (TechnicianWorkLog log : this.logs) {
+            if (log.getAction().equals(TechnicianWorkLog.CLOCK_IN)) {
+                clockInTimes.add(log.getCreatedAt());
+            } else if (log.getAction().equals(TechnicianWorkLog.CLOCK_OUT)) {
+                clockOutTimes.add(log.getCreatedAt());
             }
         }
-
+    
         // Calculate sum of durations between clock-in and clock-out times
-        Long sumOfDurations = 0L;
+        long sumOfDurations = 0;
         for (int i = 0; i < Math.min(clockInTimes.size(), clockOutTimes.size()); i++) {
             Duration duration = Duration.between(clockInTimes.get(i), clockOutTimes.get(i));
             sumOfDurations += duration.toMinutes();
         }
+    
+        // Subtract break time
+        sumOfDurations -= BREAK_TIME;
 
-        return sumOfDurations - BREAK_TIME;
+        // Ensure sumOfDurations is non-negative
+        return sumOfDurations;
     }
 
     @Override

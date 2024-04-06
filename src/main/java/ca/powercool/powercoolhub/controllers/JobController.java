@@ -40,10 +40,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class JobController {
     @Autowired
     private JobRepository jobRepository;
-    
+
     @Autowired
     private CustomerRepository customerRepository;
-    
+
     @Autowired
     private UserRepository userRepository;
 
@@ -112,7 +112,7 @@ public class JobController {
         return new ResponseEntity<>("Job added successfully", HttpStatus.OK);
     }
 
-    //get jobs from customer id
+    // get jobs from customer id
     @GetMapping("/getJobs")
     public String getJobsForCustomer(@RequestParam("customerId") int customerId, Model model) {
         List<Job> jobs = jobRepository.findByCustomerId(customerId);
@@ -139,12 +139,12 @@ public class JobController {
 
         Job job = existingJob.get();
         List<User> assignedTechnicians = this.userRepository.findAssignedTechnicians(job.getId());
-        
+
         User user = (User) request.getSession().getAttribute("user");
         Optional<Customer> customer = this.customerRepository.findById(job.getCustomerId());
-        
+
         String clockState = this.technicianWorkLogService.getClockState(user);
-        
+
         model.addAttribute("job", job);
         model.addAttribute("customer", customer.get());
         model.addAttribute("assignedTechnicians", assignedTechnicians);
@@ -159,13 +159,14 @@ public class JobController {
     }
 
     @PostMapping("/{id}/complete")
-    public ResponseEntity<?> completeJob(@PathVariable("id") Integer id, HttpServletRequest request, @RequestBody String address) {
+    public ResponseEntity<?> completeJob(@PathVariable("id") Integer id, HttpServletRequest request,
+            @RequestBody String address) {
         Optional<Job> existingJob = this.jobRepository.findById(id);
 
         if (!existingJob.isPresent()) {
             return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(null);
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(null);
         }
 
         User user = (User) request.getSession().getAttribute("user");
@@ -189,8 +190,8 @@ public class JobController {
         Optional<Job> existingJob = this.jobRepository.findById(id);
         if (!existingJob.isPresent()) {
             return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(null);
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(null);
         }
 
         Job job = existingJob.get();
@@ -204,20 +205,27 @@ public class JobController {
     @GetMapping("/getJobsCount")
     public ResponseEntity<Map<Integer,  Integer>> getJobsCountForTechnicians(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         List<User> technicians = userRepository.findByRole(UserRole.TECHNICIAN);
-        Map<Integer,  Integer> techJobs = new HashMap<>(); // techId, jobCount
+        Map<Integer, Integer> techJobs = new HashMap<>(); // techId, jobCount
         List<Job> jobsOnDate = jobRepository.findByServiceDate(date);
 
         for (User tech : technicians) {
             int techId = tech.getId().intValue();
             int jobCount = 0;
-            for(Job job : jobsOnDate){
-                if(job.getTechnicianIds().contains(techId)){
+            for (Job job : jobsOnDate) {
+                if (job.getTechnicianIds().contains(techId)) {
                     jobCount++;
                 }
             }
             techJobs.put(techId, jobCount);
         }
         return new ResponseEntity<>(techJobs, HttpStatus.OK);
+    }
+
+    @GetMapping("/viewAllJobs")
+    public String getAllandShowAllJobs(Model model) {
+        List<Job> jobs = jobRepository.findAll();
+        model.addAttribute("jobs", jobs);
+        return "jobs/viewAllJobs";
     }
 
 

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
-    <title>View Employees</title>
+    <title>View Jobs</title>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
@@ -18,7 +18,7 @@
     <div th:replace="~{fragments/left-navigation :: left-navigation}"></div>
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <div class="d-flex" style="justify-content: center;">
-            <h1 class="m-4">All Employees</h1>
+            <h1 class="m-4">All Jobs</h1>
         </div>
         <div class="container mt-5">
             <div class="row">
@@ -26,20 +26,21 @@
                     <table class="table table-bordered table-hover">
                         <thead class="thead-light">
                             <tr>
-                                <th scope="col">Employee Name</th>
-                                <th scope="col">Email Address</th>
-                                <th scope="col">Title</th>
+                                <th scope="col">Customer ID</th>
+                                <th scope="col">Service Date</th>
+                                <th scope="col">Note</th>
+                                <th scope="col">Job Type</th>
+                                <th scope="col">Technician ID</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            <tr th:each="user : ${users}">
-                                <td> <a style="text-decoration: none;"
-                                        th:href="@{/users/manager/operationsOnUsers/editUsers/{id}(id=${user.id})}"
-                                        th:text="${user.name}"></a>
-                                </td>
-                                <td th:text="${user.email}"></td>
-                                <td th:text="${user.role}"></td>
+                            <tr th:each="job : ${jobs}">
+                                <td th:text="${job.customerId}"></td>
+                                <td th:text="${job.serviceDate}"></td>
+                                <td th:text="${job.note}"></td>
+                                <td th:text="${job.jobType}"></td>
+                                <td th:text="${job.technicianIds}"></td>
                             </tr>
                         </tbody>
 
@@ -48,10 +49,6 @@
                 </div>
             </div>
             <br>
-            <button type="button" class="btn btn-success"><a style="text-decoration-line: none; color: #fff;"
-                    href="/register"> Register new
-                    employee</a>
-            </button>
         </div>
 
     </main>

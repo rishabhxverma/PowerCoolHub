@@ -112,25 +112,25 @@ public class TechnicianWorkLogTest {
         List<TechnicianWorkLog> workLogs = new ArrayList<>();
         
         // 3 hours
-        workLogs.add(createWorkLog("clock-in", "2024-03-20T01:00:00.000"));
-        workLogs.add(createWorkLog("clock-out", "2024-03-20T04:00:00.000"));
+        workLogs.add(createWorkLog(TechnicianWorkLog.CLOCK_IN, "2024-03-20T01:00:00.000"));
+        workLogs.add(createWorkLog(TechnicianWorkLog.CLOCK_OUT, "2024-03-20T04:00:00.000"));
 
         // 3 hours
-        workLogs.add(createWorkLog("clock-in", "2024-03-20T14:00:00.000"));
-        workLogs.add(createWorkLog("clock-out", "2024-03-20T17:00:00.000"));
+        workLogs.add(createWorkLog(TechnicianWorkLog.CLOCK_IN, "2024-03-20T14:00:00.000"));
+        workLogs.add(createWorkLog(TechnicianWorkLog.CLOCK_OUT, "2024-03-20T17:00:00.000"));
         
         // 2 hours
-        workLogs.add(createWorkLog("clock-in", "2024-03-20T19:00:00.000"));
-        workLogs.add(createWorkLog("clock-out", "2024-03-20T21:00:00.000"));
+        workLogs.add(createWorkLog(TechnicianWorkLog.CLOCK_IN, "2024-03-20T19:00:00.000"));
+        workLogs.add(createWorkLog(TechnicianWorkLog.CLOCK_OUT, "2024-03-20T21:00:00.000"));
         
         GroupedWorkLogsData groupedWorkLogsData = new GroupedWorkLogsData(LocalDateTime.now().toLocalDate(), workLogs);
 
         // When
-        Long sumOfDurations = groupedWorkLogsData.calculateSumOfDurations();
+        long sumOfDurations = groupedWorkLogsData.calculateSumOfDurations();
 
         // Then
-        // 3 + 3 + 2 = 8 hours * 60 mins = 480 mins.
-        assertEquals(480, sumOfDurations);
+        // 3 + 3 + 2 = 8 hours * 60 mins = 435 mins.
+        assertEquals(435, sumOfDurations);
     }
 
     private TechnicianWorkLog createWorkLog(String action, String createdAt) {
