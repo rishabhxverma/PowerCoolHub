@@ -179,6 +179,7 @@ public class JobController {
 
         Job job = existingJob.get();
         List<User> assignedTechnicians = this.userRepository.findAssignedTechnicians(job.getId());
+        List<User> allTechnicians = this.userRepository.findByRole(UserRole.TECHNICIAN);
 
         User user = (User) request.getSession().getAttribute("user");
         Optional<Customer> customer = this.customerRepository.findById(job.getCustomerId());
@@ -188,6 +189,7 @@ public class JobController {
         model.addAttribute("job", job);
         model.addAttribute("customer", customer.get());
         model.addAttribute("assignedTechnicians", assignedTechnicians);
+        model.addAttribute("allTechnicians", allTechnicians);
         model.addAttribute("clockButtonState", clockState);
         model.addAttribute("user", user);
 

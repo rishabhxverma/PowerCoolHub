@@ -83,32 +83,22 @@
             </div>
 
             <!-- Technicians -->
-            <div class="form-group">
-              <label for="tech-checkbox">Select employees to assign:</label>
-              <div id="tech-checkbox" class="row">
-                <!-- Iterate over technicians and pre-select those assigned to the job -->
-                <div th:each="tech : ${techs}" class="col-md-2">
-                  <div class="tech-box form-check">
-                    <input
-                      th:id="${'tech' + tech.id}"
-                      th:value="${tech.id}"
-                      name="technicianIds"
-                      type="checkbox"
-                      class="form-check-input"
-                      th:checked="${job.technicianIds.contains(tech.id)}"
-                    />
-                    <label
-                      th:for="${'tech' + tech.id}"
-                      class="form-check-label"
-                    >
-                      <div th:text="${tech.name}"></div>
-                      <div class="job-count">Jobs:</div>
-                    </label>
-                  </div>
-                </div>
+            <div th:each="tech : ${allTechnicians}" class="col-md-2">
+              <div class="tech-box form-check">
+                <input
+                  th:id="${'tech' + tech.id}"
+                  th:value="${tech.id}"
+                  name="technicianIds"
+                  type="checkbox"
+                  class="form-check-input"
+                  th:checked="${assignedTechnicians.contains(tech)}"
+                />
+                <label th:for="${'tech' + tech.id}" class="form-check-label">
+                  <div th:text="${tech.name}"></div>
+                  <div class="job-count">Jobs:</div>
+                </label>
               </div>
             </div>
-
             <!-- Submit button -->
             <button type="submit" class="btn btn-primary">Update</button>
           </form>

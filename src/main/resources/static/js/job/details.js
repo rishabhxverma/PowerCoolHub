@@ -87,12 +87,8 @@ function on_note_field_changed(dom) {
 
 //function to open updateJobFragment Modal
 function on_reschedule_button_clicked(buttonElement) {
-  var rescheduleButton = buttonElement;
-  rescheduleButton.addEventListener("click", function () {
-    var rescheduleModal = document.getElementById("updateJobModal");
-    var modal = new bootstrap.Modal(rescheduleModal);
-    modal.show();
-    console.log("Open reschedule modal for job: " + jobId);
-    document.getElementById("jobId").value = jobId;
-  });
+  var jobId = buttonElement.getAttribute("data-job-id");
+  var rescheduleModal = document.getElementById("updateJobModal");
+  var modal = new bootstrap.Modal(rescheduleModal);
+  modal.show();
 }
