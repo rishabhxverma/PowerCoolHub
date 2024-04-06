@@ -8,6 +8,7 @@
     <div th:replace="~{fragments/technician/top-navigation :: top-navigation(${user.id}, ${clockButtonState})}"></div>
     <div class="container px-md-5 px-2 px-sm-2 mt-md-4 mt-2">
         <div th:replace="~{fragments/jobs/details :: details}"></div>
+        <div th:replace="~{fragments/technician/confirmation-modal :: confirmationModal}"></div>
     </div>
 
     <script th:src="@{/js/job/details.js}" defer></script>
