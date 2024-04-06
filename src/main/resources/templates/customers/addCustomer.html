@@ -75,8 +75,13 @@
               />
             </div>
             <div class="form-group">
-              <label for="state">State:</label>
-              <select class="form-control" id="state" th:field="*{state}">
+              <label for="state" style="display:none;">State:</label>
+              <select
+                class="form-control"
+                id="state"
+                th:field="*{state}"
+                style="display: none"
+              >
                 <option
                   th:each="state : ${T(ca.powercool.powercoolhub.models.Customer.CustomerState).values()}"
                   th:value="${state}"
@@ -85,11 +90,11 @@
               </select>
             </div><br>
             <div class="form-group">
-              <label for="notes">Notes:</label>
+              <label for="message">Message:</label>
               <textarea
                 class="form-control"
-                id="notes"
-                th:field="*{notes}"
+                id="message"
+                th:field="*{message}"
               ></textarea>
             </div> <br>
             <button type="submit" class="btn btn-primary">Submit</button>

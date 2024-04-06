@@ -28,7 +28,7 @@ import static org.hamcrest.Matchers.not;
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-public class TechnicianHistoryIntegrationTest {
+public class TechnicianHistoryTest {
     @Autowired
     private MockMvc mockMvc;
 

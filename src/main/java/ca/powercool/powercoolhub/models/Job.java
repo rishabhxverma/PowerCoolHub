@@ -1,6 +1,5 @@
 package ca.powercool.powercoolhub.models;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,6 +26,7 @@ public class Job {
     private int customerId;
     private LocalDate serviceDate;
     private String note;
+    private String customerMessage; //customer message
     // technician ids assigned to this job
     @ElementCollection
     @CollectionTable(name = "job_technicians")
@@ -57,6 +57,10 @@ public class Job {
         this.technicianIds = techIds;
         this.jobDone = jobDone;
     }
+    
+    public String getCustomerMessage() {
+        return customerMessage;
+    }
 
     public LocalDateTime getJobDoneTime() {
         return jobDoneTime;
@@ -64,6 +68,9 @@ public class Job {
 
     public void setJobDoneTime(LocalDateTime jobDoneTime) {
         this.jobDoneTime = jobDoneTime;
+    }
+    public void setCustomerMessage(String customerMessage) {
+        this.customerMessage = customerMessage;
     }
 
     public boolean isActive() {

@@ -11,3 +11,7 @@
     background-color: transparent;
     cursor: pointer;
 }
+
+.clock-button .fa-clock { 
+    color: black;
+}
