@@ -74,6 +74,7 @@ function fetchJobsAndDisplay(weekDates) {
         // create on-click for the jobs in calender that opens a modal with job details fragment
         jobEntry.addEventListener("click", function () {
           var jobId = job.id;
+          if(jobId == null) return;
           var url = "/jobs/" + jobId;
           // Open a new tab and redirect to the URL
           window.open(url, '_blank').focus();

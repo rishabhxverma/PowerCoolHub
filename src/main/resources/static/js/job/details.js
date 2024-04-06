@@ -4,6 +4,8 @@ function on_complete_button_clicked(dom) {
 
   let button = dom;
   let jobId = dom.getAttribute("jobId");
+  if(jobId == null) return;
+
 
   button.classList.add("disabled");
   button.setAttribute("disabled", "disabled");
@@ -66,6 +68,8 @@ function on_direction_button_clicked(dom) {
 
 function on_note_field_changed(dom) {
   let jobId = dom.getAttribute("jobId");
+  if(jobId == null) return;
+
   let note = dom.value;
 
   let xhr = new XMLHttpRequest();
