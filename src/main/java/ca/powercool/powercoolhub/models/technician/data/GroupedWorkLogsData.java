@@ -82,7 +82,7 @@ public class GroupedWorkLogsData {
      * @param logs
      * @return float minutes
      */
-    public float calculateSumOfDurations() {
+    public long calculateSumOfDurations() {
         List<LocalDateTime> clockInTimes = new ArrayList<>();
         List<LocalDateTime> clockOutTimes = new ArrayList<>();
     
@@ -96,17 +96,17 @@ public class GroupedWorkLogsData {
         }
     
         // Calculate sum of durations between clock-in and clock-out times
-        float sumOfDurations = 0.0f;
+        long sumOfDurations = 0;
         for (int i = 0; i < Math.min(clockInTimes.size(), clockOutTimes.size()); i++) {
             Duration duration = Duration.between(clockInTimes.get(i), clockOutTimes.get(i));
-            sumOfDurations += (float) duration.toMinutes();
+            sumOfDurations += duration.toMinutes();
         }
     
         // Subtract break time
         sumOfDurations -= BREAK_TIME;
-    
+
         // Ensure sumOfDurations is non-negative
-        return Math.max(sumOfDurations, 0.0f);
+        return sumOfDurations;
     }
 
     @Override
