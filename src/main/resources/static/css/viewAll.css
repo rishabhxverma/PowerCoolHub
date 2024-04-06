@@ -13,7 +13,7 @@
 
 /* for employee assignment ..................................................*/
   .tech-box input[type="checkbox"] {
-    display: block; /* Hides the checkbox */
+    display: none; /* Hides the checkbox */
   }
 
   .tech-box {
@@ -22,6 +22,7 @@
     border-radius: 5px;
     text-align: center;
     margin-bottom: 10px;
+    user-select: none;
   }
 
   .tech-box label {

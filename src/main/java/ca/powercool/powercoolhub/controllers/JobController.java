@@ -36,8 +36,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@RequestMapping("/jobs")
+/**
+ * Controller for handling job-related requests.
+ */
 @Controller
+@RequestMapping("/jobs")
 public class JobController {
     @Autowired
     private JobRepository jobRepository;
@@ -50,23 +53,38 @@ public class JobController {
 
     private final MailService mailService;
 
+    /**
+     * Constructor for JobController.
+     *
+     * @param mailService The mail service to be used by this controller.
+     */
     public JobController(MailService mailService) {     this.mailService = mailService;}
-
-    @RequestMapping("/sendTestEmail")
-    public String sendTestEmail() {        
-        
-        return "email sent";
-    }
 
 
     @Autowired
     private TechnicianWorkLogService technicianWorkLogService;
 
+    /**
+     * Endpoint for adding a job.
+     *
+     * @return The name of the view to be rendered.
+     */
     @GetMapping("/addJob")
     public String addJob() {
         return "jobs/addJob";
     }
 
+    /**
+     * Endpoint for adding a job for a customer into the database.
+     *
+     * @param customerIdInfo The ID of the customer.
+     * @param serviceDate The date of the service.
+     * @param message The message from the customer.
+     * @param note The note for the job.
+     * @param jobTypeString The type of the job.
+     * @param technicianIds The IDs of the technicians.
+     * @return A ResponseEntity indicating the result of the operation.
+     */
     @PostMapping("/addJob")
     public ResponseEntity<String> addJobForTheCustomerIntoDataBase(
             @RequestParam("customerId") int customerIdInfo,
@@ -113,7 +131,13 @@ public class JobController {
         return new ResponseEntity<>("Job added successfully", HttpStatus.OK);
     }
 
-    // get jobs from customer id
+    /**
+     * Endpoint for getting jobs for a customer.
+     *
+     * @param customerId The ID of the customer.
+     * @param model The model to be used by the view.
+     * @return The name of the view to be rendered.
+     */
     @GetMapping("/getJobs")
     public String getJobsForCustomer(@RequestParam("customerId") int customerId, Model model) {
         List<Job> jobs = jobRepository.findByCustomerId(customerId);
@@ -121,6 +145,13 @@ public class JobController {
         return "jobs/viewJobs";
     }
 
+    /**
+     * Endpoint for getting jobs for a week.
+     *
+     * @param startDate The start date of the week.
+     * @param endDate The end date of the week.
+     * @return A list of jobs for the week.
+     */
     @GetMapping("/getWeek")
     @ResponseBody
     public List<Job> getJobsForWeek(@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
@@ -129,6 +160,15 @@ public class JobController {
         return jobs;
     }
 
+
+    /**
+     * Endpoint for showing a job page.
+     *
+     * @param id The ID of the job.
+     * @param request The HttpServletRequest.
+     * @param model The model to be used by the view.
+     * @return The name of the view to be rendered.
+     */
     @GetMapping("/{id}")
     public String showJobPage(@PathVariable("id") Integer id, HttpServletRequest request, Model model) {
         Optional<Job> existingJob = this.jobRepository.findById(id);
@@ -159,6 +199,15 @@ public class JobController {
         }
     }
 
+
+    /**
+     * Endpoint for completing a job.
+     *
+     * @param id The ID of the job.
+     * @param request The HttpServletRequest.
+     * @param address The address where the job was completed.
+     * @return A ResponseEntity indicating the result of the operation.
+     */
     @PostMapping("/{id}/complete")
     public ResponseEntity<?> completeJob(@PathVariable("id") Integer id, HttpServletRequest request,
             @RequestBody String address) {
@@ -188,6 +237,13 @@ public class JobController {
         return new ResponseEntity<>(completedJob, HttpStatus.OK);
     }
 
+    /**
+     * Endpoint for updating a job's note.
+     *
+     * @param id The ID of the job.
+     * @param note The new note.
+     * @return A ResponseEntity indicating the result of the operation.
+     */
     @PostMapping("/{id}/note/update")
     public ResponseEntity<?> updateNote(@PathVariable("id") Integer id, @RequestBody String note) {
         Optional<Job> existingJob = this.jobRepository.findById(id);
@@ -205,6 +261,12 @@ public class JobController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
+   /**
+     * Endpoint for getting the job count for technicians.
+     *
+     * @param date The date for which to get the job count.
+     * @return A ResponseEntity containing a map of technician IDs to job counts.
+     */
     @GetMapping("/getJobsCount")
     public ResponseEntity<Map<Integer,  Integer>> getJobsCountForTechnicians(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         List<User> technicians = userRepository.findByRole(UserRole.TECHNICIAN);
@@ -224,6 +286,12 @@ public class JobController {
         return new ResponseEntity<>(techJobs, HttpStatus.OK);
     }
 
+    /**
+     * Endpoint for viewing all jobs.
+     *
+     * @param model The model to be used by the view.
+     * @return The name of the view to be rendered.
+     */
     @GetMapping("/viewAllJobs")
     public String getAllandShowAllJobs(Model model) {
         List<Job> jobs = jobRepository.findAll();
@@ -232,6 +300,18 @@ public class JobController {
     }
 
 
+    /**
+     * Endpoint for updating a job in the database.
+     *
+     * @param jobId The ID of the job.
+     * @param serviceDate The new service date.
+     * @param message The new message.
+     * @param note The new note.
+     * @param jobTypeString The new job type.
+     * @param technicianIds The new technician IDs.
+     * @param stat The HttpServletResponse.
+     * @return A string indicating the result of the operation.
+     */
     @PostMapping("/updateJob")
     public String updateJobInDatabase(@RequestParam("jobId") int jobId,
                                     @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate serviceDate,

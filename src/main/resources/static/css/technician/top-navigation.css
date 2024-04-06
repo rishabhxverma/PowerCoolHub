@@ -10,8 +10,39 @@
     /* Optionally remove other default styles */
     background-color: transparent;
     cursor: pointer;
+    color: black;
 }
 
 .clock-button .fa-clock { 
     color: black;
+}
+
+@keyframes blinker {
+    50% { color: red; }
+}
+
+.blinking {
+    animation: blinker 1.5s linear infinite;
+}
+
+/* Screens less than 429px width */
+@media only screen and (max-width: 429px) {
+    #top-navigation .container {
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    #brand-container {
+        margin-top: 0.25rem;
+    }
+
+    .clock-button {
+        top: 16px;
+        left: 6px;
+        position: absolute;
+    }
+
+    #top-navigation .navbar-brand {
+        font-size: 1rem;
+    }
 }
