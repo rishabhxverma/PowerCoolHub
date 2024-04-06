@@ -1,70 +1,129 @@
 <div th:fragment="update-job-fragment">
-    <div class="modal fade" id="updateJobModal" tabindex="-1" aria-labelledby="updateJobModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-centered modal-xl">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="updateJobModalLabel">Update Job</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <!-- Content for updating job -->
-            <form id="updateJobForm" action="/jobs/update" method="post">
-              <!-- Hidden input for job ID -->
-              <input type="hidden" name="jobId" th:value="${job.id}" />
-  
-              <!-- Display current customer name -->
-              <p>Customer Name: <span th:text="${job.customerName}"></span></p>
-  
-              <!-- Date service -->
-              <div class="form-group">
-                <label for="dateService">Date Service</label>
-                <input type="date" name="dateService" class="form-control" id="dateService" th:value="${#dates.format(job.serviceDate, 'yyyy-MM-dd')}" required />
-              </div>
-  
-              <!-- Note -->
-              <div class="form-group">
-                <label for="note">Note</label>
-                <textarea class="form-control" name="note" id="note" rows="3" required th:text="${job.note}"></textarea>
-              </div>
-  
-              <!-- Job Type -->
-              <div class="form-group">
-                <label for="jobType">Job Type</label><br />
-                <input type="radio" id="install" name="jobType" value="INSTALL" th:checked="${job.jobType == 'INSTALL'}" required />
-                <label for="install">Install</label><br />
-                <input type="radio" id="service" name="jobType" value="SERVICE" th:checked="${job.jobType == 'SERVICE'}" />
-                <label for="service">Service</label><br />
-                <input type="radio" id="repair" name="jobType" value="REPAIR" th:checked="${job.jobType == 'REPAIR'}" />
-                <label for="repair">Repair</label><br />
-              </div>
-  
-              <!-- Technicians -->
-              <div class="form-group">
-                <label for="tech-checkbox">Select employees to assign:</label>
-                <div id="tech-checkbox" class="row">
-                  <!-- Iterate over technicians and pre-select those assigned to the job -->
-                  <div th:each="tech : ${techs}" class="col-md-2">
-                    <div class="tech-box form-check">
-                      <input th:id="${'tech' + tech.id}" th:value="${tech.id}" name="technicianIds" type="checkbox" class="form-check-input" th:checked="${job.technicianIds.contains(tech.id)}" />
-                      <label th:for="${'tech' + tech.id}" class="form-check-label">
-                        <div th:text="${tech.name}"></div>
-                        <div class="job-count">Jobs:</div>
-                      </label>
-                    </div>
+  <div
+    class="modal fade"
+    id="updateJobModal"
+    tabindex="-1"
+    aria-labelledby="updateJobModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateJobModalLabel">Update Job</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <!-- Content for updating job -->
+          <form id="updateJobForm" action="/jobs/update" method="post">
+            <!-- Hidden input for job ID -->
+            <input type="hidden" name="jobId" th:value="${job.id}" />
+
+            <!-- Display current customer name -->
+            <p>Customer Name: <span th:text="${job.customerName}"></span></p>
+
+            <!-- Date service -->
+            <div class="form-group">
+              <label for="dateService">Date Service</label>
+              <input
+                type="date"
+                name="dateService"
+                class="form-control"
+                id="dateService"
+                th:value="${job.getFormattedDate()}"
+                required
+              />
+            </div>
+
+            <!-- Note -->
+            <div class="form-group">
+              <label for="note">Note</label>
+              <textarea
+                class="form-control"
+                name="note"
+                id="note"
+                rows="3"
+                required
+                th:text="${job.note}"
+              ></textarea>
+            </div>
+
+            <!-- Job Type -->
+            <div class="form-group">
+              <label for="jobType">Job Type</label><br />
+              <input
+                type="radio"
+                id="install"
+                name="jobType"
+                value="INSTALL"
+                th:checked="${job.jobType == 'INSTALL'}"
+                required
+              />
+              <label for="install">Install</label><br />
+              <input
+                type="radio"
+                id="service"
+                name="jobType"
+                value="SERVICE"
+                th:checked="${job.jobType == 'SERVICE'}"
+              />
+              <label for="service">Service</label><br />
+              <input
+                type="radio"
+                id="repair"
+                name="jobType"
+                value="REPAIR"
+                th:checked="${job.jobType == 'REPAIR'}"
+              />
+              <label for="repair">Repair</label><br />
+            </div>
+
+            <!-- Technicians -->
+            <div class="form-group">
+              <label for="tech-checkbox">Select employees to assign:</label>
+              <div id="tech-checkbox" class="row">
+                <!-- Iterate over technicians and pre-select those assigned to the job -->
+                <div th:each="tech : ${techs}" class="col-md-2">
+                  <div class="tech-box form-check">
+                    <input
+                      th:id="${'tech' + tech.id}"
+                      th:value="${tech.id}"
+                      name="technicianIds"
+                      type="checkbox"
+                      class="form-check-input"
+                      th:checked="${job.technicianIds.contains(tech.id)}"
+                    />
+                    <label
+                      th:for="${'tech' + tech.id}"
+                      class="form-check-label"
+                    >
+                      <div th:text="${tech.name}"></div>
+                      <div class="job-count">Jobs:</div>
+                    </label>
                   </div>
                 </div>
               </div>
-  
-              <!-- Submit button -->
-              <button type="submit" class="btn btn-primary">Update</button>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <!-- Additional buttons if needed -->
-          </div>
+            </div>
+
+            <!-- Submit button -->
+            <button type="submit" class="btn btn-primary">Update</button>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
+          <!-- Additional buttons if needed -->
         </div>
       </div>
     </div>
   </div>
-  
+</div>

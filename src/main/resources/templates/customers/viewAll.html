@@ -75,10 +75,27 @@
         <div class="col">
           <label for="filter">Filter by:</label>
           <select id="filter" class="form-control">
-            <option selected value="all">All</option>
-            <option value="upcoming">Upcoming</option>
-            <option value="archived">Archived</option>
-            <option value="requesting-app">Requesting Appointment</option>
+            <option th:selected="${selectedFilter == 'all'}" value="all">
+              All
+            </option>
+            <option
+              th:selected="${selectedFilter == 'upcoming'}"
+              value="upcoming"
+            >
+              Upcoming
+            </option>
+            <option
+              th:selected="${selectedFilter == 'archived'}"
+              value="archived"
+            >
+              Archived
+            </option>
+            <option
+              th:selected="${selectedFilter == 'requesting-app'}"
+              value="requesting-app"
+            >
+              Requesting Appointment
+            </option>
           </select>
         </div>
       </div>
