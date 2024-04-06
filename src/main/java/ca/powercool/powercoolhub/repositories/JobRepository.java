@@ -14,7 +14,8 @@ import java.util.List;
 @Repository
 public interface JobRepository extends JpaRepository<Job, Integer> {
     @Query("SELECT j FROM Job j WHERE j.serviceDate BETWEEN :startDate AND :endDate")
-    List<Job> findJobsBetweenDates(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+    List<Job> findJobsBetweenDates(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     List<Job> findByCustomerId(int customerId); // customer's appointments
 
@@ -26,7 +27,7 @@ public interface JobRepository extends JpaRepository<Job, Integer> {
 
     List<Job> findByPaymentReceivedFalse(); // pending payments
 
-    List<Job> findByServiceDate(Date date);
+    List<Job> findByServiceDate(LocalDate date);
 
     // find jobs assigned to specific technician ID
     @Query("SELECT j FROM Job j JOIN j.technicianIds t WHERE t = :technicianId")

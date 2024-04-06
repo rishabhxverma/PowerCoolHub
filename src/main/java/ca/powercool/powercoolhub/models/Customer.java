@@ -19,6 +19,7 @@ public class Customer {
     private String notes;
     private LocalDate lastServiced;
     private LocalDate nextService;
+    private String message;
 
     /*
      * The state of the customer, which can be one of the following: ARCHIVED (job finished and no future jobs planned)
@@ -37,30 +38,38 @@ public class Customer {
     }
 
     public Customer(Integer id, String name, String address, String phoneNumber, String notes, LocalDate lastServiced,
-    LocalDate nextService, CustomerState state) {
+    LocalDate nextService, CustomerState state, String message) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
-        this.notes = notes;
+        this.message = message;
         this.lastServiced = lastServiced;
         this.nextService = nextService;
         this.state = state;
     }
 
     // Constructor for adding a new customer, no id, no last serviced, no next
-    public Customer(String name, String address, String phoneNumber, String email, CustomerState state, String notes) {
+    public Customer(String name, String address, String phoneNumber, String email, CustomerState state, String message) {
         this.name = name;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.notes = notes;
+        this.message = message;
         this.state = state; // Default state for new customers
     }
 
     // Getters and setters
 
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
     // Other methods
+
 
     public boolean isArchived() {
         return state == CustomerState.ARCHIVED;

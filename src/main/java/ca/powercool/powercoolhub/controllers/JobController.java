@@ -1,6 +1,6 @@
 package ca.powercool.powercoolhub.controllers;
 
-import java.sql.Date;
+import java.util.ArrayList;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +24,7 @@ import ca.powercool.powercoolhub.repositories.JobRepository;
 import ca.powercool.powercoolhub.repositories.UserRepository;
 import ca.powercool.powercoolhub.services.TechnicianWorkLogService;
 import jakarta.servlet.http.HttpServletRequest;
+import ca.powercool.powercoolhub.services.MailService;
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,6 +47,17 @@ public class JobController {
     @Autowired
     private UserRepository userRepository;
 
+    private final MailService mailService;
+
+    public JobController(MailService mailService) {     this.mailService = mailService;}
+
+    @RequestMapping("/sendTestEmail")
+    public String sendTestEmail() {        
+        
+        return "email sent";
+    }
+
+
     @Autowired
     private TechnicianWorkLogService technicianWorkLogService;
 
@@ -55,37 +67,49 @@ public class JobController {
     }
 
     @PostMapping("/addJob")
-    public String addJobForTheCustomerIntoDataBase(@RequestParam("customerId") int customerIdInfo,
+    public ResponseEntity<String> addJobForTheCustomerIntoDataBase(
+            @RequestParam("customerId") int customerIdInfo,
             @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate serviceDate,
+            @RequestParam(required = false, value = "message") String message,
             @RequestParam("note") String note,
             @RequestParam("jobType") String jobTypeString,
-            @RequestParam("technicianIds") List<Integer> technicianIds,
-            HttpServletResponse stat) {
+            @RequestParam("technicianIds") List<Integer> technicianIds) {
+    
+        Optional<Customer> optionalCustomer = customerRepository.findById(customerIdInfo);
+        if (!optionalCustomer.isPresent()) {
+            return new ResponseEntity<>("Customer not found", HttpStatus.NOT_FOUND);
+        }
+    
+        Customer customer = optionalCustomer.get();
+        String customerName = customer.getName() != null ? customer.getName() : "Customer unnamed";
+    
         Job job = new Job();
+        job.setCustomerMessage(message);
         job.setCustomerId(customerIdInfo);
         job.setServiceDate(serviceDate);
         job.setNote(note);
         job.setJobType(jobTypeString);
         job.setTechnicianIds(technicianIds);
-
-        Customer customer = customerRepository.findById(customerIdInfo).orElse(null);
-
-        String customerName;
-        if (customer == null) {
-            customerName = "Customer not found";
-        } else {
-            customerName = customer.getName();
-            if (customerName == null) {
-                customerName = "Customer unnamed";
-            }
-        }
         job.setCustomerName(customerName);
+    
         customer.setState(Customer.CustomerState.UPCOMING);
         customer.setNextService(serviceDate);
+        customerRepository.save(customer);
+    
         jobRepository.save(job);
-        stat.setStatus(HttpServletResponse.SC_OK);
-
-        return "redirect:/customers/viewAll";
+    
+        List<String> technicians = new ArrayList<>();
+        for (Integer i : technicianIds) {
+            Optional<User> optionalUser = userRepository.findById((long) i);
+            if (!optionalUser.isPresent()) {
+                return new ResponseEntity<>("Technician not found", HttpStatus.NOT_FOUND);
+            }
+            technicians.add(optionalUser.get().getName());
+        }
+    
+        //mailService.sendBookingConfirmation(customer.getEmail(), customerName, serviceDate, customer.getAddress(), jobTypeString, technicians);
+    
+        return new ResponseEntity<>("Job added successfully", HttpStatus.OK);
     }
 
     // get jobs from customer id
@@ -98,8 +122,8 @@ public class JobController {
 
     @GetMapping("/getWeek")
     @ResponseBody
-    public List<Job> getJobsForWeek(@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date startDate,
-            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date endDate) {
+    public List<Job> getJobsForWeek(@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
         List<Job> jobs = jobRepository.findJobsBetweenDates(startDate, endDate);
         return jobs;
     }
@@ -179,8 +203,7 @@ public class JobController {
     }
 
     @GetMapping("/getJobsCount")
-    public ResponseEntity<Map<Integer, Integer>> getJobsCountForTechnicians(
-            @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") Date date) {
+    public ResponseEntity<Map<Integer,  Integer>> getJobsCountForTechnicians(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         List<User> technicians = userRepository.findByRole(UserRole.TECHNICIAN);
         Map<Integer, Integer> techJobs = new HashMap<>(); // techId, jobCount
         List<Job> jobsOnDate = jobRepository.findByServiceDate(date);
@@ -204,4 +227,55 @@ public class JobController {
         model.addAttribute("jobs", jobs);
         return "jobs/viewAllJobs";
     }
+
+
+    @PostMapping("/updateJob")
+    public String updateJobInDatabase(@RequestParam("jobId") int jobId,
+                                    @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate serviceDate,
+                                    @RequestParam(required = false, value = "message") String message,
+                                    @RequestParam("note") String note,
+                                    @RequestParam("jobType") String jobTypeString,
+                                    @RequestParam("technicianIds") List<Integer> technicianIds,
+                                    HttpServletResponse stat) {
+        // Fetch the existing job from the database
+        Job job = jobRepository.findById(jobId).orElse(null);
+        if (job == null) {
+            // Handle case where job is not found
+            return "redirect:/error";
+        }
+
+        // Update job details
+        job.setCustomerMessage(message); // Assuming this field can be updated
+        job.setServiceDate(serviceDate);
+        job.setNote(note);
+        job.setJobType(jobTypeString);
+        job.setTechnicianIds(technicianIds);
+
+        // Update job in the database
+        jobRepository.save(job);
+
+        // Update related customer's state and next service date (assuming this logic is the same as in addJobForTheCustomerIntoDataBase method)
+
+        // Update related customer's state and next service date
+        Customer customer = customerRepository.findById(job.getCustomerId()).orElse(null);
+        if (customer != null) {
+            customer.setState(Customer.CustomerState.UPCOMING);
+            customer.setNextService(serviceDate);
+            customerRepository.save(customer);
+        } else {
+            // Handle case where customer is not found
+            return NullPointerException.class.getName();
+        }
+
+        stat.setStatus(HttpServletResponse.SC_OK);
+        //send confirmation email
+        //get list of technicians by their ids
+        List<String> technicians = new ArrayList<>();
+        for (Integer i : technicianIds) {
+            technicians.add(userRepository.findById((long) i).get().getName());
+        }
+        //mailService.sendBookingConfirmation(customer.getEmail(), customer.getName(), serviceDate, customer.getAddress(), jobTypeString, technicians);
+        return "redirect:/customers/viewAll";
+    }
+
 }

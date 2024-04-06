@@ -2,7 +2,9 @@
 function getWeekDates(baseDate) {
   let weekDates = [];
   for (let i = 0; i < 7; i++) {
-    let date = new Date(baseDate.toLocaleString("en-US", { timeZone: "America/Vancouver" }));
+    let date = new Date(
+      baseDate.toLocaleString("en-US", { timeZone: "America/Vancouver" })
+    );
     date.setDate(date.getDate() - date.getDay() + i); // First loop this is Sunday, then Monday, etc.
     weekDates.push({
       day: date.getDate(),
@@ -51,32 +53,36 @@ function fetchJobsAndDisplay(weekDates) {
       jobs.forEach((job) => {
         let jobDate = createDateFromString(job.serviceDate);
         jobDate = formatDate(jobDate);
-        let dayColumn = document.querySelector(`.calendar-col[datetime="${jobDate}"]`);
-        if(dayColumn == null) return;
+        let dayColumn = document.querySelector(
+          `.calendar-col[datetime="${jobDate}"]`
+        );
+        if (dayColumn == null) return;
 
         // Make the div for the job
         let jobEntry = document.createElement("div");
         jobEntry.classList.add("job");
-        if (job.jobDone) 
-          jobEntry.classList.add("finished");
-        else{
+        if (job.jobDone) jobEntry.classList.add("finished");
+        else {
           let jobtype = job.jobType.toLowerCase();
-          if (job.jobType === "service")
-            jobEntry.classList.add("service-job");
+          if (job.jobType === "service") jobEntry.classList.add("service-job");
           else if (job.jobType === "repair")
             jobEntry.classList.add("repair-job");
           else if (job.jobType === "install")
             jobEntry.classList.add("install-job");
         }
 
-        
+        // create on-click for the jobs in calender that opens a modal with job details fragment
+        jobEntry.addEventListener("click", function () {
+          var jobId = job.id;
+          var url = "/jobs/" + jobId;
+          // Open a new tab and redirect to the URL
+          window.open(url, '_blank').focus();
+        });
 
         let jobNameDiv = document.createElement("div");
         jobNameDiv.classList.add("job-name");
-                if(job.customerName == null)
-                    jobNameDiv.textContent = "No Name";
-                else
-                    jobNameDiv.textContent = job.customerName;
+        if (job.customerName == null) jobNameDiv.textContent = "No Name";
+        else jobNameDiv.textContent = job.customerName;
 
         let jobTypeDiv = document.createElement("div");
         jobTypeDiv.classList.add("job-type");
@@ -108,14 +114,17 @@ function displayWeek(weekDates) {
     let dateString = formatDate(weekDay.date); // YYYY-MM-DD
     console.log(dateString);
 
-    let topDateElement = document.querySelector(`.calendar-top:nth-child(${index + 1}) .week-date`);
+    let topDateElement = document.querySelector(
+      `.calendar-top:nth-child(${index + 1}) .week-date`
+    );
     topDateElement.textContent = `${weekDay.month} ${weekDay.day}`;
 
-    
     topDateElement.setAttribute("datetime", dateString);
 
-    let dayColumn = document.querySelector(`.calendar-col:nth-child(${index + 1})`);
-    if(dayColumn == null) return;
+    let dayColumn = document.querySelector(
+      `.calendar-col:nth-child(${index + 1})`
+    );
+    if (dayColumn == null) return;
     dayColumn.setAttribute("datetime", dateString);
   });
 
@@ -131,12 +140,15 @@ function changeWeek(weeksToAdd) {
 }
 
 // Initialize with current date
-let currentBaseDate = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Vancouver" }));
+let currentBaseDate = new Date(
+  new Date().toLocaleString("en-US", { timeZone: "America/Vancouver" })
+);
 
 let currentWeekOffset = 0;
 let currentWeekDates = getWeekDates(currentBaseDate);
 
-
+// Event listeners
+//event listener for job details
 
 document.addEventListener("DOMContentLoaded", () => {
   // Display the current week

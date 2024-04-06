@@ -31,20 +31,46 @@ public class CustomerController {
 
     // View all customers
     @GetMapping("/viewAll")
-    public String viewAllCustomers(@RequestParam(required = false) String filter, Model model) {
-        List<Customer> customers = customerRepository.findAll();
-        if (filter != null) {
-            Customer.CustomerState state = mapFilterToState(filter);
-            customers = customerRepository.findByState(state);
+    public String viewAllCustomers(@RequestParam(required = false) String filter,
+                                   @RequestParam(required = false, value = "customerName", defaultValue = "") String customerName,
+                                   Model model) {
+        List<Customer> customers;
+    
+        if (customerName != null && !customerName.isEmpty()) {
+            customers = customerRepository.findByNameLikeIgnoreCase(customerName + "%");
         } else {
-            customers = customerRepository.findAll();
+            // Filter customers based on the selected filter
+            if (filter != null && !filter.isEmpty()) {
+                Customer.CustomerState state = mapFilterToState(filter);
+                customers = customerRepository.findByState(state);
+            } else {
+                // If no filter is provided, return all customers
+                customers = customerRepository.findAll();
+            }
         }
+    
         model.addAttribute("customers", customers);
-
+        model.addAttribute("selectedFilter", filter);
+    
         List<User> techs = userRepository.findByRole(UserRole.TECHNICIAN);
         model.addAttribute("techs", techs);
-
+    
         return "customers/viewAll";
+    }
+    
+    
+    @GetMapping("/searchCustomer")
+    public String searchCustomerByName(@RequestParam(value = "customerName", defaultValue = "") String customerName,
+            Model model) {
+        customerName = customerName.trim();
+        if (customerName == "") {
+            return "redirect:/customers/viewAll";
+        }
+
+        List<Customer> customers = customerRepository.findByNameLikeIgnoreCase(customerName + "%");
+        model.addAttribute("customers", customers);
+        model.addAttribute("searchTerm", customerName);
+        return "customers/searchResults";
     }
 
     // Filter customers by state
@@ -93,20 +119,6 @@ public class CustomerController {
         return "customers/addCustomer";
     }
 
-    @GetMapping("/searchCustomer")
-    public String searchCustomerByName(@RequestParam(value = "customerName", defaultValue = "") String customerName,
-            Model model) {
-        customerName = customerName.trim();
-        if (customerName == "") {
-            return "redirect:/customers/viewAll";
-        }
-
-        List<Customer> customers = customerRepository.findByNameLikeIgnoreCase(customerName + "%");
-        model.addAttribute("customers", customers);
-        model.addAttribute("searchTerm", customerName);
-        return "customers/searchResults";
-    }
-
     @PostMapping("/update/{id}")
     public String updateCustomer(@PathVariable Integer id, @ModelAttribute("customer") Customer customerDetails,
             RedirectAttributes redirectAttributes) {
@@ -135,10 +147,11 @@ public class CustomerController {
         Customer aCustomer = customerRepository.findByEmail(customersData.getEmail()); // finds and stores the information on an existing customer
         boolean addressExists = customerRepository.existsByAddress(customersData.getAddress()); // checks if the customer already has email add in the db
     
-        if (aCustomer != null && addressExists) { // if customer exists in db, it updates its state and notes, prevents duplication 
+        if (aCustomer != null && addressExists) { //existing // if customer exists in db, it updates its state and notes, prevents duplication 
             aCustomer.setState(CustomerState.REQUESTING_APPOINTMENT);
             aCustomer.setNotes(customersData.getNotes());
-        } else { // if not, it stores the data from front-end as a new customer
+        } else { //new
+            aCustomer.setState(CustomerState.REQUESTING_APPOINTMENT); // if not, it stores the data from front-end as a new customer
             aCustomer = customersData;
         }
         customerRepository.save(aCustomer);

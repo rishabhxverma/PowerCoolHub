@@ -1,6 +1,5 @@
 document.getElementById("filter").addEventListener("change", function () {
   var selectedFilter = this.value;
-  console.log(selectedFilter);
   fetch(`/customers/filterJson?filter=${selectedFilter}`)
     .then((response) => response.json())
     .then((data) => {
@@ -28,7 +27,7 @@ document.getElementById("filter").addEventListener("change", function () {
           buttonCell.appendChild(button);
           row.appendChild(buttonCell);
         } else {
-          // If filter is not "requesting-app", add an empty cell for the actions column
+          // If filter is not "requesting-app", hide the first column including title
           var emptyCell = document.createElement("td");
           row.appendChild(emptyCell);
         }
@@ -43,33 +42,15 @@ document.getElementById("filter").addEventListener("change", function () {
         );
         appendCell(row, "td", "", "", customer.address);
         appendCell(row, "td", "", "", customer.phoneNumber);
-        appendCell(row, "td", "", "", customer.lastServiced);
         appendCell(row, "td", "", "", customer.nextService);
         appendCell(row, "td", "", "", customer.state);
-        appendCell(row, "td", "", "", customer.notes);
+        appendCell(row, "td", "", "", customer.message);
 
         // Append the row to the table body
         tbody.appendChild(row);
       });
     });
 });
-
-// Function to append cells
-function appendCell(row, element, className, href, textContent) {
-  var cell = document.createElement(element);
-  if (className !== "") {
-    cell.className = className;
-  }
-  if (href !== "") {
-    var link = document.createElement("a");
-    link.href = href;
-    link.textContent = textContent;
-    cell.appendChild(link);
-  } else {
-    cell.textContent = textContent;
-  }
-  row.appendChild(cell);
-}
 
 // Function to append cells
 function appendCell(row, element, className, href, textContent) {
@@ -98,12 +79,12 @@ function resetColumnBackgrounds() {
 function changeColumnColor(date) {
   resetColumnBackgrounds();
   let top = document.querySelector(`.week-date[datetime="${date}"]`);
-  if(top == null) return;
+  if (top == null) return;
   top = top.parentElement;
 
   let column = document.querySelector(`.calendar-col[datetime="${date}"]`);
 
-  if(top == null || column == null) return;
+  if (top == null || column == null) return;
 
   top.style.backgroundColor = "#ebebeb";
   column.style.backgroundColor = "#f0f0f0";
@@ -152,14 +133,17 @@ function displayWeek(weekDates) {
   weekDates.forEach((weekDay, index) => {
     let dateString = formatDate(weekDay.date); // YYYY-MM-DD
 
-    let topDateElement = document.querySelector(`.calendar-top:nth-child(${index + 1}) .week-date`);
+    let topDateElement = document.querySelector(
+      `.calendar-top:nth-child(${index + 1}) .week-date`
+    );
     topDateElement.textContent = `${weekDay.month} ${weekDay.day}`;
 
-    
     topDateElement.setAttribute("datetime", dateString);
 
-    let dayColumn = document.querySelector(`.calendar-col:nth-child(${index + 1})`);
-    if(dayColumn == null) return;
+    let dayColumn = document.querySelector(
+      `.calendar-col:nth-child(${index + 1})`
+    );
+    if (dayColumn == null) return;
     dayColumn.setAttribute("datetime", dateString);
   });
 
@@ -202,6 +186,39 @@ function getUserName(userId) {
     });
 }
 
+function handleDateChange(date) {
+  const techCheckboxDiv = document.getElementById("tech-checkbox");
+
+  fetch("/jobs/getJobsCount?date=" + date)
+    .then((response) => response.json())
+    .then((jobCounts) => {
+      // hashmap of userId->jobCount
+      console.log(jobCounts);
+      const techBoxes = document.querySelectorAll(".tech-box");
+
+      techBoxes.forEach((techBox) => {
+        const checkbox = techBox.querySelector('input[name="technicianIds"]');
+
+        const userId = checkbox.value;
+
+        const jobCountDiv = techBox.querySelector(".job-count");
+
+        const count = jobCounts[userId];
+        jobCountDiv.textContent = `Jobs: ${count}`;
+      });
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+    });
+}
+
+document.querySelectorAll(".calendar-col").forEach((col) => {
+  col.addEventListener("click", (event) => {
+    let date = col.getAttribute("datetime");
+    document.querySelector("#dateService").value = date;
+    handleDateChange(date);
+  });
+});
 
 // ....... This function handles given a SimpleEntity<User, Integer> (where user is a technician and integer is their jobCount) .......
 // function handleDateChange(date) {
@@ -264,38 +281,3 @@ function getUserName(userId) {
 //     });
 
 // }
-
-function handleDateChange(date) {
-  const techCheckboxDiv = document.getElementById("tech-checkbox");
-
-  fetch("/jobs/getJobsCount?date=" + date)
-    .then((response) => response.json())
-    .then((jobCounts) => { // hashmap of userId->jobCount
-      console.log(jobCounts);
-      const techBoxes = document.querySelectorAll('.tech-box');
-
-      techBoxes.forEach(techBox => {
-        const checkbox = techBox.querySelector('input[name="technicianIds"]');
-
-        const userId = checkbox.value;
-
-        const jobCountDiv = techBox.querySelector('.job-count');
-
-        const count = jobCounts[userId];
-        jobCountDiv.textContent = `Jobs: ${count}`;
-      });
-    })
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-
-}
-
-
-document.querySelectorAll(".calendar-col").forEach((col) => {
-  col.addEventListener("click", (event) => {
-    let date = col.getAttribute("datetime");
-    document.querySelector("#dateService").value = date;
-    handleDateChange(date);
-  });
-});
