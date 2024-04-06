@@ -24,3 +24,10 @@
 .blinking {
     animation: blinker 1.5s linear infinite;
 }
+
+/* Screens less than 429px width */
+@media only screen and (max-width: 429px) {
+    #top-navigation .container {
+        justify-content: center;
+    }
+}
