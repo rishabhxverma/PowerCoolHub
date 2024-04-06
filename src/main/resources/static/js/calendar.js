@@ -73,11 +73,10 @@ function fetchJobsAndDisplay(weekDates) {
 
         // create on-click for the jobs in calender that opens a modal with job details fragment
         jobEntry.addEventListener("click", function () {
-          console.log("clicked job");
-          var jobDetailsModal = document.getElementById("jobDetailsModal");
-          console.log(jobDetailsModal);
-          var modal = new bootstrap.Modal(jobDetailsModal);
-          modal.show();
+          var jobId = job.id;
+          var url = "/jobs/" + jobId;
+          // Open a new tab and redirect to the URL
+          window.open(url, '_blank').focus();
         });
 
         let jobNameDiv = document.createElement("div");
