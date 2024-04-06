@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ca.powercool.powercoolhub.models.Job;
+import ca.powercool.powercoolhub.models.Job.JobType;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -28,6 +29,10 @@ public interface JobRepository extends JpaRepository<Job, Integer> {
     List<Job> findByPaymentReceivedFalse(); // pending payments
 
     List<Job> findByServiceDate(LocalDate date);
+
+    List<Job> findByCustomerNameLikeIgnoreCase(String customerName);
+
+    List<Job> findByJobType(JobType jobType);
 
     // find jobs assigned to specific technician ID
     @Query("SELECT j FROM Job j JOIN j.technicianIds t WHERE t = :technicianId")

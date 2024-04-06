@@ -293,11 +293,53 @@ public class JobController {
      * @return The name of the view to be rendered.
      */
     @GetMapping("/viewAllJobs")
-    public String getAllandShowAllJobs(Model model) {
-        List<Job> jobs = jobRepository.findAll();
+    public String getAllandShowAllJobs(@RequestParam(required = false) String filter,
+                                       @RequestParam(required = false, value = "customerName", defaultValue = "") String customerName,
+                                       Model model) {
+        List<Job> jobs;
+    
+        if (customerName != null && !customerName.isEmpty()) {
+            // Search jobs by customer's name
+            jobs = jobRepository.findByCustomerNameLikeIgnoreCase(customerName + "%");
+        } else {
+            // Filter jobs based on the selected filter
+            if (filter != null && !filter.isEmpty()) {
+                if (filter.equalsIgnoreCase("done")) {
+                    jobs = jobRepository.findByJobDoneTrue();
+                } else if (filter.equalsIgnoreCase("notdone")) {
+                    jobs = jobRepository.findByJobDoneFalse();
+                } else {
+                    Job.JobType type = mapFilterToType(filter);
+                    jobs = jobRepository.findByJobType(type);
+                }
+            } else {
+                // If no filter is provided, return all jobs
+                jobs = jobRepository.findAll();
+            }
+        }
+    
         model.addAttribute("jobs", jobs);
+        model.addAttribute("selectedFilter", filter);
+    
+        List<User> techs = userRepository.findByRole(UserRole.TECHNICIAN);
+        model.addAttribute("techs", techs);
+    
         return "jobs/viewAllJobs";
     }
+
+    private Job.JobType mapFilterToType(String filter) {
+        switch (filter.toLowerCase()) {
+            case "service":
+                return Job.JobType.SERVICE;
+            case "install":
+                return Job.JobType.INSTALL;
+            case "repair":
+                return Job.JobType.REPAIR;
+            default:
+                throw new IllegalArgumentException("Invalid filter: " + filter);
+        }
+    }
+
 
 
     /**

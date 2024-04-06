@@ -1,154 +1,117 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
-<head>
+<html lang="en">
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/css/customer/viewAll.css" />
     <title>View Jobs</title>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="/css/viewAll.css" />
+    <script src="/js/viewAllJobs.js" defer></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
-</head>
-
-<body>
+    <script src="/js/calendar/addCalendarColSelect.js" defer></script>
+  </head>
+  <body>
     <div th:replace="~{fragments/top-navigation :: top-navigation}"></div>
     <div th:replace="~{fragments/left-navigation :: left-navigation}"></div>
     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-        <div class="d-flex" style="justify-content: center;">
-            <h1 class="m-4">All Jobs</h1>
-        </div>
-        <div class="container mt-5">
-            <div class="row">
-                <div class="col">
-                    <table class="table table-bordered table-hover">
-                        <thead class="thead-light">
-                            <tr>
-                                <th scope="col">Customer ID</th>
-                                <th scope="col">Service Date</th>
-                                <th scope="col">Note</th>
-                                <th scope="col">Job Type</th>
-                                <th scope="col">Technician ID</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr th:each="job : ${jobs}">
-                                <td th:text="${job.customerId}"></td>
-                                <td th:text="${job.serviceDate}"></td>
-                                <td th:text="${job.note}"></td>
-                                <td th:text="${job.jobType}"></td>
-                                <td th:text="${job.technicianIds}"></td>
-                            </tr>
-                        </tbody>
-
-
-                    </table>
-                </div>
+      <div class="d-flex" style="justify-content: center">
+        <h1 class="m-4">All Jobs</h1>
+      </div>
+      <div class="container mt-5">
+        <div class="row">
+          <div class="col">
+            <div class="mb-3">
+              <label for="filter" class="form-label">Filter by:</label>
+              <select
+                class="form-select"
+                id="filter"
+                onchange="location = this.value;"
+              >
+                <option
+                  th:selected="${selectedFilter == null}"
+                  value="viewAllJobs"
+                >
+                  All
+                </option>
+                <option
+                  th:selected="${selectedFilter == 'service'}"
+                  value="viewAllJobs?filter=service"
+                >
+                  Service
+                </option>
+                <option
+                  th:selected="${selectedFilter == 'install'}"
+                  value="viewAllJobs?filter=install"
+                >
+                  Install
+                </option>
+                <option
+                  th:selected="${selectedFilter == 'repair'}"
+                  value="viewAllJobs?filter=repair"
+                >
+                  Repair
+                </option>
+                <option
+                  th:selected="${selectedFilter == 'done'}"
+                  value="viewAllJobs?filter=done"
+                >
+                  Job Done
+                </option>
+                <option
+                  th:selected="${selectedFilter == 'notdone'}"
+                  value="viewAllJobs?filter=notdone"
+                >
+                  Job Upcoming
+                </option>
+              </select>
             </div>
-            <br>
+            <table class="table table-bordered table-hover">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col">Customer Name</th>
+                  <th scope="col">Service Date</th>
+                  <th scope="col">Note</th>
+                  <th scope="col">Job Type</th>
+                  <th scope="col">Technician ID</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr th:each="job : ${jobs}">
+                  <td>
+                    <a
+                      style="text-decoration: none; font-weight: 900"
+                      th:href="@{/jobs/{id}(id=${job.id})}"
+                      th:text="${job.customerName}"
+                    ></a>
+                  </td>
+                  <td th:text="${job.serviceDate}"></td>
+                  <td th:text="${job.note}"></td>
+                  <td th:text="${job.jobType}"></td>
+                  <td th:text="${job.technicianIds}"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-
+        <br />
+      </div>
     </main>
-
-    <style>
-        @media screen and (max-width: 767px) {
-            #sidebarMenu {
-                width: 100%;
-            }
-        }
-
-        body {
-            font-size: 0.875rem;
-        }
-
-        .feather {
-            width: 16px;
-            height: 16px;
-            vertical-align: text-bottom;
-        }
-
-        .sidebar {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            z-index: 100;
-            padding: 48px 0 0;
-            box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
-        }
-
-        @media (max-width: 767.98px) {
-            .sidebar {
-                top: 5rem;
-            }
-        }
-
-        .sidebar-sticky {
-            position: relative;
-            top: 0;
-            height: calc(100vh - 48px);
-            padding-top: 0.5rem;
-            overflow-x: hidden;
-            overflow-y: auto;
-        }
-
-        .sidebar .nav-link {
-            font-weight: 500;
-            color: #333;
-        }
-
-        .sidebar .nav-link .feather {
-            margin-right: 4px;
-            color: #727272;
-        }
-
-        .sidebar .nav-link.active {
-            color: #2470dc;
-        }
-
-        .sidebar .nav-link:hover .feather,
-        .sidebar .nav-link.active .feather {
-            color: inherit;
-        }
-
-        .sidebar-heading {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-        }
-
-        .navbar-brand {
-            padding-top: 0.75rem;
-            padding-bottom: 0.75rem;
-            font-size: 1rem;
-            background-color: rgba(0, 0, 0, 0.25);
-            box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.25);
-        }
-
-        .navbar .navbar-toggler {
-            top: 0.25rem;
-            right: 1rem;
-        }
-
-        .navbar .form-control {
-            padding: 0.75rem 1rem;
-            border-width: 0;
-            border-radius: 0;
-        }
-
-        .form-control-dark {
-            color: #fff;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .form-control-dark:focus {
-            border-color: transparent;
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.25);
-        }
-    </style>
-</body>
-
+    <!-- Closing main tag here -->
+    <!-- Modal -->
+    <div th:replace="~{fragments/addJobFragment :: add-job-fragment}"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+  </body>
 </html>
