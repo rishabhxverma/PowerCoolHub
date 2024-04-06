@@ -72,6 +72,10 @@ public class Job {
         return technicianIds;
     }
 
+    public List<Long> getTechnicianIdsLong() {
+        return technicianIds.stream().map(Integer::longValue).toList();
+    }
+
     public void setTechnicianIds(List<Integer> technicianIds) {
         this.technicianIds = technicianIds;
     }

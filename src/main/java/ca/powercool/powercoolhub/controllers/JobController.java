@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -320,9 +321,16 @@ public class JobController {
     
         model.addAttribute("jobs", jobs);
         model.addAttribute("selectedFilter", filter);
-    
-        List<User> techs = userRepository.findByRole(UserRole.TECHNICIAN);
-        model.addAttribute("techs", techs);
+
+        Map<String, List<String>> jobTechnicianNames = new HashMap<>();
+        for (Job job : jobs) {
+            List<User> assignedTechnicians = userRepository.findAssignedTechnicians(job.getId());
+            List<String> technicianNames = assignedTechnicians.stream()
+                .map(User::getName)
+                .collect(Collectors.toList());
+            jobTechnicianNames.put(job.getId().toString(), technicianNames);
+        }
+        model.addAttribute("jobTechnicianNames", jobTechnicianNames);
     
         return "jobs/viewAllJobs";
     }

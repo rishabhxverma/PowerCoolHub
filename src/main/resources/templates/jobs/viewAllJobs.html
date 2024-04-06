@@ -83,7 +83,7 @@
                   <th scope="col">Service Date</th>
                   <th scope="col">Note</th>
                   <th scope="col">Job Type</th>
-                  <th scope="col">Technician ID</th>
+                  <th scope="col">Technicians</th>
                 </tr>
               </thead>
 
@@ -99,7 +99,7 @@
                   <td th:text="${job.serviceDate}"></td>
                   <td th:text="${job.note}"></td>
                   <td th:text="${job.jobType}"></td>
-                  <td th:text="${job.technicianIds}"></td>
+                  <td th:text="${jobTechnicianNames[job.id.toString()]}"></td>
                 </tr>
               </tbody>
             </table>
