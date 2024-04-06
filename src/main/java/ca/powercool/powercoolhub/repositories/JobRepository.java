@@ -46,7 +46,7 @@ public interface JobRepository extends JpaRepository<Job, Integer> {
 
     @Query(value = "SELECT * FROM jobs j " +
         "INNER JOIN job_technicians jt ON j.id = jt.job_id " +
-        "WHERE jt.technician_id = ?1 AND j.job_done = true " +
+        "WHERE jt.technician_id = ?1 AND j.job_done = true AND j.job_done_time IS NOT NULL " +
         "ORDER BY j.job_done_time DESC LIMIT 1", nativeQuery = true)
     Job findLatestCompleteJobByTechnicianId(Long userId);
 
