@@ -1,4 +1,27 @@
 <div th:fragment="update-job-fragment">
+  <style>
+    .tech-box input[type="checkbox"] {
+      display: none; /* Hides the checkbox */
+    }
+
+    .tech-box {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      text-align: center;
+      margin-bottom: 10px;
+      user-select: none;
+    }
+
+    .tech-box label {
+      width: 100%;
+      cursor: pointer;
+    }
+
+    .tech-box.checked {
+      background-color: #ddd;
+    }
+  </style>
   <div
     class="modal fade"
     id="updateJobModal"
@@ -19,7 +42,7 @@
         </div>
         <div class="modal-body">
           <!-- Content for updating job -->
-          <form id="updateJobForm" action="/jobs/update" method="post">
+          <form id="updateJobForm" action="/jobs/updateJob" method="post">
             <!-- Hidden input for job ID -->
             <input type="hidden" name="jobId" th:value="${job.id}" />
 
@@ -62,7 +85,7 @@
                 id="install"
                 name="jobType"
                 value="INSTALL"
-                th:checked="${job.jobType == 'INSTALL'}"
+                th:checked="${job.jobType == 'install'}"
                 required
               />
               <label for="install">Install</label><br />
@@ -71,7 +94,7 @@
                 id="service"
                 name="jobType"
                 value="SERVICE"
-                th:checked="${job.jobType == 'SERVICE'}"
+                th:checked="${job.jobType == 'service'}"
               />
               <label for="service">Service</label><br />
               <input
@@ -79,30 +102,38 @@
                 id="repair"
                 name="jobType"
                 value="REPAIR"
-                th:checked="${job.jobType == 'REPAIR'}"
+                th:checked="${job.jobType == 'repair'}"
               />
               <label for="repair">Repair</label><br />
             </div>
 
             <!-- Technicians -->
-            <div th:each="tech : ${allTechnicians}" class="col-md-2">
-              <div class="tech-box form-check">
-                <input
-                  th:id="${'tech' + tech.id}"
-                  th:value="${tech.id}"
-                  name="technicianIds"
-                  type="checkbox"
-                  class="form-check-input"
-                  th:checked="${assignedTechnicians.contains(tech)}"
-                />
-                <label th:for="${'tech' + tech.id}" class="form-check-label">
-                  <div th:text="${tech.name}"></div>
-                  <div class="job-count">Jobs:</div>
-                </label>
+            <div class="form-group">
+              <label for="tech-checkbox">Select employees to assign:</label>
+              <div id="tech-checkbox" class="row">
+                <div
+                  th:each="tech : ${allTechnicians}"
+                  class="tech-box form-check"
+                >
+                  <input
+                    th:id="${'tech' + tech.id}"
+                    th:value="${tech.id}"
+                    name="technicianIds"
+                    type="checkbox"
+                    class="form-check-input"
+                    required
+                  />
+                  <label th:for="${'tech' + tech.id}" class="form-check-label">
+                    <div th:text="${tech.name}"></div>
+                    <div class="job-count">Jobs:</div>
+                  </label>
+                </div>
               </div>
             </div>
             <!-- Submit button -->
-            <button type="submit" class="btn btn-primary">Update</button>
+            <button id="updateJobButton" type="submit" class="btn btn-primary">
+              Update
+            </button>
           </form>
         </div>
         <div class="modal-footer">
@@ -118,6 +149,11 @@
       </div>
     </div>
   </div>
+  <div
+    id="customerData"
+    style="display: none"
+    th:attr="data-customer-name=${customer.name}, data-customer-email=${customer.email}, data-customer-phone=${customer.phoneNumber}"
+  ></div>
   <script>
     function handleDateChange(date) {
       const techCheckboxDiv = document.getElementById("tech-checkbox");
@@ -129,7 +165,9 @@
           const techBoxes = document.querySelectorAll(".tech-box");
 
           techBoxes.forEach((techBox) => {
-            const checkbox = techBox.querySelector('input[name="technicianIds"]');
+            const checkbox = techBox.querySelector(
+              'input[name="technicianIds"]'
+            );
 
             const userId = checkbox.value;
 
@@ -143,6 +181,50 @@
           console.error("Error:", error);
         });
     }
+
+    let techBoxes = document.querySelectorAll(".tech-box");
+    techBoxes.forEach(function (box) {
+      box
+        .querySelector('input[type="checkbox"]')
+        .addEventListener("change", function () {
+          if (this.checked) {
+            box.classList.add("checked");
+          } else {
+            box.classList.remove("checked");
+          }
+        });
+    });
+
+    // Uncheck all checkboxes when page is refreshed
+    var checkboxes = document.querySelectorAll('input[name="technicianIds"]');
+    checkboxes.forEach(function (checkbox) {
+      checkbox.checked = false;
+    });
+
+    // shows alert with customer data when form is submitted, so manager can contact customer
+    document.querySelector("form").addEventListener("submit", function (event) {
+      event.preventDefault(); // Prevent the form from submitting normally
+
+      var customerData = document.getElementById("customerData");
+      var name = customerData.getAttribute("data-customer-name");
+      var email = customerData.getAttribute("data-customer-email");
+      var phone = customerData.getAttribute("data-customer-phone");
+
+      alert(
+        "Please contact the customer to inform them of the date change.\n\n" +
+          "Name: " +
+          name +
+          "\n" +
+          "Email: " +
+          email +
+          "\n" +
+          "Phone: " +
+          phone
+      );
+
+      // If you want to submit the form after showing the alert, you can uncomment the following line:
+      event.target.submit();
+    });
   </script>
   <script src="/js/calendar/addCalendarColSelect.js"></script>
 </div>

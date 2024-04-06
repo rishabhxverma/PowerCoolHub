@@ -1,29 +1,46 @@
-<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse" th:fragment="left-navigation">
+<nav
+  id="sidebarMenu"
+  class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse"
+  th:fragment="left-navigation"
+>
   <div class="position-sticky pt-3">
     <ul class="nav flex-column">
       <li class="nav-item">
-        <a th:href="@{/manager}" class="nav-link" aria-current="page" id="dashboard">
+        <a
+          th:href="@{/manager}"
+          class="nav-link"
+          aria-current="page"
+          id="dashboard"
+        >
           <b>Dashboard</b>
         </a>
       </li>
       <li class="nav-item">
         <a th:href="@{/customers/viewAll}" class="nav-link" id="customers">
-          Customers
+          <b> Customers </b>
         </a>
       </li>
       <li class="nav-item">
-        <a th:href="@{/jobs/viewAllJobs}" class="nav-link" id="jobs"> <b>Jobs</b> </a>
+        <a th:href="@{/jobs/viewAllJobs}" class="nav-link" id="jobs">
+          <b>Jobs</b>
+        </a>
       </li>
       <li class="nav-item">
         <a th:href="@{#}" class="nav-link" id="reports"> <b>Reports</b> </a>
       </li>
       <li class="nav-item">
-        <a th:href="@{/users/manager/employeeManagementSystem}" class="nav-link" id="employees">
+        <a
+          th:href="@{/users/manager/employeeManagementSystem}"
+          class="nav-link"
+          id="employees"
+        >
           <b>Employees</b>
         </a>
       </li>
       <li class="nav-item">
-        <a th:href="@{/logout}" class="nav-link" id="logout"> <b> Log Out </b></a>
+        <a th:href="@{/logout}" class="nav-link" id="logout">
+          <b> Log Out </b></a
+        >
       </li>
       <!-- <li class="nav-item">
         <a th:href="@{/jobs/addJob}" class="nav-link" id="job"> <br><br> Add Job (TEMP) </a>
