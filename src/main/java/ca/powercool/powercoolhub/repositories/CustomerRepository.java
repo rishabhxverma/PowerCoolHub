@@ -27,7 +27,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     //find if customer already exists (same name, email, address)
     boolean existsByNameAndEmailAndAddress(String name, String email, String address);
 
-    //return the same customer if exists
+    //return the same customer ^ if exists
     Customer findByNameAndEmailAndAddress(String name, String email, String address);
 
     boolean existsByAddress(String address);
