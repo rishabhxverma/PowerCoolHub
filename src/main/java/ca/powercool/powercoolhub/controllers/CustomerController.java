@@ -142,21 +142,23 @@ public class CustomerController {
         return "customers/editedCustomer";
     }
 
-   @PostMapping("/")
-    public String createCustomer(@ModelAttribute Customer customersData, Model model) {
-        Customer aCustomer = customerRepository.findByEmail(customersData.getEmail()); // finds and stores the information on an existing customer
-        boolean addressExists = customerRepository.existsByAddress(customersData.getAddress()); // checks if the customer already has email add in the db
+    @PostMapping("/")
+    public String createCustomer(@ModelAttribute Customer newCustomerData, Model model) {
+        // Check if customer already exists
+        boolean customerExists = customerRepository.existsByNameAndEmailAndAddress(newCustomerData.getName(),
+                newCustomerData.getEmail(), newCustomerData.getAddress());
     
-        if (aCustomer != null && addressExists) { //existing // if customer exists in db, it updates its state and notes, prevents duplication 
-            aCustomer.setState(CustomerState.REQUESTING_APPOINTMENT);
-            aCustomer.setNotes(customersData.getNotes());
-        } else { //new
-            aCustomer.setState(CustomerState.REQUESTING_APPOINTMENT); // if not, it stores the data from front-end as a new customer
-            aCustomer = customersData;
+        if (customerExists) {
+            Customer existingCustomer = customerRepository.findByNameAndEmailAndAddress(newCustomerData.getName(),
+                    newCustomerData.getEmail(), newCustomerData.getAddress());
+            existingCustomer.setState(CustomerState.REQUESTING_APPOINTMENT);
+            existingCustomer.setMessage(newCustomerData.getMessage());
+            customerRepository.save(existingCustomer);
+        } else {
+            newCustomerData.setState(CustomerState.REQUESTING_APPOINTMENT);
+            customerRepository.save(newCustomerData);
         }
-        customerRepository.save(aCustomer);
-    
-        return "redirect:/customers/viewAll"; 
+        return "redirect:/customers/viewAll";
     }
     
     @PostMapping("/delete/{id}")
