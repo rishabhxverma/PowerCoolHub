@@ -112,7 +112,7 @@
     >
       <button
         id="cancelButton"
-        th:attr="jobId=${job.getId()}"
+        th:attr="data-job-id=${job.getId()}"
         class="btn btn-danger"
         onclick="on_cancel_button_clicked(this)"
       >

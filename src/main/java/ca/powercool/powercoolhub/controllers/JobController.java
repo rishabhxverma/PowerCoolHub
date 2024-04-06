@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -358,6 +359,39 @@ public class JobController {
         }
         //mailService.sendBookingConfirmation(customer.getEmail(), customer.getName(), serviceDate, customer.getAddress(), jobTypeString, technicians);
         return "redirect:/customers/viewAll";
+    }
+
+    // method to delete a job by id
+    @DeleteMapping("/delete/{id}")
+    public String deleteJob(@PathVariable Integer id) {
+        try {
+            // Delete the job
+            jobRepository.deleteById(id);
+    
+            // Get the job
+            Optional<Job> job = jobRepository.findById(id);
+            if (job.isPresent()) {
+                // Get the customer
+                Optional<Customer> customer = customerRepository.findById(job.get().getCustomerId());
+                if (customer.isPresent()) {
+                    // Add note to customer that job has been deleted
+                    customer.get().setMessage("last job was cancelled");
+                    // MAILS CUSTOMER THAT JOB HAS BEEN CANCELLED, uncomment when wanting functionality
+                    //mailService.sendCancellationConfirmation(customer.get().getEmail(), customer.get().getName(), job.get().getServiceDate(), customer.get().getAddress(), job.get().getJobType());
+                } else {
+                    // Handle case where customer is not found
+                    System.out.println("Customer not found");
+                }
+            } else {
+                // Handle case where job is not found
+                System.out.println("Job not found");
+            }
+        } catch (Exception e) {
+            // Handle any other exceptions
+            System.out.println("An error occurred: " + e.getMessage());
+        }
+    
+        return "redirect:/jobs/viewAllJobs";
     }
 
 }

@@ -4,8 +4,7 @@ function on_complete_button_clicked(dom) {
 
   let button = dom;
   let jobId = dom.getAttribute("jobId");
-  if(jobId == null) return;
-
+  if (jobId == null) return;
 
   button.classList.add("disabled");
   button.setAttribute("disabled", "disabled");
@@ -68,7 +67,7 @@ function on_direction_button_clicked(dom) {
 
 function on_note_field_changed(dom) {
   let jobId = dom.getAttribute("jobId");
-  if(jobId == null) return;
+  if (jobId == null) return;
 
   let note = dom.value;
 
@@ -95,4 +94,28 @@ function on_reschedule_button_clicked(buttonElement) {
   var rescheduleModal = document.getElementById("updateJobModal");
   var modal = new bootstrap.Modal(rescheduleModal);
   modal.show();
+}
+
+function on_cancel_button_clicked(buttonElement) {
+  var jobId = buttonElement.getAttribute("data-job-id");
+  console.log(jobId);
+  //call delete mapping in job controller
+  fetch("delete/" + jobId, {
+    method: "DELETE",
+  })
+    .then((response) => {
+      if (response.ok) {
+        //redirect to job list
+        window.location.href = "/jobs/viewAllJobs";
+      } else {
+        console.error("Request failed:", response.status);
+      }
+    })
+    .catch((error) => {
+      console.error("Request failed:", error);
+    });
+  //create popup letting user know job has been cancelled, and customer has been emailed.
+  alert("Job has been cancelled. Customer has been emailed.");
+  //redirect to job list
+  window.location.href = "/jobs/viewAllJobs";
 }
