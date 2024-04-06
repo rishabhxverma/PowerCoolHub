@@ -126,7 +126,7 @@ public class TechnicianWorkLogTest {
         GroupedWorkLogsData groupedWorkLogsData = new GroupedWorkLogsData(LocalDateTime.now().toLocalDate(), workLogs);
 
         // When
-        Long sumOfDurations = groupedWorkLogsData.calculateSumOfDurations();
+        Long sumOfDurations = (long) groupedWorkLogsData.calculateSumOfDurations();
 
         // Then
         // 3 + 3 + 2 = 8 hours * 60 mins = 480 mins.
