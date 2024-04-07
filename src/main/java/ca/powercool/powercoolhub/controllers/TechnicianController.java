@@ -1,8 +1,10 @@
 package ca.powercool.powercoolhub.controllers;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -108,23 +110,23 @@ public class TechnicianController {
         return "users/technician/history/details";
     }
 
-    @GetMapping("/technician/getAddress/{techId}")
-    public ResponseEntity<?> getLatestAddress(@PathVariable("techId") Long techId) {
-        try {
-            String latestAddress = this.technicianService.getLatestCompletedJobAddress(techId);
-            if (latestAddress != null && !latestAddress.isEmpty()) {
-                return ResponseEntity.ok(latestAddress);
-            } else {
-                // Handle the case where the address is null or empty
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            // Log the exception details and return a proper error message or code
-            // Depending on your logging framework, adjust the following line
-            // e.g., log.error("Error fetching latest address", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching latest address");
-        }
-    }
+    // @GetMapping("/technician/getAddress/{techId}")
+    // public ResponseEntity<?> getLatestAddress(@PathVariable("techId") Long techId) {
+    //     try {
+    //         String latestAddress = this.technicianService.getLatestCompletedJobAddress(techId);
+    //         if (latestAddress != null && !latestAddress.isEmpty()) {
+    //             return ResponseEntity.ok(latestAddress);
+    //         } else {
+    //             // Handle the case where the address is null or empty
+    //             return ResponseEntity.notFound().build();
+    //         }
+    //     } catch (Exception e) {
+    //         // Log the exception details and return a proper error message or code
+    //         // Depending on your logging framework, adjust the following line
+    //         // e.g., log.error("Error fetching latest address", e);
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching latest address");
+    //     }
+    // }
 
     @PostMapping("/technician/clock")
     @ResponseBody
@@ -137,4 +139,28 @@ public class TechnicianController {
         TechnicianWorkLog savedLog = this.technicianWorkLogService.saveWorkLog(user, clockData);
         return ResponseEntity.ok(savedLog);
     }
+
+    @PostMapping("/technician/checkLocation/{techId}")
+    public ResponseEntity<?> checkLocation(@PathVariable("techId") Long techId, @RequestBody Map<String, Double> locationDetails) {
+        double latitude = locationDetails.get("latitude");
+        double longitude = locationDetails.get("longitude");
+        
+        // // Now, invoke the service method to process the location and check if it's within range
+        boolean isWithinRange = technicianService.isTechnicianWithinRange(
+            techId,
+            latitude,
+            longitude
+        );
+        //I dont have this set up yet so I have it commented out. Eventually we will invoke the mailService
+        // If it's out of range, send an email
+        // if (!isWithinRange) {
+        //     mailService.notifyManagersOfOutOfRangeClockOut(technicianId);
+        // }
+
+        // Return appropriate HTTP response
+        return isWithinRange 
+            ? ResponseEntity.ok().build()
+            : ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Technician clocked out outside of required range");
+    }
+
 }

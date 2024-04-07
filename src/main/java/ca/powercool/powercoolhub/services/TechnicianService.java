@@ -10,4 +10,8 @@ public interface TechnicianService {
     List<Job> getUpcomingJobs(User user, String startDate, String endDate);
 
     String getLatestCompletedJobAddress(Long techId);
+
+    boolean isTechnicianWithinRange(Long technicianId, double latitude, double longitude);
+
+    double calculateDistance(double techLat, double techLong, double jobLat, double jobLong);
 }
