@@ -79,9 +79,12 @@ function fetchAndProcessLocation(callback) {
     if (navigator.geolocation) {
         //Requests the current location of the device
         navigator.geolocation.getCurrentPosition(position => {
-            const {latitude, longitude} = position.coords;
+            const currentLocation = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+            };
             if(isClockedIn === "true"){
-                checkClockOutLocation(latitude, longitude);
+                checkClockOutLocation(currentLocation.latitude, currentLocation.longitude);
             }
             //TODO: Change the API key to be hidden in environment variables
             const geocodeApiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyD7W1stQyxkMS1msMvHXRHBPDltzAXZh3g`;
