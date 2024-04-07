@@ -121,7 +121,6 @@
                     name="technicianIds"
                     type="checkbox"
                     class="form-check-input"
-                    required
                   />
                   <label th:for="${'tech' + tech.id}" class="form-check-label">
                     <div th:text="${tech.name}"></div>
@@ -224,6 +223,13 @@
 
       // If you want to submit the form after showing the alert, you can uncomment the following line:
       event.target.submit();
+    });
+
+    document.querySelector("form").addEventListener("submit", function (event) {
+      if (!document.getElementById("tech80").checked) {
+        event.preventDefault();
+        // Optionally, display a message to the user
+      }
     });
   </script>
   <script src="/js/calendar/addCalendarColSelect.js"></script>
