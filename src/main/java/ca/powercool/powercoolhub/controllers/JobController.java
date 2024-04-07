@@ -61,8 +61,7 @@ public class JobController {
      * @param mailService The mail service to be used by this controller.
      */
     public JobController(MailService mailService) {     this.mailService = mailService;}
-
-
+    
     @Autowired
     private TechnicianWorkLogService technicianWorkLogService;
 
@@ -90,6 +89,7 @@ public class JobController {
     @PostMapping("/addJob")
     public ResponseEntity<String> addJobForTheCustomerIntoDataBase(
             @RequestParam("customerId") int customerIdInfo,
+            @RequestParam("message") String aMessageForCustomer,
             @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate serviceDate,
             @RequestParam(required = false, value = "message") String message,
             @RequestParam("note") String note,
@@ -115,6 +115,7 @@ public class JobController {
     
         customer.setState(Customer.CustomerState.UPCOMING);
         customer.setNextService(serviceDate);
+        customer.setMessage(aMessageForCustomer);
         customerRepository.save(customer);
     
         jobRepository.save(job);
@@ -367,6 +368,7 @@ public class JobController {
      */
     @PostMapping("/updateJob")
     public String updateJobInDatabase(@RequestParam("jobId") int jobId,
+                                    @RequestParam("message") String aMessageForCustomer,
                                     @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate serviceDate,
                                     @RequestParam(required = false, value = "message") String message,
                                     @RequestParam("note") String note,
@@ -397,6 +399,7 @@ public class JobController {
         if (customer != null) {
             customer.setState(Customer.CustomerState.UPCOMING);
             customer.setNextService(serviceDate);
+            customer.setMessage(aMessageForCustomer);
             customerRepository.save(customer);
         } else {
             // Handle case where customer is not found
@@ -446,5 +449,4 @@ public class JobController {
     
         return "redirect:/jobs/viewAllJobs";
     }
-
 }
