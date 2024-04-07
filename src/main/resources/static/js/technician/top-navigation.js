@@ -37,7 +37,10 @@ function showConfirmationModal(callback) {
     
     // Update modal content
     const modalText = document.querySelector('#confirmationModal .modal-body');
-    modalText.innerHTML = `Are you sure you want to ${isClockedIn ? "clock out" : "clock in"}?<br>Current time: ${new Date().toLocaleTimeString()}`;
+    const actionText = isClockedIn ? "clock out" : "clock in";
+    let warningMessage = isClockedIn ? "<br><strong>Remember to complete your last job before clocking out!</strong>" : "";
+    modalText.innerHTML = `Are you sure you want to ${actionText}?<br>Current time: ${new Date().toLocaleTimeString()}${warningMessage}`;
+    modal.show();
     modal.show();
 
     // Set event listener for confirm button
