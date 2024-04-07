@@ -154,6 +154,38 @@
     th:attr="data-customer-name=${customer.name}, data-customer-email=${customer.email}, data-customer-phone=${customer.phoneNumber}"
   ></div>
   <script>
+    let checkboxSelected = false;
+
+    document
+      .getElementById("updateJobForm")
+      .addEventListener("submit", function (e) {
+        var checkboxes = document.querySelectorAll(
+          'input[name="technicianIds"]:checked'
+        );
+        if (checkboxes.length === 0) {
+          e.preventDefault();
+          alert("Please select at least one technician.");
+        } else {
+          checkboxSelected = true;
+
+          var customerData = document.getElementById("customerData");
+          var name = customerData.getAttribute("data-customer-name");
+          var email = customerData.getAttribute("data-customer-email");
+          var phone = customerData.getAttribute("data-customer-phone");
+
+          alert(
+            "Please contact the customer to inform them of the date change.\n\n" +
+              "Name: " +
+              name +
+              "\n" +
+              "Email: " +
+              email +
+              "\n" +
+              "Phone: " +
+              phone
+          );
+        }
+      });
     function handleDateChange(date) {
       const techCheckboxDiv = document.getElementById("tech-checkbox");
 
@@ -198,38 +230,6 @@
     var checkboxes = document.querySelectorAll('input[name="technicianIds"]');
     checkboxes.forEach(function (checkbox) {
       checkbox.checked = false;
-    });
-
-    // shows alert with customer data when form is submitted, so manager can contact customer
-    document.querySelector("form").addEventListener("submit", function (event) {
-      event.preventDefault(); // Prevent the form from submitting normally
-
-      var customerData = document.getElementById("customerData");
-      var name = customerData.getAttribute("data-customer-name");
-      var email = customerData.getAttribute("data-customer-email");
-      var phone = customerData.getAttribute("data-customer-phone");
-
-      alert(
-        "Please contact the customer to inform them of the date change.\n\n" +
-          "Name: " +
-          name +
-          "\n" +
-          "Email: " +
-          email +
-          "\n" +
-          "Phone: " +
-          phone
-      );
-
-      // If you want to submit the form after showing the alert, you can uncomment the following line:
-      event.target.submit();
-    });
-
-    document.querySelector("form").addEventListener("submit", function (event) {
-      if (!document.getElementById("tech80").checked) {
-        event.preventDefault();
-        // Optionally, display a message to the user
-      }
     });
   </script>
   <script src="/js/calendar/addCalendarColSelect.js"></script>
