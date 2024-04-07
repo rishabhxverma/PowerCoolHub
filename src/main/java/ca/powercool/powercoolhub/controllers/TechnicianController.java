@@ -22,6 +22,8 @@ import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.models.technician.TechnicianWorkLog;
 import ca.powercool.powercoolhub.models.technician.data.GroupedWorkLogsData;
 import ca.powercool.powercoolhub.models.technician.data.WorkLogsFilter;
+import ca.powercool.powercoolhub.repositories.UserRepository;
+import ca.powercool.powercoolhub.services.MailService;
 import ca.powercool.powercoolhub.services.TechnicianService;
 import ca.powercool.powercoolhub.services.TechnicianWorkLogService;
 import ca.powercool.powercoolhub.utilities.LocalDateTimeUtility;
@@ -38,6 +40,9 @@ public class TechnicianController {
 
     @Autowired
     private TechnicianService technicianService;
+
+    @Autowired
+    private MailService mailService;
 
     @GetMapping("/technician")
     public String getTechnicianDashboard(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -142,20 +147,20 @@ public class TechnicianController {
 
     @PostMapping("/technician/checkLocation/{techId}")
     public ResponseEntity<?> checkLocation(@PathVariable("techId") Long techId, @RequestBody Map<String, Double> locationDetails) {
+        
         double latitude = locationDetails.get("latitude");
         double longitude = locationDetails.get("longitude");
-        
+
         // // Now, invoke the service method to process the location and check if it's within range
         boolean isWithinRange = technicianService.isTechnicianWithinRange(
             techId,
             latitude,
             longitude
         );
-        //I dont have this set up yet so I have it commented out. Eventually we will invoke the mailService
-        // If it's out of range, send an email
-        // if (!isWithinRange) {
-        //     mailService.notifyManagersOfOutOfRangeClockOut(technicianId);
-        // }
+        if (!isWithinRange) {
+            String clockOutAddress = technicianService.getLastClockOutAddress(techId);
+            mailService.notifyManagersOfOutOfRangeClockOut(techId, clockOutAddress);
+        }
 
         // Return appropriate HTTP response
         return isWithinRange 

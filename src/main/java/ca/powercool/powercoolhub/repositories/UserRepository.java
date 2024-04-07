@@ -2,6 +2,7 @@ package ca.powercool.powercoolhub.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import ca.powercool.powercoolhub.models.User;
 
@@ -22,4 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "INNER JOIN job_technicians jt ON jt.technician_id = u.id " +
             "WHERE jt.job_id = ?1", nativeQuery = true)
     List<User> findAssignedTechnicians(Integer jobId);
+
+    @Query("SELECT u.name FROM User u WHERE u.id = :id")
+    String findNameById(@Param("id") Long id);
 }

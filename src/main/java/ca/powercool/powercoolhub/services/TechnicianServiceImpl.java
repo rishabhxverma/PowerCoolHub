@@ -13,6 +13,7 @@ import ca.powercool.powercoolhub.models.Job;
 import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.repositories.CustomerRepository;
 import ca.powercool.powercoolhub.repositories.JobRepository;
+import ca.powercool.powercoolhub.repositories.TechnicianWorkLogRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
@@ -26,6 +27,9 @@ public class TechnicianServiceImpl implements TechnicianService {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    private TechnicianWorkLogRepository technicianWorkLogRepository;
 
     @Override
     public List<Job> getUpcomingJobs(User user, String startDate, String endDate) {
@@ -73,6 +77,12 @@ public class TechnicianServiceImpl implements TechnicianService {
         double distance = R * c; // convert to meters
 
     return distance;
+    }
+
+    @Override
+    public String getLastClockOutAddress(Long technicianId) {
+        String lastClockOutLocation = technicianWorkLogRepository.findLastClockOutAddressForTechnician(technicianId);
+        return lastClockOutLocation;
     }
 
 }

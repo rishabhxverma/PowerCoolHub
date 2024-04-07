@@ -5,12 +5,17 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import ca.powercool.powercoolhub.repositories.UserRepository;
+
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
 public class MailService {
+
+    @Autowired
+    private UserRepository userRepository;
 
     private final JavaMailSender javaMailSender;
 
@@ -60,6 +65,14 @@ public class MailService {
                         "Kamal Lakha\n" +
                         "PowerCool";
                         
+        sendEmail(to, subject, body);
+    }
+
+    public void notifyManagersOfOutOfRangeClockOut(Long technicianId, String clockOutAddress) {
+        String technicianName = userRepository.findNameById(technicianId);
+        String to = "menzies23@gmail.com";
+        String subject = "Technician Clocked Out Outside of Range";
+        String body = "Technician with name: " + technicianName + " has clocked out at an unauthorized location: " + clockOutAddress + ". Please follow up with Technician";
         sendEmail(to, subject, body);
     }
 

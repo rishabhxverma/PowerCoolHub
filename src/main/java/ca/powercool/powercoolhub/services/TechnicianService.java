@@ -14,4 +14,6 @@ public interface TechnicianService {
     boolean isTechnicianWithinRange(Long technicianId, double latitude, double longitude);
 
     double calculateDistance(double techLat, double techLong, double jobLat, double jobLong);
+
+    String getLastClockOutAddress(Long technicianId);
 }
