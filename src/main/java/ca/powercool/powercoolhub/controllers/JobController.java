@@ -60,8 +60,7 @@ public class JobController {
      * @param mailService The mail service to be used by this controller.
      */
     public JobController(MailService mailService) {     this.mailService = mailService;}
-
-
+    
     @Autowired
     private TechnicianWorkLogService technicianWorkLogService;
 

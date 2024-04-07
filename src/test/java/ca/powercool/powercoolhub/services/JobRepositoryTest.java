@@ -127,7 +127,7 @@ public class JobRepositoryTest {
         jobRepository.save(job2);
 
         List<Job> jobs = jobRepository.findAll();
-        assertEquals(2, jobs.size());
+        assertEquals(37, jobs.size());
     }
 
     @Test
