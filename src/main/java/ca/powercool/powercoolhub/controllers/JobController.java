@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -180,6 +182,7 @@ public class JobController {
 
         Job job = existingJob.get();
         List<User> assignedTechnicians = this.userRepository.findAssignedTechnicians(job.getId());
+        List<User> allTechnicians = this.userRepository.findByRole(UserRole.TECHNICIAN);
 
         User user = (User) request.getSession().getAttribute("user");
         Optional<Customer> customer = this.customerRepository.findById(job.getCustomerId());
@@ -189,6 +192,7 @@ public class JobController {
         model.addAttribute("job", job);
         model.addAttribute("customer", customer.get());
         model.addAttribute("assignedTechnicians", assignedTechnicians);
+        model.addAttribute("allTechnicians", allTechnicians);
         model.addAttribute("clockButtonState", clockState);
         model.addAttribute("user", user);
 
@@ -293,11 +297,60 @@ public class JobController {
      * @return The name of the view to be rendered.
      */
     @GetMapping("/viewAllJobs")
-    public String getAllandShowAllJobs(Model model) {
-        List<Job> jobs = jobRepository.findAll();
+    public String getAllandShowAllJobs(@RequestParam(required = false) String filter,
+                                       @RequestParam(required = false, value = "customerName", defaultValue = "") String customerName,
+                                       Model model) {
+        List<Job> jobs;
+    
+        if (customerName != null && !customerName.isEmpty()) {
+            // Search jobs by customer's name
+            jobs = jobRepository.findByCustomerNameLikeIgnoreCase(customerName + "%");
+        } else {
+            // Filter jobs based on the selected filter
+            if (filter != null && !filter.isEmpty()) {
+                if (filter.equalsIgnoreCase("done")) {
+                    jobs = jobRepository.findByJobDoneTrue();
+                } else if (filter.equalsIgnoreCase("notdone")) {
+                    jobs = jobRepository.findByJobDoneFalse();
+                } else {
+                    Job.JobType type = mapFilterToType(filter);
+                    jobs = jobRepository.findByJobType(type);
+                }
+            } else {
+                // If no filter is provided, return all jobs
+                jobs = jobRepository.findAll();
+            }
+        }
+    
         model.addAttribute("jobs", jobs);
+        model.addAttribute("selectedFilter", filter);
+
+        Map<String, List<String>> jobTechnicianNames = new HashMap<>();
+        for (Job job : jobs) {
+            List<User> assignedTechnicians = userRepository.findAssignedTechnicians(job.getId());
+            List<String> technicianNames = assignedTechnicians.stream()
+                .map(User::getName)
+                .collect(Collectors.toList());
+            jobTechnicianNames.put(job.getId().toString(), technicianNames);
+        }
+        model.addAttribute("jobTechnicianNames", jobTechnicianNames);
+    
         return "jobs/viewAllJobs";
     }
+
+    private Job.JobType mapFilterToType(String filter) {
+        switch (filter.toLowerCase()) {
+            case "service":
+                return Job.JobType.SERVICE;
+            case "install":
+                return Job.JobType.INSTALL;
+            case "repair":
+                return Job.JobType.REPAIR;
+            default:
+                throw new IllegalArgumentException("Invalid filter: " + filter);
+        }
+    }
+
 
 
     /**
@@ -359,6 +412,39 @@ public class JobController {
         }
         //mailService.sendBookingConfirmation(customer.getEmail(), customer.getName(), serviceDate, customer.getAddress(), jobTypeString, technicians);
         return "redirect:/customers/viewAll";
+    }
+
+    // method to delete a job by id
+    @DeleteMapping("/delete/{id}")
+    public String deleteJob(@PathVariable Integer id) {
+        try {
+            // Delete the job
+            jobRepository.deleteById(id);
+    
+            // Get the job
+            Optional<Job> job = jobRepository.findById(id);
+            if (job.isPresent()) {
+                // Get the customer
+                Optional<Customer> customer = customerRepository.findById(job.get().getCustomerId());
+                if (customer.isPresent()) {
+                    // Add note to customer that job has been deleted
+                    customer.get().setMessage("last job was cancelled");
+                    // MAILS CUSTOMER THAT JOB HAS BEEN CANCELLED, uncomment when wanting functionality
+                    //mailService.sendCancellationConfirmation(customer.get().getEmail(), customer.get().getName(), job.get().getServiceDate(), customer.get().getAddress(), job.get().getJobType());
+                } else {
+                    // Handle case where customer is not found
+                    System.out.println("Customer not found");
+                }
+            } else {
+                // Handle case where job is not found
+                System.out.println("Job not found");
+            }
+        } catch (Exception e) {
+            // Handle any other exceptions
+            System.out.println("An error occurred: " + e.getMessage());
+        }
+    
+        return "redirect:/jobs/viewAllJobs";
     }
 
 }
