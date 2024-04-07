@@ -3,10 +3,12 @@ package ca.powercool.powercoolhub.controllers;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -43,6 +45,9 @@ public class TechnicianController {
 
     @Autowired
     private MailService mailService;
+
+    @Value("${google.api.key}")
+    private String mapsApiKey;
 
     @GetMapping("/technician")
     public String getTechnicianDashboard(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -167,5 +172,10 @@ public class TechnicianController {
             ? ResponseEntity.ok().body("{}") // sending empty JSON object
             : ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\":\"Technician clocked out outside of required range\"}");
     }
+
+    @GetMapping("/technician/api-key")
+    public ResponseEntity<String> getMapsApiKey() {
+        return ResponseEntity.ok(mapsApiKey);
+    }   
 
 }

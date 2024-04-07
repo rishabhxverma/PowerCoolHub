@@ -86,20 +86,18 @@ function fetchAndProcessLocation(callback) {
             };
             console.log(`Current location: ${currentLocation.latitude}, ${currentLocation.longitude}`); // Debugging line
 
-            // if(isClockedIn){
-            //     console.log("checkClockOutLocation called"); // Debugging line
-            //     checkClockOutLocation(technicianId, currentLocation);
-            // }
             //TODO: Change the API key to be hidden in environment variables
-            const geocodeApiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${currentLocation.latitude},${currentLocation.longitude}&key=AIzaSyD7W1stQyxkMS1msMvHXRHBPDltzAXZh3g`;
-            //Makes an HTTP GET request. fetch returns a promise that resolves with the response to this request
-            fetch(geocodeApiUrl)
-                //Takes the response and uses .json to parse the response body as JSON
-                .then(response => response.json())
-                //Receives the parsed JSON data above. "data" is the response from the google maps API
+             // Fetch API key from your server
+             fetch('/technician/api-key')
+                .then(response => response.text()) // Handle as plain text
+                .then(apiKey => {
+                    const geocodeApiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${currentLocation.latitude},${currentLocation.longitude}&key=${apiKey}`;
+                    return fetch(geocodeApiUrl);
+                })
+                .then(response => response.json()) // This stays the same, as the geocode API response is still expected to be JSON
                 .then(data => {
                     if (data.status === "OK" && data.results[0]) {
-                        callback(data.results[0].formatted_address); // Proceed with the provided address
+                        callback(data.results[0].formatted_address);
                     } else {
                         throw new Error('Failed to retrieve address');
                     }
@@ -110,7 +108,6 @@ function fetchAndProcessLocation(callback) {
             console.error('Geolocation error:', error);
             alert('Please enable location services to use this feature.');
         });
-    //Error message if the browser does not support geolocation
     } else {
         console.error('Geolocation is not supported by this browser.');
         alert('Geolocation is not supported by this browser.');
