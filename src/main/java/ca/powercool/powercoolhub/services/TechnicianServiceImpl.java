@@ -57,7 +57,7 @@ public class TechnicianServiceImpl implements TechnicianService {
         double jobLongitude = result.get("lng");
         double distance = calculateDistance(latitude, longitude, jobLatitude, jobLongitude);
         
-        return distance <= 500;
+        return distance <= 1000;
     }
 
     @Override

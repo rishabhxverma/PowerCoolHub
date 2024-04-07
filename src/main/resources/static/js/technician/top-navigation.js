@@ -1,6 +1,7 @@
 
 let isClockedIn = false; // Flag to track clock-in status
 let currentConfirmAction = null;
+let currentLocation = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     let clockState = document.body.getAttribute('data-clock-state');
@@ -79,16 +80,16 @@ function fetchAndProcessLocation(callback) {
         console.log('Requesting current position...'); // Debugging line
 
         navigator.geolocation.getCurrentPosition(position => {
-            const currentLocation = {
+            currentLocation = {
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude
             };
             console.log(`Current location: ${currentLocation.latitude}, ${currentLocation.longitude}`); // Debugging line
 
-            if(isClockedIn){
-                console.log("checkClockOutLocation called"); // Debugging line
-                checkClockOutLocation(technicianId, currentLocation);
-            }
+            // if(isClockedIn){
+            //     console.log("checkClockOutLocation called"); // Debugging line
+            //     checkClockOutLocation(technicianId, currentLocation);
+            // }
             //TODO: Change the API key to be hidden in environment variables
             const geocodeApiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${currentLocation.latitude},${currentLocation.longitude}&key=AIzaSyD7W1stQyxkMS1msMvHXRHBPDltzAXZh3g`;
             //Makes an HTTP GET request. fetch returns a promise that resolves with the response to this request
@@ -121,6 +122,11 @@ function postClockAction(address, button) {
     console.log("postClockAction called")
     const technicianId = document.body.getAttribute('tech-id');
     const intendedAction = isClockedIn ? "clock_out" : "clock_in";  // The intended action based on current state
+    if(isClockedIn){
+        console.log(`Current location: ${currentLocation.latitude}, ${currentLocation.longitude}`); // Debugging line
+        console.log("checkClockOutLocation called"); // Debugging line
+        checkClockOutLocation(technicianId, currentLocation);
+    }
     // if(intendedAction === "clock_out"){
     //     console.log("isClockedIn is True - going to call GET")
     //     fetch(`/technician/getAddress/${technicianId}`, {
@@ -177,7 +183,6 @@ function updateClockButton(button, isClockedIn) {
     }
 }
 
-
 function checkClockOutLocation(technicianId, currentLocation){
     fetch(`/technician/checkLocation/${technicianId}`, {
         method: 'POST',
@@ -185,14 +190,19 @@ function checkClockOutLocation(technicianId, currentLocation){
         body: JSON.stringify(currentLocation)
     })
     .then(response => {
-        if (!response.ok) throw new Error('Network response was not ok.');
-        return response.json();
+        if (!response.ok) {
+            // Handle non-OK responses
+            return response.text().then(text => {
+                const error = text ? JSON.parse(text) : { message: 'An error occurred' };
+                return Promise.reject(error);
+            });
+        }
+        return response.text().then(text => text ? JSON.parse(text) : {});
     })
     .then(data => {
         console.log('Location check successful:', data);
     })
     .catch(error => {
-        // This is the change: directly logging the error object to inspect its properties
         console.error('Error posting location check:', error);
     });
 }

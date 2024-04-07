@@ -159,8 +159,8 @@ public class TechnicianController {
 
         // Return appropriate HTTP response
         return isWithinRange 
-            ? ResponseEntity.ok().build()
-            : ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Technician clocked out outside of required range");
+            ? ResponseEntity.ok().body("{}") // sending empty JSON object
+            : ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\":\"Technician clocked out outside of required range\"}");
     }
 
 }
