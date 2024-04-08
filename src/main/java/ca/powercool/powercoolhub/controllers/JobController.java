@@ -1,6 +1,7 @@
 package ca.powercool.powercoolhub.controllers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -60,8 +61,10 @@ public class JobController {
      *
      * @param mailService The mail service to be used by this controller.
      */
-    public JobController(MailService mailService) {     this.mailService = mailService;}
-    
+    public JobController(MailService mailService) {
+        this.mailService = mailService;
+    }
+
     @Autowired
     private TechnicianWorkLogService technicianWorkLogService;
 
@@ -79,15 +82,16 @@ public class JobController {
      * Endpoint for adding a job for a customer into the database.
      *
      * @param customerIdInfo The ID of the customer.
-     * @param serviceDate The date of the service.
-     * @param message The message from the customer.
-     * @param note The note for the job.
-     * @param jobTypeString The type of the job.
-     * @param technicianIds The IDs of the technicians.
+     * @param serviceDate    The date of the service.
+     * @param message        The message from the customer.
+     * @param note           The note for the job.
+     * @param jobTypeString  The type of the job.
+     * @param technicianIds  The IDs of the technicians.
      * @return A ResponseEntity indicating the result of the operation.
      */
     @PostMapping("/addJob")
-    public ResponseEntity<String> addJobForTheCustomerIntoDataBase(
+    @ResponseBody
+    public ResponseEntity<?> addJobForTheCustomerIntoDataBase(
             @RequestParam("customerId") int customerIdInfo,
             @RequestParam("message") String aMessageForCustomer,
             @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate serviceDate,
@@ -95,15 +99,16 @@ public class JobController {
             @RequestParam("note") String note,
             @RequestParam("jobType") String jobTypeString,
             @RequestParam("technicianIds") List<Integer> technicianIds) {
-    
+
         Optional<Customer> optionalCustomer = customerRepository.findById(customerIdInfo);
         if (!optionalCustomer.isPresent()) {
-            return new ResponseEntity<>("Customer not found", HttpStatus.NOT_FOUND);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "job addition failed"));
         }
-    
+
         Customer customer = optionalCustomer.get();
         String customerName = customer.getName() != null ? customer.getName() : "Customer unnamed";
-    
+
         Job job = new Job();
         job.setCustomerMessage(message);
         job.setCustomerId(customerIdInfo);
@@ -112,14 +117,14 @@ public class JobController {
         job.setJobType(jobTypeString);
         job.setTechnicianIds(technicianIds);
         job.setCustomerName(customerName);
-    
+
         customer.setState(Customer.CustomerState.UPCOMING);
         customer.setNextService(serviceDate);
         customer.setMessage(aMessageForCustomer);
         customerRepository.save(customer);
-    
+
         jobRepository.save(job);
-    
+
         List<String> technicians = new ArrayList<>();
         for (Integer i : technicianIds) {
             Optional<User> optionalUser = userRepository.findById((long) i);
@@ -128,17 +133,18 @@ public class JobController {
             }
             technicians.add(optionalUser.get().getName());
         }
-    
-        //mailService.sendBookingConfirmation(customer.getEmail(), customerName, serviceDate, customer.getAddress(), jobTypeString, technicians);
-    
-        return new ResponseEntity<>("Job added successfully", HttpStatus.OK);
+
+        // mailService.sendBookingConfirmation(customer.getEmail(), customerName,
+        // serviceDate, customer.getAddress(), jobTypeString, technicians);
+
+        return ResponseEntity.ok(Collections.singletonMap("message", "Job form submitted successfully"));
     }
 
     /**
      * Endpoint for getting jobs for a customer.
      *
      * @param customerId The ID of the customer.
-     * @param model The model to be used by the view.
+     * @param model      The model to be used by the view.
      * @return The name of the view to be rendered.
      */
     @GetMapping("/getJobs")
@@ -152,24 +158,24 @@ public class JobController {
      * Endpoint for getting jobs for a week.
      *
      * @param startDate The start date of the week.
-     * @param endDate The end date of the week.
+     * @param endDate   The end date of the week.
      * @return A list of jobs for the week.
      */
     @GetMapping("/getWeek")
     @ResponseBody
-    public List<Job> getJobsForWeek(@RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+    public List<Job> getJobsForWeek(
+            @RequestParam("startDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
             @RequestParam("endDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate) {
         List<Job> jobs = jobRepository.findJobsBetweenDates(startDate, endDate);
         return jobs;
     }
 
-
     /**
      * Endpoint for showing a job page.
      *
-     * @param id The ID of the job.
+     * @param id      The ID of the job.
      * @param request The HttpServletRequest.
-     * @param model The model to be used by the view.
+     * @param model   The model to be used by the view.
      * @return The name of the view to be rendered.
      */
     @GetMapping("/{id}")
@@ -204,11 +210,10 @@ public class JobController {
         }
     }
 
-
     /**
      * Endpoint for completing a job.
      *
-     * @param id The ID of the job.
+     * @param id      The ID of the job.
      * @param request The HttpServletRequest.
      * @param address The address where the job was completed.
      * @return A ResponseEntity indicating the result of the operation.
@@ -245,7 +250,7 @@ public class JobController {
     /**
      * Endpoint for updating a job's note.
      *
-     * @param id The ID of the job.
+     * @param id   The ID of the job.
      * @param note The new note.
      * @return A ResponseEntity indicating the result of the operation.
      */
@@ -266,14 +271,15 @@ public class JobController {
         return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
-   /**
+    /**
      * Endpoint for getting the job count for technicians.
      *
      * @param date The date for which to get the job count.
      * @return A ResponseEntity containing a map of technician IDs to job counts.
      */
     @GetMapping("/getJobsCount")
-    public ResponseEntity<Map<Integer,  Integer>> getJobsCountForTechnicians(@RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+    public ResponseEntity<Map<Integer, Integer>> getJobsCountForTechnicians(
+            @RequestParam("date") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
         List<User> technicians = userRepository.findByRole(UserRole.TECHNICIAN);
         Map<Integer, Integer> techJobs = new HashMap<>(); // techId, jobCount
         List<Job> jobsOnDate = jobRepository.findByServiceDate(date);
@@ -299,10 +305,10 @@ public class JobController {
      */
     @GetMapping("/viewAllJobs")
     public String getAllandShowAllJobs(@RequestParam(required = false) String filter,
-                                       @RequestParam(required = false, value = "customerName", defaultValue = "") String customerName,
-                                       Model model) {
+            @RequestParam(required = false, value = "customerName", defaultValue = "") String customerName,
+            Model model) {
         List<Job> jobs;
-    
+
         if (customerName != null && !customerName.isEmpty()) {
             // Search jobs by customer's name
             jobs = jobRepository.findByCustomerNameLikeIgnoreCase(customerName + "%");
@@ -322,7 +328,7 @@ public class JobController {
                 jobs = jobRepository.findAll();
             }
         }
-    
+
         model.addAttribute("jobs", jobs);
         model.addAttribute("selectedFilter", filter);
 
@@ -330,12 +336,12 @@ public class JobController {
         for (Job job : jobs) {
             List<User> assignedTechnicians = userRepository.findAssignedTechnicians(job.getId());
             List<String> technicianNames = assignedTechnicians.stream()
-                .map(User::getName)
-                .collect(Collectors.toList());
+                    .map(User::getName)
+                    .collect(Collectors.toList());
             jobTechnicianNames.put(job.getId().toString(), technicianNames);
         }
         model.addAttribute("jobTechnicianNames", jobTechnicianNames);
-    
+
         return "jobs/viewAllJobs";
     }
 
@@ -352,29 +358,27 @@ public class JobController {
         }
     }
 
-
-
     /**
      * Endpoint for updating a job in the database.
      *
-     * @param jobId The ID of the job.
-     * @param serviceDate The new service date.
-     * @param message The new message.
-     * @param note The new note.
+     * @param jobId         The ID of the job.
+     * @param serviceDate   The new service date.
+     * @param message       The new message.
+     * @param note          The new note.
      * @param jobTypeString The new job type.
      * @param technicianIds The new technician IDs.
-     * @param stat The HttpServletResponse.
+     * @param stat          The HttpServletResponse.
      * @return A string indicating the result of the operation.
      */
     @PostMapping("/updateJob")
     public String updateJobInDatabase(@RequestParam("jobId") int jobId,
-                                    @RequestParam("message") String aMessageForCustomer,
-                                    @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate serviceDate,
-                                    @RequestParam(required = false, value = "message") String message,
-                                    @RequestParam("note") String note,
-                                    @RequestParam("jobType") String jobTypeString,
-                                    @RequestParam("technicianIds") List<Integer> technicianIds,
-                                    HttpServletResponse stat) {
+            @RequestParam("message") String aMessageForCustomer,
+            @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate serviceDate,
+            @RequestParam(required = false, value = "message") String message,
+            @RequestParam("note") String note,
+            @RequestParam("jobType") String jobTypeString,
+            @RequestParam("technicianIds") List<Integer> technicianIds,
+            HttpServletResponse stat) {
         // Fetch the existing job from the database
         Job job = jobRepository.findById(jobId).orElse(null);
         if (job == null) {
@@ -392,7 +396,8 @@ public class JobController {
         // Update job in the database
         jobRepository.save(job);
 
-        // Update related customer's state and next service date (assuming this logic is the same as in addJobForTheCustomerIntoDataBase method)
+        // Update related customer's state and next service date (assuming this logic is
+        // the same as in addJobForTheCustomerIntoDataBase method)
 
         // Update related customer's state and next service date
         Customer customer = customerRepository.findById(job.getCustomerId()).orElse(null);
@@ -407,13 +412,14 @@ public class JobController {
         }
 
         stat.setStatus(HttpServletResponse.SC_OK);
-        //send confirmation email
-        //get list of technicians by their ids
+        // send confirmation email
+        // get list of technicians by their ids
         List<String> technicians = new ArrayList<>();
         for (Integer i : technicianIds) {
             technicians.add(userRepository.findById((long) i).get().getName());
         }
-        //mailService.sendBookingConfirmation(customer.getEmail(), customer.getName(), serviceDate, customer.getAddress(), jobTypeString, technicians);
+        // mailService.sendBookingConfirmation(customer.getEmail(), customer.getName(),
+        // serviceDate, customer.getAddress(), jobTypeString, technicians);
         return "redirect:/customers/viewAll";
     }
 
@@ -423,7 +429,7 @@ public class JobController {
         try {
             // Delete the job
             jobRepository.deleteById(id);
-    
+
             // Get the job
             Optional<Job> job = jobRepository.findById(id);
             if (job.isPresent()) {
@@ -432,8 +438,11 @@ public class JobController {
                 if (customer.isPresent()) {
                     // Add note to customer that job has been deleted
                     customer.get().setMessage("last job was cancelled");
-                    // MAILS CUSTOMER THAT JOB HAS BEEN CANCELLED, uncomment when wanting functionality
-                    //mailService.sendCancellationConfirmation(customer.get().getEmail(), customer.get().getName(), job.get().getServiceDate(), customer.get().getAddress(), job.get().getJobType());
+                    // MAILS CUSTOMER THAT JOB HAS BEEN CANCELLED, uncomment when wanting
+                    // functionality
+                    // mailService.sendCancellationConfirmation(customer.get().getEmail(),
+                    // customer.get().getName(), job.get().getServiceDate(),
+                    // customer.get().getAddress(), job.get().getJobType());
                 } else {
                     // Handle case where customer is not found
                     System.out.println("Customer not found");
@@ -446,7 +455,7 @@ public class JobController {
             // Handle any other exceptions
             System.out.println("An error occurred: " + e.getMessage());
         }
-    
+
         return "redirect:/jobs/viewAllJobs";
     }
 }
