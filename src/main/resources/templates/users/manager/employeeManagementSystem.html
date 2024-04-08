@@ -34,9 +34,9 @@
 
                         <tbody>
                             <tr th:each="user : ${users}">
-                                <td> <a style="text-decoration: none;"
-                                        th:href="@{/users/manager/operationsOnUsers/editUsers/{id}(id=${user.id})}"
-                                        th:text="${user.name}"></a>
+                                <td> <b><a style="text-decoration: none;"
+                                            th:href="@{/users/manager/operationsOnUsers/editUsers/{id}(id=${user.id})}"
+                                            th:text="${user.name}"></a></b>
                                 </td>
                                 <td th:text="${user.email}"></td>
                                 <td th:text="${user.role}"></td>

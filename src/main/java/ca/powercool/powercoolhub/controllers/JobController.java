@@ -2,6 +2,7 @@ package ca.powercool.powercoolhub.controllers;
 
 import java.util.ArrayList;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,8 +61,7 @@ public class JobController {
      * @param mailService The mail service to be used by this controller.
      */
     public JobController(MailService mailService) {     this.mailService = mailService;}
-
-
+    
     @Autowired
     private TechnicianWorkLogService technicianWorkLogService;
 
@@ -89,6 +89,7 @@ public class JobController {
     @PostMapping("/addJob")
     public String addJobForTheCustomerIntoDataBase(
             @RequestParam("customerId") int customerIdInfo,
+            @RequestParam("message") String aMessageForCustomer,
             @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate serviceDate,
             @RequestParam(required = false, value = "message") String message,
             @RequestParam("note") String note,
@@ -114,6 +115,7 @@ public class JobController {
     
         customer.setState(Customer.CustomerState.UPCOMING);
         customer.setNextService(serviceDate);
+        customer.setMessage(aMessageForCustomer);
         customerRepository.save(customer);
     
         jobRepository.save(job);
@@ -223,9 +225,11 @@ public class JobController {
         }
 
         User user = (User) request.getSession().getAttribute("user");
+        LocalDateTime now = LocalDateTime.now();
 
         Job completedJob = existingJob.get();
         completedJob.setJobDone(true);
+        completedJob.setJobDoneTime(now);
         this.jobRepository.save(completedJob);
 
         // Log the job completion
@@ -364,6 +368,7 @@ public class JobController {
      */
     @PostMapping("/updateJob")
     public String updateJobInDatabase(@RequestParam("jobId") int jobId,
+                                    @RequestParam("message") String aMessageForCustomer,
                                     @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate serviceDate,
                                     @RequestParam(required = false, value = "message") String message,
                                     @RequestParam("note") String note,
@@ -394,6 +399,7 @@ public class JobController {
         if (customer != null) {
             customer.setState(Customer.CustomerState.UPCOMING);
             customer.setNextService(serviceDate);
+            customer.setMessage(aMessageForCustomer);
             customerRepository.save(customer);
         } else {
             // Handle case where customer is not found
@@ -443,5 +449,4 @@ public class JobController {
     
         return "redirect:/jobs/viewAllJobs";
     }
-
 }

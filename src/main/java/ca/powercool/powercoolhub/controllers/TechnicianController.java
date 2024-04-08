@@ -1,10 +1,14 @@
 package ca.powercool.powercoolhub.controllers;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,6 +24,8 @@ import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.models.technician.TechnicianWorkLog;
 import ca.powercool.powercoolhub.models.technician.data.GroupedWorkLogsData;
 import ca.powercool.powercoolhub.models.technician.data.WorkLogsFilter;
+import ca.powercool.powercoolhub.repositories.UserRepository;
+import ca.powercool.powercoolhub.services.MailService;
 import ca.powercool.powercoolhub.services.TechnicianService;
 import ca.powercool.powercoolhub.services.TechnicianWorkLogService;
 import ca.powercool.powercoolhub.utilities.LocalDateTimeUtility;
@@ -36,6 +42,12 @@ public class TechnicianController {
 
     @Autowired
     private TechnicianService technicianService;
+
+    @Autowired
+    private MailService mailService;
+
+    @Value("${google.api.key}")
+    private String mapsApiKey;
 
     @GetMapping("/technician")
     public String getTechnicianDashboard(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -108,6 +120,24 @@ public class TechnicianController {
         return "users/technician/history/details";
     }
 
+    // @GetMapping("/technician/getAddress/{techId}")
+    // public ResponseEntity<?> getLatestAddress(@PathVariable("techId") Long techId) {
+    //     try {
+    //         String latestAddress = this.technicianService.getLatestCompletedJobAddress(techId);
+    //         if (latestAddress != null && !latestAddress.isEmpty()) {
+    //             return ResponseEntity.ok(latestAddress);
+    //         } else {
+    //             // Handle the case where the address is null or empty
+    //             return ResponseEntity.notFound().build();
+    //         }
+    //     } catch (Exception e) {
+    //         // Log the exception details and return a proper error message or code
+    //         // Depending on your logging framework, adjust the following line
+    //         // e.g., log.error("Error fetching latest address", e);
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching latest address");
+    //     }
+    // }
+
     @PostMapping("/technician/clock")
     @ResponseBody
     public ResponseEntity<?> clock(@RequestBody TechnicianWorkLog clockData, HttpServletRequest request) {
@@ -115,7 +145,37 @@ public class TechnicianController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
+
         TechnicianWorkLog savedLog = this.technicianWorkLogService.saveWorkLog(user, clockData);
         return ResponseEntity.ok(savedLog);
     }
+
+    @PostMapping("/technician/checkLocation/{techId}")
+    public ResponseEntity<?> checkLocation(@PathVariable("techId") Long techId, @RequestBody Map<String, Double> locationDetails) {
+        
+        double latitude = locationDetails.get("latitude");
+        double longitude = locationDetails.get("longitude");
+
+        // // Now, invoke the service method to process the location and check if it's within range
+        boolean isWithinRange = technicianService.isTechnicianWithinRange(
+            techId,
+            latitude,
+            longitude
+        );
+        if (!isWithinRange) {
+            String clockOutAddress = technicianService.getLastClockOutAddress(techId);
+            mailService.notifyManagersOfOutOfRangeClockOut(techId, clockOutAddress);
+        }
+
+        // Return appropriate HTTP response
+        return isWithinRange 
+            ? ResponseEntity.ok().body("{}") // sending empty JSON object
+            : ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\":\"Technician clocked out outside of required range\"}");
+    }
+
+    @GetMapping("/technician/api-key")
+    public ResponseEntity<String> getMapsApiKey() {
+        return ResponseEntity.ok(mapsApiKey);
+    }   
+
 }

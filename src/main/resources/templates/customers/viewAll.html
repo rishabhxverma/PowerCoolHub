@@ -126,8 +126,8 @@
                     <td th:unless="${selectedFilter == 'requesting-app'}"></td>
                     <!-- Render customer details -->
                     <td>
-                      <a
-                        style="text-decoration: none; font-weight: 900"
+                      <a 
+                        style="text-decoration: none;"
                         th:href="@{/customers/edit/{id}(id=${customer.id})}"
                         th:text="${customer.name}"
                       ></a>
