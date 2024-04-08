@@ -87,7 +87,7 @@ public class JobController {
      * @return A ResponseEntity indicating the result of the operation.
      */
     @PostMapping("/addJob")
-    public ResponseEntity<String> addJobForTheCustomerIntoDataBase(
+    public String addJobForTheCustomerIntoDataBase(
             @RequestParam("customerId") int customerIdInfo,
             @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate serviceDate,
             @RequestParam(required = false, value = "message") String message,
@@ -97,7 +97,7 @@ public class JobController {
     
         Optional<Customer> optionalCustomer = customerRepository.findById(customerIdInfo);
         if (!optionalCustomer.isPresent()) {
-            return new ResponseEntity<>("Customer not found", HttpStatus.NOT_FOUND);
+            return "Customer not found";
         }
     
         Customer customer = optionalCustomer.get();
@@ -122,14 +122,14 @@ public class JobController {
         for (Integer i : technicianIds) {
             Optional<User> optionalUser = userRepository.findById((long) i);
             if (!optionalUser.isPresent()) {
-                return new ResponseEntity<>("Technician not found", HttpStatus.NOT_FOUND);
+                return "Technician not found";
             }
             technicians.add(optionalUser.get().getName());
         }
     
         //mailService.sendBookingConfirmation(customer.getEmail(), customerName, serviceDate, customer.getAddress(), jobTypeString, technicians);
     
-        return new ResponseEntity<>("Job added successfully", HttpStatus.OK);
+        return "redirect:/customers/viewAll?filter=requesting-app";
     }
 
     /**

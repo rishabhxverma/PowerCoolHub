@@ -132,4 +132,17 @@
       </div>
     </div>
   </div>
+  <script>
+    document
+      .getElementById("jobForm")
+      .addEventListener("submit", function (e) {
+        var checkboxes = document.querySelectorAll(
+          'input[name="technicianIds"]:checked'
+        );
+        if (checkboxes.length === 0) {
+          e.preventDefault();
+          alert("Please select at least one technician.");
+        }
+      });
+  </script>
 </div>
