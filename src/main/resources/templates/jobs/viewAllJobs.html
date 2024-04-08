@@ -99,7 +99,12 @@
                   <td th:text="${job.serviceDate}"></td>
                   <td th:text="${job.note}"></td>
                   <td th:text="${job.jobType}"></td>
-                  <td th:text="${jobTechnicianNames[job.id.toString()]}"></td>
+                  <td>
+                    <span
+                      th:each="technician : ${jobTechnicians[job.id]}"
+                      th:text="${technician.name} + ', '"
+                    ></span>
+                  </td>
                 </tr>
               </tbody>
             </table>

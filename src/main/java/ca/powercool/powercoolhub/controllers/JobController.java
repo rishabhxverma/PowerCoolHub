@@ -326,15 +326,12 @@ public class JobController {
         model.addAttribute("jobs", jobs);
         model.addAttribute("selectedFilter", filter);
 
-        Map<String, List<String>> jobTechnicianNames = new HashMap<>();
+        Map<Integer, List<User>> jobTechnicians = new HashMap<>();
         for (Job job : jobs) {
             List<User> assignedTechnicians = userRepository.findAssignedTechnicians(job.getId());
-            List<String> technicianNames = assignedTechnicians.stream()
-                .map(User::getName)
-                .collect(Collectors.toList());
-            jobTechnicianNames.put(job.getId().toString(), technicianNames);
+            jobTechnicians.put(job.getId(), assignedTechnicians);
         }
-        model.addAttribute("jobTechnicianNames", jobTechnicianNames);
+        model.addAttribute("jobTechnicians", jobTechnicians);
     
         return "jobs/viewAllJobs";
     }
