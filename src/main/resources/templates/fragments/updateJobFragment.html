@@ -63,7 +63,18 @@
                 required
               />
             </div>
-
+            <!-- Customer Message -->
+            <div class="form-group">
+              <label for="customerMessage">Message from customer</label>
+              <textarea
+                id="customerMessage"
+                name="customerMessage"
+                class="form-control"
+                rows="3"
+                th:text="${customer.message}"
+                readonly
+              ></textarea>
+            </div>
             <!-- Note -->
             <div class="form-group">
               <label for="note">Note</label>

@@ -6,6 +6,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +29,6 @@ import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.models.technician.TechnicianWorkLog;
 import ca.powercool.powercoolhub.models.technician.data.GroupedWorkLogsData;
 import ca.powercool.powercoolhub.models.technician.data.WorkLogsFilter;
-import ca.powercool.powercoolhub.repositories.UserRepository;
 import ca.powercool.powercoolhub.services.MailService;
 import ca.powercool.powercoolhub.services.TechnicianService;
 import ca.powercool.powercoolhub.services.TechnicianWorkLogService;

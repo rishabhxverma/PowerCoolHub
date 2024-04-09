@@ -1,10 +1,21 @@
 <div th:fragment="add-job-fragment">
-  <div class="modal fade" id="jobModal" tabindex="-1" aria-labelledby="jobModalLabel" aria-hidden="true">
+  <div
+    class="modal fade"
+    id="jobModal"
+    tabindex="-1"
+    aria-labelledby="jobModalLabel"
+    aria-hidden="true"
+  >
     <div class="modal-dialog modal-dialog-centered modal-xl">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="jobModalLabel">Book Appointment</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
         <div class="modal-body">
           <!-- Content from addJob.html -->
@@ -12,24 +23,63 @@
             <!-- hidden customer id -->
             <div class="form-group">
               <label for="customerId" hidden></label>
-              <input type="number" name="customerId" class="form-control" id="customerId" required hidden />
+              <input
+                type="number"
+                name="customerId"
+                class="form-control"
+                id="customerId"
+                required
+                hidden
+              />
             </div>
 
             <!-- add calender fragment -->
             <div class="form-group">
-              <div class="row" th:replace="~{fragments/calendar :: calendar-fragment}"></div>
+              <div
+                class="row"
+                th:replace="~{fragments/calendar :: calendar-fragment}"
+              ></div>
             </div>
             <div class="form-group">
               <label for="dateService">Date Service</label>
-              <input type="date" name="dateService" class="form-control" id="dateService" required />
+              <input
+                type="date"
+                name="dateService"
+                class="form-control"
+                id="dateService"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="message">Message from customer</label>
+              <textarea
+                class="form-control"
+                name="message"
+                id="message"
+                rows="4"
+                required
+                readonly
+              ></textarea>
             </div>
             <div class="form-group">
               <label for="note">Note</label>
-              <textarea class="form-control" name="note" id="note" rows="3" required></textarea>
+              <textarea
+                class="form-control"
+                name="note"
+                id="note"
+                rows="3"
+                required
+              ></textarea>
             </div>
             <div class="form-group">
               <label for="jobType" required>Job Type</label><br />
-              <input type="radio" id="install" name="jobType" value="INSTALL" required />
+              <input
+                type="radio"
+                id="install"
+                name="jobType"
+                value="INSTALL"
+                required
+              />
               <label for="install">Install</label><br />
               <input type="radio" id="service" name="jobType" value="SERVICE" />
               <label for="service">Service</label><br />
@@ -42,9 +92,17 @@
               <div id="tech-checkbox" class="row">
                 <div th:each="tech : ${techs}" class="col-md-2">
                   <div class="tech-box form-check">
-                    <input th:id="${'tech' + tech.id}" th:value="${tech.id}" name="technicianIds" type="checkbox"
-                      class="form-check-input" />
-                    <label th:for="${'tech' + tech.id}" class="form-check-label">
+                    <input
+                      th:id="${'tech' + tech.id}"
+                      th:value="${tech.id}"
+                      name="technicianIds"
+                      type="checkbox"
+                      class="form-check-input"
+                    />
+                    <label
+                      th:for="${'tech' + tech.id}"
+                      class="form-check-label"
+                    >
                       <div th:text="${tech.name}"></div>
                       <div class="job-count">Jobs:</div>
                     </label>
@@ -67,12 +125,16 @@
             <label class="custom-control-label" for="jobDone"></label>
           </div>
         </div> -->
-            <br>
+            <br />
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
             Close
           </button>
           <!-- Additional buttons if needed -->
@@ -81,16 +143,14 @@
     </div>
   </div>
   <script>
-    document
-      .getElementById("jobForm")
-      .addEventListener("submit", function (e) {
-        var checkboxes = document.querySelectorAll(
-          'input[name="technicianIds"]:checked'
-        );
-        if (checkboxes.length === 0) {
-          e.preventDefault();
-          alert("Please select at least one technician.");
-        }
-      });
+    document.getElementById("jobForm").addEventListener("submit", function (e) {
+      var checkboxes = document.querySelectorAll(
+        'input[name="technicianIds"]:checked'
+      );
+      if (checkboxes.length === 0) {
+        e.preventDefault();
+        alert("Please select at least one technician.");
+      }
+    });
   </script>
 </div>

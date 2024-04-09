@@ -106,7 +106,7 @@ public class GroupedWorkLogsData {
         sumOfDurations -= BREAK_TIME;
 
         // Ensure sumOfDurations is non-negative
-        return sumOfDurations;
+        return Math.max(sumOfDurations, 0L);
     }
 
     @Override

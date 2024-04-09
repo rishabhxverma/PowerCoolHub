@@ -47,6 +47,20 @@
     </div>
     <div class="row my-3 px-md-4 px-0">
       <div class="col my-2">
+        <h4>Customer Message</h4>
+        <textarea
+          class="form-control"
+          id="customerMessage"
+          th:text="${customer.message}"
+          rows="5"
+          readonly
+        >
+        </textarea>
+      </div>
+    </div>
+
+    <div class="row my-3 px-md-4 px-0">
+      <div class="col my-2">
         <h4>Note</h4>
         <textarea
           class="form-control"

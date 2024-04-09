@@ -1,5 +1,5 @@
-document.getElementById("filter").addEventListener("change", function () {
-  var selectedFilter = this.value;
+function handleFilterChange() {
+  var selectedFilter = document.getElementById("filter").value;
   fetch(`/customers/filterJson?filter=${selectedFilter}`)
     .then((response) => response.json())
     .then((data) => {
@@ -21,8 +21,12 @@ document.getElementById("filter").addEventListener("change", function () {
             var jobModal = document.getElementById("jobModal");
             var modal = new bootstrap.Modal(jobModal);
             modal.show();
-            console.log("Open modal for customer: " + customer.id);
             document.getElementById("customerId").value = customer.id;
+            fetch(`/customers/${customer.id}/message`)
+              .then((response) => response.text())
+              .then((message) => {
+                document.getElementById("message").value = message;
+              });
           });
           buttonCell.appendChild(button);
           row.appendChild(buttonCell);
@@ -50,7 +54,15 @@ document.getElementById("filter").addEventListener("change", function () {
         tbody.appendChild(row);
       });
     });
-});
+}
+
+// Call the function when the page loads
+handleFilterChange();
+
+// Call the function when the filter changes
+document
+  .getElementById("filter")
+  .addEventListener("change", handleFilterChange);
 
 // Function to append cells
 function appendCell(row, element, className, href, textContent) {
@@ -68,7 +80,6 @@ function appendCell(row, element, className, href, textContent) {
   }
   row.appendChild(cell);
 }
-
 
 // Enables clicking on user boxes to check them..................
 let techBoxes = document.querySelectorAll(".tech-box");
@@ -123,65 +134,3 @@ function handleDateChange(date) {
       console.error("Error:", error);
     });
 }
-
-// ....... This function handles given a SimpleEntity<User, Integer> (where user is a technician and integer is their jobCount) .......
-// function handleDateChange(date) {
-//   const techCheckboxDiv = document.getElementById("tech-checkbox");
-//   techCheckboxDiv.innerHTML = ""; // Clear the div
-
-//   fetch("/jobs/getJobsCount?date=" + date)
-//     .then((response) => response.json())
-//     .then((data) => {
-//       data.forEach(item => {
-//         // Extracting data from the json object
-//         const userString = Object.keys(item)[0];
-
-//         const idMatch = userString.match(/id=(\d+),/);
-//         const techId = idMatch ? idMatch[1] : "Unknown";
-
-//         const nameMatch = userString.match(/name='([^']+)'/);
-//         const name = nameMatch ? nameMatch[1] : "Unknown";
-
-//         const jobCount = item[userString];
-
-//         const column = document.createElement("div");
-//         column.classList.add("col-md-2");
-//           const container = document.createElement("div");
-//           container.classList.add("user-box");
-//           container.classList.add("form-check");
-
-//             const checkbox = document.createElement("input");
-//             checkbox.id = `tech${techId}`;
-//             checkbox.value = techId;
-//             checkbox.name = "technicianIds";
-//             checkbox.type = "checkbox";
-//             checkbox.classList.add("form-check-input");
-//             checkbox.addEventListener("change", function () { // Allows clicking on the user box to check it
-//               if (this.checked) {
-//                 checkbox.classList.add("checked");
-//               } else {
-//                 checkbox.classList.remove("checked");
-//               }
-//             });
-//             container.appendChild(checkbox);
-
-//             const label = document.createElement("label");
-//             label.htmlFor = `tech${techId}`;
-//             label.classList.add("form-check-label");
-//               const nameDiv = document.createElement("div");
-//               nameDiv.textContent = name;
-//               label.appendChild(nameDiv);
-
-//               const jobCountDiv = document.createElement("div");
-//               jobCountDiv.textContent = `Jobs: ${jobCount}`;
-//               label.appendChild(jobCountDiv);
-//             container.appendChild(label);
-//           column.appendChild(container);
-//         techCheckboxDiv.appendChild(column);
-//       });
-//     })
-//     .catch((error) => {
-//       console.error('Error:', error);
-//     });
-
-// }
