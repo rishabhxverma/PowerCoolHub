@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cglib.core.Local;
@@ -152,24 +153,20 @@ public class TechnicianController {
         double longitude = locationDetails.get("longitude");
 
         // // Now, invoke the service method to process the location and check if it's within range
-        boolean isWithinRange = technicianService.isTechnicianWithinRange(
-            techId,
-            latitude,
-            longitude
-        );
-        if (!isWithinRange) {
-            String clockOutAddress = technicianService.getLastClockOutAddress(techId);
-            mailService.notifyManagersOfOutOfRangeClockOut(techId, clockOutAddress);
+        try {
+            boolean isWithinRange = technicianService.isTechnicianWithinRange(techId, latitude, longitude);
+    
+            if (!isWithinRange) {
+                String clockOutAddress = technicianService.getLastClockOutAddress(techId);
+                mailService.notifyManagersOfOutOfRangeClockOut(techId, clockOutAddress);
+                return ResponseEntity.ok().body("{\"message\":\"Technician clocked out outside of required range\"}");
+            }
+    
+            return ResponseEntity.ok().body("{}");
+        } catch (ServiceException ex) {
+            // Log the error or do additional handling
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\":\"" + ex.getMessage() + "\"}");
         }
-
-        //Updated return statement to return just the message when outside of range - not BAD_REQUEST error
-        String responseBody;
-        if (isWithinRange) {
-            responseBody = "{}"; 
-        } else {
-            responseBody = "{\"message\":\"Technician clocked out outside of required range\"}"; 
-        }
-        return ResponseEntity.ok().body(responseBody);
     }
 
     @GetMapping("/technician/api-key")
