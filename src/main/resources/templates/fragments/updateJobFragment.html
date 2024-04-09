@@ -63,7 +63,18 @@
                 required
               />
             </div>
-
+            <!-- Customer Message -->
+            <div class="form-group">
+              <label for="customerMessage">Customer Message:</label>
+              <textarea
+                id="customerMessage"
+                name="customerMessage"
+                class="form-control"
+                rows="3"
+                th:text="${customer.message}"
+                readonly
+              ></textarea>
+            </div>
             <!-- Note -->
             <div class="form-group">
               <label for="note">Note</label>
@@ -74,16 +85,6 @@
                 rows="3"
                 required
                 th:text="${job.note}"
-              ></textarea>
-            </div>
-            <div class="form-group">
-              <label for="message">Message for customer</label>
-              <textarea
-                class="form-control"
-                name="message"
-                id="message"
-                rows="4"
-                required
               ></textarea>
             </div>
             <!-- Job Type -->

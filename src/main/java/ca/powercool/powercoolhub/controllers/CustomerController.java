@@ -64,6 +64,15 @@ public class CustomerController {
         return "customers/viewAll";
     }
     
+    @GetMapping("/{customerId}/message")
+    public ResponseEntity<String> getCustomerMessage(@PathVariable Integer customerId) {
+        Optional<Customer> customer = customerRepository.findById(customerId);
+        if (customer.isPresent()) {
+            return ResponseEntity.ok(customer.get().getMessage());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
     
     @GetMapping("/searchCustomer")
     public String searchCustomerByName(@RequestParam(value = "customerName", defaultValue = "") String customerName,
