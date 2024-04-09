@@ -47,6 +47,20 @@
     </div>
     <div class="row my-3 px-md-4 px-0">
       <div class="col my-2">
+        <h4>Customer Message</h4>
+        <textarea
+          class="form-control"
+          id="customerMessage"
+          th:text="${customer.message}"
+          rows="5"
+          readonly
+        >
+        </textarea>
+      </div>
+    </div>
+
+    <div class="row my-3 px-md-4 px-0">
+      <div class="col my-2">
         <h4>Note</h4>
         <textarea
           class="form-control"
@@ -91,12 +105,14 @@
       </div>
     </div>
     <!-- Reschedule Job Button -->
-    <div class="col my-2 d-flex justify-content-center">
+    <div
+      class="col my-2 d-flex justify-content-center"
+      th:if="${user.role} == 'manager'"
+    >
       <button
-        th:attr="jobId=${job.getId()}"
+        th:attr="data-job-id=${job.getId()}"
         class="btn btn-warning"
         id="rescheduleButton"
-        jobId="${job.getId()}"
         onclick="on_reschedule_button_clicked(this)"
       >
         Reschedule Job
@@ -104,10 +120,13 @@
     </div>
 
     <!-- Cancel Job Button -->
-    <div class="col my-2 d-flex justify-content-center">
+    <div
+      class="col my-2 d-flex justify-content-center"
+      th:if="${user.role} == 'manager'"
+    >
       <button
         id="cancelButton"
-        th:attr="jobId=${job.getId()}"
+        th:attr="data-job-id=${job.getId()}"
         class="btn btn-danger"
         onclick="on_cancel_button_clicked(this)"
       >

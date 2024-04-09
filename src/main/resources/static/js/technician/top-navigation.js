@@ -1,6 +1,7 @@
 
 let isClockedIn = false; // Flag to track clock-in status
 let currentConfirmAction = null;
+let currentLocation = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     let clockState = document.body.getAttribute('data-clock-state');
@@ -36,7 +37,10 @@ function showConfirmationModal(callback) {
     
     // Update modal content
     const modalText = document.querySelector('#confirmationModal .modal-body');
-    modalText.innerHTML = `Are you sure you want to ${isClockedIn ? "clock out" : "clock in"}?<br>Current time: ${new Date().toLocaleTimeString()}`;
+    const actionText = isClockedIn ? "clock out" : "clock in";
+    let warningMessage = isClockedIn ? "<br><strong>Remember to complete your last job before clocking out!</strong>" : "";
+    modalText.innerHTML = `Are you sure you want to ${actionText}?<br>Current time: ${new Date().toLocaleTimeString()}${warningMessage}`;
+    modal.show();
     modal.show();
 
     // Set event listener for confirm button
@@ -72,22 +76,31 @@ function handleClockInOut(event, button) {
 
 // Function to handle the geolocation and address fetching
 function fetchAndProcessLocation(callback) {
+    const technicianId = document.body.getAttribute('tech-id');
     //Check if the browser supports geolocation. If it does, then we continue in the block
     if (navigator.geolocation) {
-        //Requests the current location of the device
+
+        console.log('Requesting current position...'); // Debugging line
+
         navigator.geolocation.getCurrentPosition(position => {
-            const {latitude, longitude} = position.coords;
-            
+            currentLocation = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude
+            };
+            console.log(`Current location: ${currentLocation.latitude}, ${currentLocation.longitude}`); // Debugging line
+
             //TODO: Change the API key to be hidden in environment variables
-            const geocodeApiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=AIzaSyD7W1stQyxkMS1msMvHXRHBPDltzAXZh3g`;
-            //Makes an HTTP GET request. fetch returns a promise that resolves with the response to this request
-            fetch(geocodeApiUrl)
-                //Takes the response and uses .json to parse the response body as JSON
-                .then(response => response.json())
-                //Receives the parsed JSON data above. "data" is the response from the google maps API
+             // Fetch API key from your server
+             fetch('/technician/api-key')
+                .then(response => response.text()) // Handle as plain text
+                .then(apiKey => {
+                    const geocodeApiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${currentLocation.latitude},${currentLocation.longitude}&key=${apiKey}`;
+                    return fetch(geocodeApiUrl);
+                })
+                .then(response => response.json()) // This stays the same, as the geocode API response is still expected to be JSON
                 .then(data => {
                     if (data.status === "OK" && data.results[0]) {
-                        callback(data.results[0].formatted_address); // Proceed with the provided address
+                        callback(data.results[0].formatted_address);
                     } else {
                         throw new Error('Failed to retrieve address');
                     }
@@ -98,7 +111,6 @@ function fetchAndProcessLocation(callback) {
             console.error('Geolocation error:', error);
             alert('Please enable location services to use this feature.');
         });
-    //Error message if the browser does not support geolocation
     } else {
         console.error('Geolocation is not supported by this browser.');
         alert('Geolocation is not supported by this browser.');
@@ -107,9 +119,14 @@ function fetchAndProcessLocation(callback) {
 
 // Function to be called after location is fetched and user confirmed
 function postClockAction(address, button) {
+    console.log("postClockAction called")
     const technicianId = document.body.getAttribute('tech-id');
     const intendedAction = isClockedIn ? "clock_out" : "clock_in";  // The intended action based on current state
-
+    if(isClockedIn){
+        console.log(`Current location: ${currentLocation.latitude}, ${currentLocation.longitude}`); // Debugging line
+        console.log("checkClockOutLocation called"); // Debugging line
+        checkClockOutLocation(technicianId, currentLocation);
+    }
     fetch('/technician/clock', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -146,4 +163,28 @@ function updateClockButton(button, isClockedIn) {
         button.setAttribute('data-clocked-in', 'true');
         button.classList.remove('blinking');
     }
+}
+
+function checkClockOutLocation(technicianId, currentLocation){
+    fetch(`/technician/checkLocation/${technicianId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(currentLocation)
+    })
+    .then(response => {
+        if (!response.ok) {
+            // Handle non-OK responses
+            return response.text().then(text => {
+                const error = text ? JSON.parse(text) : { message: 'An error occurred' };
+                return Promise.reject(error);
+            });
+        }
+        return response.text().then(text => text ? JSON.parse(text) : {});
+    })
+    .then(data => {
+        console.log('Location check successful:', data);
+    })
+    .catch(error => {
+        console.error('Error posting location check:', error);
+    });
 }

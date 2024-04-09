@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ca.powercool.powercoolhub.models.Job;
+import ca.powercool.powercoolhub.models.Job.JobType;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -29,6 +30,10 @@ public interface JobRepository extends JpaRepository<Job, Integer> {
 
     List<Job> findByServiceDate(LocalDate date);
 
+    List<Job> findByCustomerNameLikeIgnoreCase(String customerName);
+
+    List<Job> findByJobType(JobType jobType);
+
     // find jobs assigned to specific technician ID
     @Query("SELECT j FROM Job j JOIN j.technicianIds t WHERE t = :technicianId")
     List<Job> findByTechnicianId(@Param("technicianId") int technicianId);
@@ -44,6 +49,12 @@ public interface JobRepository extends JpaRepository<Job, Integer> {
         "WHERE jt.technician_id = ?1 " +
         "AND j.service_date BETWEEN ?2 AND ?3 AND j.job_done = false", nativeQuery = true)
     List<Job> findIncompleteJobsByTechnicianIdBetween(Long userId, LocalDate startDate, LocalDate endDate);
+
+    @Query(value = "SELECT * FROM jobs j " +
+        "INNER JOIN job_technicians jt ON j.id = jt.job_id " +
+        "WHERE jt.technician_id = ?1 AND j.job_done = true AND j.job_done_time IS NOT NULL " +
+        "ORDER BY j.job_done_time DESC LIMIT 1", nativeQuery = true)
+    Job findLatestCompleteJobByTechnicianId(Long userId);
 
     // find jobs that arent assigned to any techID
     @Query("SELECT j FROM Job j WHERE j.technicianIds IS EMPTY")

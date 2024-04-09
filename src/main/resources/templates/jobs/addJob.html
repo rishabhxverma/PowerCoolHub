@@ -1,92 +1,70 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Enhanced Job Submission Form with Thymeleaf</title>
-    <link
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <style>
-      body {
-        padding-top: 20px;
-      }
 
-      .container {
-        max-width: 800px;
-      }
-    </style>
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Form</title>
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      padding-top: 20px;
+    }
 
-  <body>
-    <div class="container">
-      <h2>Job Submission Form</h2>
-      <form action="/jobs/addJob" method="post">
-        <div class="form-group">
-          <label for="dateService">Date Service</label>
-          <input
-            type="date"
-            name="dateService"
-            class="form-control"
-            id="dateService"
-            required
-          />
+    .container {
+      max-width: 800px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h2>Job Submission Form</h2>
+    <form action="/jobs/addJob" method="post">
+      <div class="form-group">
+        <label for="dateService">Date Service</label>
+        <input type="date" name="dateService" class="form-control" id="dateService" required />
+      </div>
+
+      <div class="form-group">
+        <label for="customerId">Customer ID</label>
+        <input type="number" name="customerId" class="form-control" id="customerId" required />
+      </div>
+
+      <div class="form-group">
+        <label for="note">Note</label>
+        <textarea class="form-control" name="note" id="note" rows="3" required></textarea>
+      </div>
+      <div class="form-group">
+        <label for="technicianIds">Technician ID</label>
+        <input type="number" name="technicianIds" class="form-control" id="technicianIds" required />
+      </div>
+      <div class="form-group">
+        <label for="jobType">Job Type</label><br />
+        <input type="radio" id="install" name="jobType" value="INSTALL" />
+        <label for="install">Install</label><br />
+        <input type="radio" id="service" name="jobType" value="SERVICE" />
+        <label for="service">Service</label><br />
+        <input type="radio" id="repair" name="jobType" value="REPAIR" />
+        <label for="repair">Repair</label><br />
+      </div>
+
+      <div class="form-group">
+        <label for="jobDone">Job Done?</label>
+        <div class="custom-control custom-switch">
+          <input type="hidden" name="jobDone" value="false" />
+          <input type="checkbox" class="custom-control-input" name="jobDone" id="jobDone" value="true" />
+          <label class="custom-control-label" for="jobDone"></label>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label for="customerId">Customer ID</label>
-          <input
-            type="number"
-            name="customerId"
-            class="form-control"
-            id="customerId"
-            required
-          />
-        </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
 
-        <div class="form-group">
-          <label for="note">Note</label>
-          <textarea
-            class="form-control"
-            name="note"
-            id="note"
-            rows="3"
-            required
-          ></textarea>
-        </div>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
 
-        <div class="form-group">
-          <label for="jobType">Job Type</label><br />
-          <input type="radio" id="install" name="jobType" value="INSTALL" />
-          <label for="install">Install</label><br />
-          <input type="radio" id="service" name="jobType" value="SERVICE" />
-          <label for="service">Service</label><br />
-          <input type="radio" id="repair" name="jobType" value="REPAIR" />
-          <label for="repair">Repair</label><br />
-        </div>
-
-        <div class="form-group">
-          <label for="jobDone">Job Done?</label>
-          <div class="custom-control custom-switch">
-            <input type="hidden" name="jobDone" value="false" />
-            <input
-              type="checkbox"
-              class="custom-control-input"
-              name="jobDone"
-              id="jobDone"
-              value="true"
-            />
-            <label class="custom-control-label" for="jobDone"></label>
-          </div>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
-    </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-  </body>
 </html>

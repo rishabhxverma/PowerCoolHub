@@ -43,7 +43,8 @@
                 th:field="*{name}"
                 required
               />
-            </div><br>
+            </div>
+            <br />
             <div class="form-group">
               <label for="address">Address:</label>
               <input
@@ -53,7 +54,8 @@
                 th:field="*{address}"
                 required
               />
-            </div><br>
+            </div>
+            <br />
             <div class="form-group">
               <label for="phoneNumber">Phone Number:</label>
               <input
@@ -63,7 +65,8 @@
                 th:field="*{phoneNumber}"
                 required
               />
-            </div><br>
+            </div>
+            <br />
             <div class="form-group">
               <label for="email">Email:</label>
               <input
@@ -75,7 +78,7 @@
               />
             </div>
             <div class="form-group">
-              <label for="state" style="display:none;">State:</label>
+              <label for="state" style="display: none">State:</label>
               <select
                 class="form-control"
                 id="state"
@@ -88,7 +91,8 @@
                   th:text="${state}"
                 ></option>
               </select>
-            </div><br>
+            </div>
+            <br />
             <div class="form-group">
               <label for="message">Message:</label>
               <textarea
@@ -96,7 +100,8 @@
                 id="message"
                 th:field="*{message}"
               ></textarea>
-            </div> <br>
+            </div>
+            <br />
             <button type="submit" class="btn btn-primary">Submit</button>
           </div>
         </div>

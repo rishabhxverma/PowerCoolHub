@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import ca.powercool.powercoolhub.models.technician.TechnicianWorkLog;
@@ -27,4 +28,8 @@ public interface TechnicianWorkLogRepository extends JpaRepository<TechnicianWor
     @Query("SELECT twl FROM TechnicianWorkLog twl " + 
         "WHERE DATE(twl.createdAt) = :date AND twl.technicianId = :userId")
     List<TechnicianWorkLog> findWorkLogsByDate(Long userId, LocalDate date);
+
+    @Query("SELECT t.location FROM TechnicianWorkLog t WHERE t.technicianId = :technicianId AND t.action = 'clock_out' ORDER BY t.createdAt DESC LIMIT 1")
+    String findLastClockOutAddressForTechnician(@Param("technicianId") Long technicianId);
+
 }

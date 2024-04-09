@@ -1,10 +1,19 @@
 package ca.powercool.powercoolhub.controllers;
 
+import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,6 +29,7 @@ import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.models.technician.TechnicianWorkLog;
 import ca.powercool.powercoolhub.models.technician.data.GroupedWorkLogsData;
 import ca.powercool.powercoolhub.models.technician.data.WorkLogsFilter;
+import ca.powercool.powercoolhub.services.MailService;
 import ca.powercool.powercoolhub.services.TechnicianService;
 import ca.powercool.powercoolhub.services.TechnicianWorkLogService;
 import ca.powercool.powercoolhub.utilities.LocalDateTimeUtility;
@@ -36,6 +46,12 @@ public class TechnicianController {
 
     @Autowired
     private TechnicianService technicianService;
+
+    @Autowired
+    private MailService mailService;
+
+    @Value("${google.api.key}")
+    private String mapsApiKey;
 
     @GetMapping("/technician")
     public String getTechnicianDashboard(HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -115,7 +131,50 @@ public class TechnicianController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
+        //logic to determine if the technician forgot to clock out at a reasonable time. 
+        if("clock_out".equals(clockData.getAction())){
+            LocalDateTime clockOutTime = clockData.getCreatedAt();
+            TechnicianWorkLog latestLog = technicianWorkLogService.latestLogById(user.getId());
+            Duration twelveHours = Duration.ofHours(12);
+            Duration duration = Duration.between(latestLog.getCreatedAt(),clockOutTime);
+            if(duration.compareTo(twelveHours) > 0){
+                mailService.notifyManagersOfLateClockOutTime(user.getId(), duration, clockOutTime);
+            }
+        }
         TechnicianWorkLog savedLog = this.technicianWorkLogService.saveWorkLog(user, clockData);
         return ResponseEntity.ok(savedLog);
     }
+
+    @PostMapping("/technician/checkLocation/{techId}")
+    public ResponseEntity<?> checkLocation(@PathVariable("techId") Long techId, @RequestBody Map<String, Double> locationDetails) {
+        
+        double latitude = locationDetails.get("latitude");
+        double longitude = locationDetails.get("longitude");
+
+        // // Now, invoke the service method to process the location and check if it's within range
+        boolean isWithinRange = technicianService.isTechnicianWithinRange(
+            techId,
+            latitude,
+            longitude
+        );
+        if (!isWithinRange) {
+            String clockOutAddress = technicianService.getLastClockOutAddress(techId);
+            mailService.notifyManagersOfOutOfRangeClockOut(techId, clockOutAddress);
+        }
+
+        //Updated return statement to return just the message when outside of range - not BAD_REQUEST error
+        String responseBody;
+        if (isWithinRange) {
+            responseBody = "{}"; 
+        } else {
+            responseBody = "{\"message\":\"Technician clocked out outside of required range\"}"; 
+        }
+        return ResponseEntity.ok().body(responseBody);
+    }
+
+    @GetMapping("/technician/api-key")
+    public ResponseEntity<String> getMapsApiKey() {
+        return ResponseEntity.ok(mapsApiKey);
+    }   
+
 }

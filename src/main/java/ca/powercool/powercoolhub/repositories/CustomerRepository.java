@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import ca.powercool.powercoolhub.models.Customer;
 
+
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     List<Customer> findByNameLikeIgnoreCase(String namePattern);
@@ -31,4 +32,5 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     Customer findByNameAndEmailAndAddress(String name, String email, String address);
 
     boolean existsByAddress(String address);
+
 }
