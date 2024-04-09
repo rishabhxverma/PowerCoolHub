@@ -1,11 +1,14 @@
 package ca.powercool.powercoolhub.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import ca.powercool.powercoolhub.models.Customer;
@@ -29,19 +32,22 @@ public class CustomerController {
     @Autowired
     UserRepository userRepository;
 
-/**
- * View all customers, with optional filters, and a search bar
- * @param filter The filter to apply to the customers, or null if no filter is selected
- * @param customerName The name of the customer to search for, or an empty string if no search is performed
- * @param model The model to add attributes to
- * @return
- */
+    /**
+     * View all customers, with optional filters, and a search bar
+     * 
+     * @param filter       The filter to apply to the customers, or null if no
+     *                     filter is selected
+     * @param customerName The name of the customer to search for, or an empty
+     *                     string if no search is performed
+     * @param model        The model to add attributes to
+     * @return
+     */
     @GetMapping("/viewAll")
     public String viewAllCustomers(@RequestParam(required = false) String filter,
-                                   @RequestParam(required = false, value = "customerName", defaultValue = "") String customerName,
-                                   Model model) {
+            @RequestParam(required = false, value = "customerName", defaultValue = "") String customerName,
+            Model model) {
         List<Customer> customers;
-    
+
         if (customerName != null && !customerName.isEmpty()) {
             customers = customerRepository.findByNameLikeIgnoreCase(customerName + "%");
         } else {
@@ -54,17 +60,16 @@ public class CustomerController {
                 customers = customerRepository.findAll();
             }
         }
-    
+
         model.addAttribute("customers", customers);
         model.addAttribute("selectedFilter", filter);
-    
+
         List<User> techs = userRepository.findByRole(UserRole.TECHNICIAN);
         model.addAttribute("techs", techs);
-    
+
         return "customers/viewAll";
     }
-    
-    
+
     @GetMapping("/searchCustomer")
     public String searchCustomerByName(@RequestParam(value = "customerName", defaultValue = "") String customerName,
             Model model) {
@@ -126,11 +131,13 @@ public class CustomerController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateCustomer(@PathVariable Integer id, @ModelAttribute("customer") Customer customerDetails,
-            RedirectAttributes redirectAttributes) {
+    @ResponseBody
+    public ResponseEntity<?> updateCustomer(@PathVariable Integer id,
+            @ModelAttribute("customer") Customer customerDetails) {
         Optional<Customer> customerOptional = customerRepository.findById(id);
         if (!customerOptional.isPresent()) {
-            return "customers/editedCustomer";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "update failed"));
         }
 
         customerDetails.setId(id);
@@ -144,14 +151,15 @@ public class CustomerController {
         }
 
         customerRepository.save(customerDetails);
-        redirectAttributes.addFlashAttribute("success", "Customer updated successfully!");
-        return "customers/editedCustomer";
+
+        return ResponseEntity.ok(Collections.singletonMap("message", "Customer information updated successfully."));
     }
 
     /**
      * Create a new customer, or update an existing customer if the customer already
+     * 
      * @param newCustomerData The new customer add form data
-     * @param model The model to add attributes to
+     * @param model           The model to add attributes to
      * @return The view to redirect to
      */
     @PostMapping("/")
@@ -159,7 +167,7 @@ public class CustomerController {
         // Check if customer already exists
         boolean customerExists = customerRepository.existsByNameAndEmailAndAddress(newCustomerData.getName(),
                 newCustomerData.getEmail(), newCustomerData.getAddress());
-    
+
         if (customerExists) {
             Customer existingCustomer = customerRepository.findByNameAndEmailAndAddress(newCustomerData.getName(),
                     newCustomerData.getEmail(), newCustomerData.getAddress());
@@ -172,13 +180,14 @@ public class CustomerController {
         }
         return "redirect:/customers/viewAll";
     }
-    
-/**
- * Delete a customer by id
- * @param id The id of the customer to delete
- * @param redirectAttributes The redirect attributes to add messages to
- * @return The view to redirect to
- */
+
+    /**
+     * Delete a customer by id
+     * 
+     * @param id                 The id of the customer to delete
+     * @param redirectAttributes The redirect attributes to add messages to
+     * @return The view to redirect to
+     */
     @PostMapping("/delete/{id}")
     public String deleteCustomer(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         Optional<Customer> customerOptional = customerRepository.findById(id);
