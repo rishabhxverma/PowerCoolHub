@@ -33,35 +33,35 @@
       <div class="row justify-content-center">
         <div class="col-md-6">
           <div class="form-group">
-            <label for="name">Name:</label>
+            <label for="name"><b>Name:</b></label>
             <input type="text" class="form-control" id="name" th:field="*{name}" required />
-          </div>
+          </div><br>
           <div class="form-group">
-            <label for="address">Address:</label>
+            <label for="address"><b>Address:</b></label>
             <input type="text" class="form-control" id="address" th:field="*{address}" required />
-          </div>
+          </div><br>
           <!--email-->
           <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" class="form-control" id="email" th:field="*{email}" required />
+            <label for="email"><b>Email:</b></label>
+            <input type="email" class="form-control" id="email" th:field="*{email}" required /><br>
             <div class="form-group">
-              <label for="phoneNumber">Phone Number:</label>
+              <label for="phoneNumber"><b>Phone Number:</b></label>
               <input type="text" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" required />
-            </div>
+            </div><br>
             <div class="form-group">
-              <label for="message">Message:</label>
+              <label for="message"><b>Message:</b></label>
               <textarea class="form-control" id="message" th:field="*{message}"></textarea>
-            </div>
+            </div><br>
             <div class="form-group">
-              <label for="lastServiced">Last Serviced:</label>
+              <label for="lastServiced"><b>Last Serviced:</b></label>
               <input type="date" class="form-control" id="lastServiced" th:field="*{lastServiced}" />
-            </div>
+            </div><br>
             <div class="form-group">
-              <label for="installationDate">Next:</label>
+              <label for="installationDate"><b>Next:</b></label>
               <input type="date" class="form-control" id="nextService" th:field="*{nextService}" />
-            </div>
+            </div><br>
             <div class="form-group">
-              <label for="state">State:</label>
+              <label for="state"><b>State:</b></label>
               <select class="form-control" id="state" th:field="*{state}">
                 <option th:each="state : ${T(ca.powercool.powercoolhub.models.Customer.CustomerState).values()}"
                   th:value="${state}" th:text="${state}"></option>
