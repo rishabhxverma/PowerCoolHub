@@ -127,24 +127,6 @@ function postClockAction(address, button) {
         console.log("checkClockOutLocation called"); // Debugging line
         checkClockOutLocation(technicianId, currentLocation);
     }
-    // if(intendedAction === "clock_out"){
-    //     console.log("isClockedIn is True - going to call GET")
-    //     fetch(`/technician/getAddress/${technicianId}`, {
-    //         method: 'GET',
-    //     })
-    //     .then(response => {
-    //         if (!response.ok) {
-    //             throw new Error('Network response was not ok ' + response.statusText);
-    //         }
-    //         return response.text(); // or .text() if the response is plain text
-    //     })
-    //     .then(data => {
-    //         console.log(data);
-    //     })
-    //     .catch(error => {
-    //         console.error('Error fetching address:', error);
-    //     });
-    // }
     fetch('/technician/clock', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

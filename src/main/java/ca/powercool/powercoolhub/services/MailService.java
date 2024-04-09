@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import ca.powercool.powercoolhub.repositories.UserRepository;
 
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -23,6 +25,18 @@ public class MailService {
     @Autowired
     public MailService(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
+    }
+
+    //Used to turn the Duration object into a readible string
+    public String formatDuration(Duration duration) {
+        long seconds = duration.getSeconds();
+        long absSeconds = Math.abs(seconds);
+        String positive = String.format(
+            "%d hours, %02d minutes, %02d seconds",
+            absSeconds / 3600,
+            (absSeconds % 3600) / 60,
+            absSeconds % 60);
+        return seconds < 0 ? "-" + positive : positive;
     }
 
     public void sendBookingConfirmation(String to, String customerName, LocalDate appointmentDate,
@@ -73,7 +87,17 @@ public class MailService {
         String technicianName = userRepository.findNameById(technicianId);
         String to = "menzies23@gmail.com";
         String subject = "Technician Clocked Out Outside of Range";
-        String body = "Technician with name: " + technicianName + " has clocked out at an unauthorized location: " + clockOutAddress + ". Please follow up with Technician";
+        String body = "Technician with name: " + technicianName + " has clocked out at an unauthorized location: " + clockOutAddress + ". Please follow up with technician.";
+        sendEmail(to, subject, body);
+    }
+
+    public void notifyManagersOfLateClockOutTime(Long technicianId, Duration duration, LocalDateTime clockOutTime){
+        String technicianName = userRepository.findNameById(technicianId);
+        String to = "menzies23@gmail.com";
+        String subject = "Technician Clocked Out Late";
+        String formattedDuration = formatDuration(duration);
+        String body = "Technician with name: " + technicianName + " has clocked out at " + clockOutTime + ".\n"+  "They were clocked in for a duration of: " 
+                        + formattedDuration + ". Please follow up with technician.";
         sendEmail(to, subject, body);
     }
 

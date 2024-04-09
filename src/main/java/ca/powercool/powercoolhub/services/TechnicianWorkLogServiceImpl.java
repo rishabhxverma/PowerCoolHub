@@ -221,4 +221,9 @@ public class TechnicianWorkLogServiceImpl implements TechnicianWorkLogService {
 
         return worklogReports;
     }
+
+    @Override
+    public TechnicianWorkLog latestLogById(Long userId) {
+        return technicianWorkLogRepository.findLatestClockWorkLogByUserId(userId);
+    }
 }
