@@ -109,8 +109,18 @@ body {
     border: 1px solid #ddd;
     border-radius: 5px;
     text-align: center;
-    margin-bottom: 10px;
     user-select: none;
+    width: 150px;
+    margin: 5px;
+}
+
+.tech-name{
+    display: block;
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
 }
 
 .tech-box label {

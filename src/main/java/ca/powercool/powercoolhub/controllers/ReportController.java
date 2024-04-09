@@ -78,7 +78,7 @@ public class ReportController {
         response.setStatus(HttpServletResponse.SC_OK);
 
         // Define a filename for the zip file
-        String zipFileName = "R" + startDate + "_" + endDate + ".zip";
+        String zipFileName = "r" + startDate + "_" + endDate + ".zip";
 
         // Set the Content-Disposition header so the zip file is downloaded
         ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
@@ -116,7 +116,8 @@ public class ReportController {
                     CSVPrinter csvPrinter = new CSVPrinter(stringWriter, CSVFormat.DEFAULT.withHeader(csvHeader))) {
 
                     // Write CSV rows for each workLog
-                    for (TechnicianWorkLogReport workLog : workLogs) {
+                    for (int i=workLogs.size()-1; i>=0; i--){
+                        TechnicianWorkLogReport workLog = workLogs.get(i);
                         boolean error = false;
                         String hoursStr = workLog.getHours();
 

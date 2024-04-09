@@ -40,7 +40,7 @@
                         <input th:id="${'tech' + tech.id}" th:value="${tech.id}" name="technicianIds" type="checkbox"
                             class="form-check-input" />
                         <label th:for="${'tech' + tech.id}" class="form-check-label">
-                            <div th:text="${tech.name}"></div>
+                            <div class="tech-name" th:text="${tech.name}"></div>
                         </label>
                     </div>
                 </div>
