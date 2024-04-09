@@ -89,7 +89,6 @@ public class JobController {
     @PostMapping("/addJob")
     public String addJobForTheCustomerIntoDataBase(
             @RequestParam("customerId") int customerIdInfo,
-            @RequestParam("message") String aMessageForCustomer,
             @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate serviceDate,
             @RequestParam(required = false, value = "message") String message,
             @RequestParam("note") String note,
@@ -115,7 +114,6 @@ public class JobController {
     
         customer.setState(Customer.CustomerState.UPCOMING);
         customer.setNextService(serviceDate);
-        customer.setMessage(aMessageForCustomer);
         customerRepository.save(customer);
     
         jobRepository.save(job);
@@ -325,13 +323,6 @@ public class JobController {
     
         model.addAttribute("jobs", jobs);
         model.addAttribute("selectedFilter", filter);
-
-        Map<Integer, List<User>> jobTechnicians = new HashMap<>();
-        for (Job job : jobs) {
-            List<User> assignedTechnicians = userRepository.findAssignedTechnicians(job.getId());
-            jobTechnicians.put(job.getId(), assignedTechnicians);
-        }
-        model.addAttribute("jobTechnicians", jobTechnicians);
     
         return "jobs/viewAllJobs";
     }
@@ -365,7 +356,6 @@ public class JobController {
      */
     @PostMapping("/updateJob")
     public String updateJobInDatabase(@RequestParam("jobId") int jobId,
-                                    @RequestParam("message") String aMessageForCustomer,
                                     @RequestParam("dateService") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate serviceDate,
                                     @RequestParam(required = false, value = "message") String message,
                                     @RequestParam("note") String note,
@@ -396,7 +386,6 @@ public class JobController {
         if (customer != null) {
             customer.setState(Customer.CustomerState.UPCOMING);
             customer.setNextService(serviceDate);
-            customer.setMessage(aMessageForCustomer);
             customerRepository.save(customer);
         } else {
             // Handle case where customer is not found

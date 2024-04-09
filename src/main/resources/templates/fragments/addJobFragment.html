@@ -62,6 +62,17 @@
               ></textarea>
             </div>
             <div class="form-group">
+              <label for="message">Message from customer</label>
+              <textarea
+                class="form-control"
+                name="message"
+                id="message"
+                rows="4"
+                required
+                readonly
+              ></textarea>
+            </div>
+            <div class="form-group">
               <label for="note">Note</label>
               <textarea
                 class="form-control"
@@ -125,7 +136,7 @@
             <label class="custom-control-label" for="jobDone"></label>
           </div>
         </div> -->
-
+            <br />
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
         </div>
@@ -143,16 +154,14 @@
     </div>
   </div>
   <script>
-    document
-      .getElementById("jobForm")
-      .addEventListener("submit", function (e) {
-        var checkboxes = document.querySelectorAll(
-          'input[name="technicianIds"]:checked'
-        );
-        if (checkboxes.length === 0) {
-          e.preventDefault();
-          alert("Please select at least one technician.");
-        }
-      });
+    document.getElementById("jobForm").addEventListener("submit", function (e) {
+      var checkboxes = document.querySelectorAll(
+        'input[name="technicianIds"]:checked'
+      );
+      if (checkboxes.length === 0) {
+        e.preventDefault();
+        alert("Please select at least one technician.");
+      }
+    });
   </script>
 </div>

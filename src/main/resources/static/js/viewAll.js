@@ -1,5 +1,5 @@
-document.getElementById("filter").addEventListener("change", function () {
-  var selectedFilter = this.value;
+function handleFilterChange() {
+  var selectedFilter = document.getElementById("filter").value;
   fetch(`/customers/filterJson?filter=${selectedFilter}`)
     .then((response) => response.json())
     .then((data) => {
@@ -54,7 +54,15 @@ document.getElementById("filter").addEventListener("change", function () {
         tbody.appendChild(row);
       });
     });
-});
+}
+
+// Call the function when the page loads
+handleFilterChange();
+
+// Call the function when the filter changes
+document
+  .getElementById("filter")
+  .addEventListener("change", handleFilterChange);
 
 // Function to append cells
 function appendCell(row, element, className, href, textContent) {
