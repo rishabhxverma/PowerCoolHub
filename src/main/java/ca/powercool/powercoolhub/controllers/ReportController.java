@@ -69,9 +69,7 @@ public class ReportController {
         String startDate = form.get("start-date");
         String endDate = form.get("end-date");
         List<Long> techIds = new ArrayList<>();
-        
-        System.out.println(technicianIds);
-        
+                
         for (String id : technicianIds) {
             techIds.add(Long.parseLong(id));
         }
@@ -122,7 +120,7 @@ public class ReportController {
                         boolean error = false;
                         String hoursStr = workLog.getHours();
 
-                        if (hoursStr.startsWith("-")) {
+                        if (hoursStr.equals("0 mins")) {
                             error = true;
                         } 
                         else {
