@@ -39,6 +39,7 @@
                 class="row"
                 th:replace="~{fragments/calendar :: calendar-fragment}"
               ></div>
+              <style> .job:last-child{margin-bottom: 70px;} </style>
             </div>
             <div class="form-group">
               <label for="dateService">Date Service</label>
@@ -90,23 +91,18 @@
             <div class="form-group">
               <label for="tech-checkbox">Select employees to assign:</label>
               <div id="tech-checkbox" class="row">
-                <div th:each="tech : ${techs}" class="col-md-2">
-                  <div class="tech-box form-check">
-                    <input
-                      th:id="${'tech' + tech.id}"
-                      th:value="${tech.id}"
-                      name="technicianIds"
-                      type="checkbox"
-                      class="form-check-input"
-                    />
-                    <label
-                      th:for="${'tech' + tech.id}"
-                      class="form-check-label"
-                    >
-                      <div th:text="${tech.name}"></div>
-                      <div class="job-count">Jobs:</div>
-                    </label>
-                  </div>
+                <div th:each="tech : ${techs}" class="tech-box form-check col-md-2">
+                  <input
+                    th:id="${'tech' + tech.id}"
+                    th:value="${tech.id}"
+                    name="technicianIds"
+                    type="checkbox"
+                    class="form-check-input"
+                  />
+                  <label th:for="${'tech' + tech.id}" class="form-check-label">
+                    <div class="tech-name" th:text="${tech.name}"></div>
+                    <div class="job-count">Jobs:</div>
+                  </label>
                 </div>
               </div>
             </div>
