@@ -323,13 +323,6 @@ public class JobController {
     
         model.addAttribute("jobs", jobs);
         model.addAttribute("selectedFilter", filter);
-
-        Map<Integer, List<User>> jobTechnicians = new HashMap<>();
-        for (Job job : jobs) {
-            List<User> assignedTechnicians = userRepository.findAssignedTechnicians(job.getId());
-            jobTechnicians.put(job.getId(), assignedTechnicians);
-        }
-        model.addAttribute("jobTechnicians", jobTechnicians);
     
         return "jobs/viewAllJobs";
     }

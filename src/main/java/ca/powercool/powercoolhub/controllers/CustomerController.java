@@ -1,11 +1,14 @@
 package ca.powercool.powercoolhub.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import ca.powercool.powercoolhub.models.Customer;
@@ -64,6 +67,15 @@ public class CustomerController {
         return "customers/viewAll";
     }
     
+    @GetMapping("/{customerId}/message")
+    public ResponseEntity<String> getCustomerMessage(@PathVariable Integer customerId) {
+        Optional<Customer> customer = customerRepository.findById(customerId);
+        if (customer.isPresent()) {
+            return ResponseEntity.ok(customer.get().getMessage());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
     
     @GetMapping("/searchCustomer")
     public String searchCustomerByName(@RequestParam(value = "customerName", defaultValue = "") String customerName,
@@ -126,11 +138,13 @@ public class CustomerController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateCustomer(@PathVariable Integer id, @ModelAttribute("customer") Customer customerDetails,
-            RedirectAttributes redirectAttributes) {
+    @ResponseBody
+    public ResponseEntity<?> updateCustomer(@PathVariable Integer id,
+            @ModelAttribute("customer") Customer customerDetails) {
         Optional<Customer> customerOptional = customerRepository.findById(id);
         if (!customerOptional.isPresent()) {
-            return "customers/editedCustomer";
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "update failed"));
         }
 
         customerDetails.setId(id);
@@ -144,8 +158,8 @@ public class CustomerController {
         }
 
         customerRepository.save(customerDetails);
-        redirectAttributes.addFlashAttribute("success", "Customer updated successfully!");
-        return "customers/editedCustomer";
+
+        return ResponseEntity.ok(Collections.singletonMap("message", "Customer information updated successfully."));
     }
 
     /**
