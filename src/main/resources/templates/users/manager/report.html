@@ -5,19 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
         crossorigin="anonymous" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/report.css" />
 </head>
-<style>
-    .date-box{
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        width: fit-content;
-    }
-</style>
 <body>
+    <div th:replace="~{fragments/top-navigation :: top-navigation}"></div>
+    <div th:replace="~{fragments/left-navigation :: left-navigation}"></div>
     <form id="tech-report-form" action="/manager/report/downloadTechCSV" method="post">
-        <h1>Select an employee to find their hours worked</h1>
-        <div>
+        <div style="display: flex; flex-direction: row;">
             <span class="date-box">
                 <label for="start-select">Start date</label>
                 <input type="date" id="tech-start-select" name="start-date" required>
@@ -27,43 +25,53 @@
                 <input type="date" id="tech-end-select" name="end-date" required>
             </span>
         </div>
-        <div>
-            <select name="tech-select">
-                <option value="-1" selected>Choose an employee</option>
-                <th:block th:each="tech : ${technicians}">
-                    <option th:value="${tech.id}" th:text="${tech.name}"></option>
-                </th:block>
-            </select>
+        
+        <div id="tech-container" class="container">
+            <label class="col-12 text-center" for="tech-checkbox">Select employees for report:</label>
+            <div id="tech-checkbox" class="row justify-content-center">
+                <div th:each="tech : ${technicians}" class="col-md-2">
+                    <div class="tech-box form-check">
+                        <input
+                            th:id="${'tech' + tech.id}"
+                            th:value="${tech.id}"
+                            name="technicianIds"
+                            type="checkbox"
+                            class="form-check-input"
+                        />
+                        <label
+                            th:for="${'tech' + tech.id}"
+                            class="form-check-label"
+                        >
+                            <div th:text="${tech.name}"></div>
+                            <div class="job-count">Jobs:</div>
+                        </label>
+                    </div>
+                </div>
+            </div>
         </div>
         <button type="submit" id="report-button">Download report</button>
     </form>
-
-    <!-- <form id="all-report-form" action="/manager/report/downloadAllCSV" method="post">
-        <h1>Select an employee to find their hours worked</h1>
-        <div>
-            <span class="date-box">
-                <label for="start-select">Start date</label>
-                <input type="date" id="all-start-select" name="start-date" required>
-            </span>
-            <span class="date-box">
-                <label for="end-select">End date</label>
-                <input type="date" id="all-end-select" name="end-date" required>
-            </span>
-        </div>
-        <button type="submit" id="report-button">Download report</button>
-    </form> -->
 </body>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var form = document.getElementById('report-form');
-        var select = document.querySelector('[name="tech-select"]');
-
-        form.addEventListener('submit', function (event) {
-            if (select.value === '-1') {
-                event.preventDefault(); // Stop the form from submitting
-                alert('Please choose an employee before submitting the form.');
-            }
+    // Enables clicking on user boxes to check them..................
+    let techBoxes = document.querySelectorAll(".tech-box");
+    techBoxes.forEach(function (box) {
+    box
+        .querySelector('input[type="checkbox"]')
+        .addEventListener("change", function () {
+        if (this.checked) {
+            box.classList.add("checked");
+        } else {
+            box.classList.remove("checked");
+        }
         });
     });
+
+    // Uncheck all checkboxes when page is refreshed
+    var checkboxes = document.querySelectorAll('input[name="technicianIds"]');
+    checkboxes.forEach(function (checkbox) {
+    checkbox.checked = false;
+    });
+    // Enables clicking on user boxes to check them..................
 </script>
 </html>
