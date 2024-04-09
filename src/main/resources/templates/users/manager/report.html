@@ -19,18 +19,18 @@
     <form id="tech-report-form" action="/manager/report/downloadTechCSV" method="post">
         <div style="display: flex; flex-direction: row;">
             <span class="date-box">
-                <label for="start-select">Start date</label>
+                <label for="start-select"><b>Start date</b></label>
                 <input type="date" id="tech-start-select" name="start-date" required
                     oninput="addRestrictionOnInputDate()">
             </span>
             <span class="date-box">
-                <label for="end-select">End date</label>
+                <label for="end-select"><b>End date</b></label>
                 <input type="date" id="tech-end-select" name="end-date" required oninput="addRestrictionOnInputDate()">
             </span>
         </div>
         <br>
         <div id="tech-container" class="container">
-            <label class="col-12 text-center" for="tech-checkbox">Select employees for report:</label>
+            <label class="col-12 text-center" for="tech-checkbox"><b>Select employees for report:</b></label>
             <div id="tech-checkbox" class="row justify-content-center">
                 <div th:each="tech : ${technicians}" class="col-md-2">
                     <div class="tech-box form-check">
@@ -45,7 +45,7 @@
             </div>
         </div> <br><br>
         <button class="btn btn-warning" id="report-button">
-            Download report
+            <b>Download report</b>
         </button>
     </form>
 </body>
