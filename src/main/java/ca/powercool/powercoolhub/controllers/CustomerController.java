@@ -139,7 +139,7 @@ public class CustomerController {
             RedirectAttributes redirectAttributes) {
         Optional<Customer> customerOptional = customerRepository.findById(id);
         if (!customerOptional.isPresent()) {
-            return "customers/editedCustomer";
+            return "/customers/viewAll";
         }
 
         customerDetails.setId(id);
@@ -154,7 +154,7 @@ public class CustomerController {
 
         customerRepository.save(customerDetails);
         redirectAttributes.addFlashAttribute("success", "Customer updated successfully!");
-        return "customers/editedCustomer";
+        return "customers/viewAll";
     }
 
     /**
