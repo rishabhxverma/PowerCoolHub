@@ -118,13 +118,12 @@ function fetchAndProcessLocation(callback) {
 }
 
 // Function to be called after location is fetched and user confirmed
+//Ideally this logic would be implemented in the backend - this is a fix for after the semester.
 function postClockAction(address, button) {
     console.log("postClockAction called")
     const technicianId = document.body.getAttribute('tech-id');
     const intendedAction = isClockedIn ? "clock_out" : "clock_in";  // The intended action based on current state
     if(isClockedIn){
-        console.log(`Current location: ${currentLocation.latitude}, ${currentLocation.longitude}`); // Debugging line
-        console.log("checkClockOutLocation called"); // Debugging line
         checkClockOutLocation(technicianId, currentLocation);
     }
     fetch('/technician/clock', {
