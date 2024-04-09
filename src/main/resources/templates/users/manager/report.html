@@ -28,9 +28,12 @@
                 <input type="date" id="tech-end-select" name="end-date" required oninput="addRestrictionOnInputDate()">
             </span>
         </div>
-        <br>
+        <br>    
         <div id="tech-container" class="container">
             <label class="col-12 text-center" for="tech-checkbox"><b>Select employees for report:</b></label>
+            <div class="text-center">
+                <button type="button" id="selectAll">Select All</button>
+            </div>
             <div id="tech-checkbox" class="row justify-content-center">
                 <div th:each="tech : ${technicians}" class="col-md-2">
                     <div class="tech-box form-check">
@@ -38,13 +41,12 @@
                             class="form-check-input" />
                         <label th:for="${'tech' + tech.id}" class="form-check-label">
                             <div th:text="${tech.name}"></div>
-                            <div class="job-count">Jobs:</div>
                         </label>
                     </div>
                 </div>
             </div>
-        </div> <br><br>
-        <button class="btn btn-warning" id="report-button">
+        </div>
+        <button class="btn btn-warning" id="report-button" style="margin-top: 10px;">
             <b>Download report</b>
         </button>
     </form>
@@ -64,6 +66,45 @@
             downloadButton.disabled = false;
         }
     }
+
+    document.getElementById('selectAll').addEventListener('click', function() {
+        // Find all checkboxes within the #tech-checkbox container
+        var checkboxes = document.querySelectorAll('#tech-checkbox .form-check-input');
+        // Determine whether all checkboxes are currently checked
+        var allChecked = true;
+        for (var checkbox of checkboxes) {
+            if (!checkbox.checked) {
+                allChecked = false;
+                break;
+            }
+        }
+        // Toggle the checked status of all checkboxes
+        if(allChecked){
+            for (var checkbox of checkboxes) {
+                checkbox.checked = false;
+                var box = checkbox.parentElement;
+                box.classList.remove("checked");
+            }
+        }
+        else{
+            for (var checkbox of checkboxes) {
+                checkbox.checked = true;
+                var box = checkbox.parentElement;
+                box.classList.add("checked");
+            }
+        }
+    });
+
+    document.getElementById('tech-report-form').addEventListener('submit', function(e) {
+        // Get all checkbox elements from the form
+        var checkboxes = document.querySelectorAll('input[name="technicianIds"]:checked');
+
+        // Check if no checkbox is checked
+        if (checkboxes.length === 0) {
+            alert('Please select at least one employee.');
+            e.preventDefault(); // Prevent form submission
+        }
+    });
 
     // Enables clicking on user boxes to check them..................
     let techBoxes = document.querySelectorAll(".tech-box");

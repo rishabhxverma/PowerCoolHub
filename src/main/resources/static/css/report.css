@@ -140,3 +140,28 @@ body {
     align-items: center;
     margin: 10px;
 }
+
+#selectAll {
+    margin: 10px;
+    padding: 10px 15px; /* Size of the button */
+    background-color: #f0f0f0; /* Light grey background */
+    color: #333; /* Dark text color for contrast */
+    border: 1px solid #ccc; /* Border to match the input fields */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 1rem; /* Font size similar to other inputs */
+    cursor: pointer; /* Cursor indicates the element is clickable */
+    outline: none; /* Removes the default focus outline */
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s; /* Smooth transition for hover effects */
+}
+
+#selectAll:hover {
+    background-color: #e8e8e8; /* Slightly darker background on hover */
+    border-color: #999; /* Darker border on hover */
+}
+
+/* Optional: Style for when the button is focused or active */
+#selectAll:focus,
+#selectAll:active {
+    background-color: #ddd; /* Even darker background for active state */
+    border-color: #888; /* Darker border for active state */
+}
