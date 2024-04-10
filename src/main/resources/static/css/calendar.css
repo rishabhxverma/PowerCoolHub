@@ -21,7 +21,6 @@
 }
 
 #calendar-container {
-  width: 97%;
   margin: 15px;
 }
 
@@ -53,8 +52,7 @@
   border: 1px solid #002e69;
   border-radius: 8px;
   padding: 2px;
-  margin-top: 10px;
-  margin-bottom: 10px;
+  margin-top: 5px;
   background-color: #eff6ff;
   width: 100%;
 
@@ -64,8 +62,8 @@
   font-size: 80%;
 }
 
-.job:not(:first-child) {
-  margin-top: 0px;
+.job:last-child {
+  margin-bottom: 5px;
 }
 
 .job-name,
@@ -76,6 +74,15 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.job-tech-count {
+  display: block;
+  width: 100%;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: clip;
 }
 
 .finished {
@@ -119,4 +126,49 @@
 
 .install-job:hover {
   background-color: #b3e6ff;
+}
+
+
+
+/* CSS for larger screens, like desktops */
+/* ... your existing styles ... */
+
+/* CSS for tablets */
+@media (max-width: 768px) {
+  /* Adjust the size of the buttons and the font size within the calendar */
+  #calendar-buttons button {
+    font-size: 0.8rem;
+  }
+
+  .calendar-top span, .calendar-top time {
+    font-size: 0.8rem;
+  }
+}
+
+/* CSS for mobile phones */
+@media (max-width: 576px) {
+  #calendar-container {
+    padding: 0px; /* Reduce padding */
+    margin: 3px;
+  }
+
+  .calendar-top, .calendar-col {
+    padding: 2px; /* Reduce padding in each calendar cell */
+  }
+
+  .calendar-top span, .calendar-top time {
+    font-size: 0.7rem; /* Reduce font size to fit smaller screens */
+  }
+
+  .job-name,
+  .job-type {
+    display: block;
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+  }
+
+  
 }

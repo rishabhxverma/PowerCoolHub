@@ -17,7 +17,7 @@ public class GeocodingService {
     @Value("${google.api.key}") // Injected from application.properties or environment variable
     private String apiKey;
 
-    private static final String GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
+    static final String GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json";
 
     public Map<String, Double> geocodeAddress(String address) {
         URI uri = UriComponentsBuilder.fromHttpUrl(GEOCODE_URL)

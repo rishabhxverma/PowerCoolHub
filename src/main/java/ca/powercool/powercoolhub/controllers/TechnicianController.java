@@ -1,14 +1,20 @@
 package ca.powercool.powercoolhub.controllers;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -24,7 +30,6 @@ import ca.powercool.powercoolhub.models.User;
 import ca.powercool.powercoolhub.models.technician.TechnicianWorkLog;
 import ca.powercool.powercoolhub.models.technician.data.GroupedWorkLogsData;
 import ca.powercool.powercoolhub.models.technician.data.WorkLogsFilter;
-import ca.powercool.powercoolhub.repositories.UserRepository;
 import ca.powercool.powercoolhub.services.MailService;
 import ca.powercool.powercoolhub.services.TechnicianService;
 import ca.powercool.powercoolhub.services.TechnicianWorkLogService;
@@ -120,24 +125,6 @@ public class TechnicianController {
         return "users/technician/history/details";
     }
 
-    // @GetMapping("/technician/getAddress/{techId}")
-    // public ResponseEntity<?> getLatestAddress(@PathVariable("techId") Long techId) {
-    //     try {
-    //         String latestAddress = this.technicianService.getLatestCompletedJobAddress(techId);
-    //         if (latestAddress != null && !latestAddress.isEmpty()) {
-    //             return ResponseEntity.ok(latestAddress);
-    //         } else {
-    //             // Handle the case where the address is null or empty
-    //             return ResponseEntity.notFound().build();
-    //         }
-    //     } catch (Exception e) {
-    //         // Log the exception details and return a proper error message or code
-    //         // Depending on your logging framework, adjust the following line
-    //         // e.g., log.error("Error fetching latest address", e);
-    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching latest address");
-    //     }
-    // }
-
     @PostMapping("/technician/clock")
     @ResponseBody
     public ResponseEntity<?> clock(@RequestBody TechnicianWorkLog clockData, HttpServletRequest request) {
@@ -145,7 +132,16 @@ public class TechnicianController {
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not authenticated");
         }
-
+        //logic to determine if the technician forgot to clock out at a reasonable time. 
+        if("clock_out".equals(clockData.getAction())){
+            LocalDateTime clockOutTime = clockData.getCreatedAt();
+            TechnicianWorkLog latestLog = technicianWorkLogService.latestLogById(user.getId());
+            Duration twelveHours = Duration.ofHours(12);
+            Duration duration = Duration.between(latestLog.getCreatedAt(),clockOutTime);
+            if(duration.compareTo(twelveHours) > 0){
+                mailService.notifyManagersOfLateClockOutTime(user.getId(), duration, clockOutTime);
+            }
+        }
         TechnicianWorkLog savedLog = this.technicianWorkLogService.saveWorkLog(user, clockData);
         return ResponseEntity.ok(savedLog);
     }
@@ -157,20 +153,20 @@ public class TechnicianController {
         double longitude = locationDetails.get("longitude");
 
         // // Now, invoke the service method to process the location and check if it's within range
-        boolean isWithinRange = technicianService.isTechnicianWithinRange(
-            techId,
-            latitude,
-            longitude
-        );
-        if (!isWithinRange) {
-            String clockOutAddress = technicianService.getLastClockOutAddress(techId);
-            mailService.notifyManagersOfOutOfRangeClockOut(techId, clockOutAddress);
+        try {
+            boolean isWithinRange = technicianService.isTechnicianWithinRange(techId, latitude, longitude);
+    
+            if (!isWithinRange) {
+                String clockOutAddress = technicianService.getLastClockOutAddress(techId);
+                mailService.notifyManagersOfOutOfRangeClockOut(techId, clockOutAddress);
+                return ResponseEntity.ok().body("{\"message\":\"Technician clocked out outside of required range\"}");
+            }
+    
+            return ResponseEntity.ok().body("{}");
+        } catch (ServiceException ex) {
+            // Log the error or do additional handling
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\":\"" + ex.getMessage() + "\"}");
         }
-
-        // Return appropriate HTTP response
-        return isWithinRange 
-            ? ResponseEntity.ok().body("{}") // sending empty JSON object
-            : ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"message\":\"Technician clocked out outside of required range\"}");
     }
 
     @GetMapping("/technician/api-key")

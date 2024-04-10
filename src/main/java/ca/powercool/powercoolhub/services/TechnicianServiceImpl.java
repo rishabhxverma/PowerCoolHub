@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,13 +56,15 @@ public class TechnicianServiceImpl implements TechnicianService {
     public boolean isTechnicianWithinRange(Long technicianId, double latitude, double longitude) {
         String address = getLatestCompletedJobAddress(technicianId);
         
-        Map<String, Double> result = geocodingService.geocodeAddress(address);
-        
-        double jobLatitude = result.get("lat");
-        double jobLongitude = result.get("lng");
-        double distance = calculateDistance(latitude, longitude, jobLatitude, jobLongitude);
-        
-        return distance <= 1000;
+        try {
+            Map<String, Double> result = geocodingService.geocodeAddress(address);
+            double jobLatitude = result.get("lat");
+            double jobLongitude = result.get("lng");
+            double distance = calculateDistance(latitude, longitude, jobLatitude, jobLongitude);
+            return distance <= 1000;
+        } catch (RuntimeException ex) {
+            throw new ServiceException("Error while checking technician range: " + ex.getMessage(), ex);
+        }
     }
 
     @Override

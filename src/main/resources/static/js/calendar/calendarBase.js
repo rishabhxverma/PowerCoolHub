@@ -89,9 +89,16 @@ function fetchJobsAndDisplay(weekDates) {
         jobTypeDiv.classList.add("job-type");
         jobTypeDiv.textContent = job.jobType;
 
+        let techCountDiv = document.createElement("div");
+        techCountDiv.classList.add("job-tech-count");
+        var techs = job.technicianIds.length;
+        techCountDiv.textContent = techs + (techs === 1 ? " tech" : " techs");
+
+
         // Append the job name/type divs to the job div
         jobEntry.appendChild(jobNameDiv);
         jobEntry.appendChild(jobTypeDiv);
+        jobEntry.appendChild(techCountDiv);
 
         // Adds the job to its day column on calendar
         dayColumn.appendChild(jobEntry);

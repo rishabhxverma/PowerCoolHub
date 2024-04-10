@@ -19,4 +19,6 @@ public interface TechnicianWorkLogService {
     TechnicianWorkLog saveWorkLog(User user, TechnicianWorkLog clockData);
 
     List<TechnicianWorkLogReport> getTechnicianWorkLogReport(User user, String startDate, String endDate);
+
+    TechnicianWorkLog latestLogById(Long userId);
 }

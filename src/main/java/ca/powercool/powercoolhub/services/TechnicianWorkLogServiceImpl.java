@@ -177,21 +177,22 @@ public class TechnicianWorkLogServiceImpl implements TechnicianWorkLogService {
      */
     @Override
     public List<TechnicianWorkLogReport> getTechnicianWorkLogReport(User user, String startDate, String endDate) {
-
         // Retrieve the grouped work logs data for the given user and date range
         List<GroupedWorkLogsData> workLogs = this.getTechnicianHistoryData(user, startDate, endDate);
         List<TechnicianWorkLogReport> worklogReports = new ArrayList<TechnicianWorkLogReport>();
+
+        Comparator<TechnicianWorkLog> localDateTimeComparator = Comparator.comparing(TechnicianWorkLog::getCreatedAt);
 
         for (GroupedWorkLogsData groupedWorkLog : workLogs) {
             Optional<TechnicianWorkLog> clockinWorkLogOptional = groupedWorkLog.getLogs()
                     .stream()
                     .filter(log -> log.getAction().equals(TechnicianWorkLog.CLOCK_IN))
-                    .findFirst();
+                    .min(localDateTimeComparator);
 
             Optional<TechnicianWorkLog> clockoutWorkLogOptional = groupedWorkLog.getLogs()
                     .stream()
                     .filter(log -> log.getAction().equals(TechnicianWorkLog.CLOCK_OUT))
-                    .reduce((first, second) -> second);
+                    .max(localDateTimeComparator);
 
             // Check if both clock-in and clock-out work logs are present
             if (clockinWorkLogOptional.isPresent() && clockoutWorkLogOptional.isPresent()) {
@@ -220,5 +221,10 @@ public class TechnicianWorkLogServiceImpl implements TechnicianWorkLogService {
         Collections.sort(worklogReports);
 
         return worklogReports;
+    }
+
+    @Override
+    public TechnicianWorkLog latestLogById(Long userId) {
+        return technicianWorkLogRepository.findLatestClockWorkLogByUserId(userId);
     }
 }

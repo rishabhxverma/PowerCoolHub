@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/css/report.css" />
+</head>
+
+<body>
+    <div th:replace="~{fragments/top-navigation :: top-navigation}"></div>
+    <div th:replace="~{fragments/left-navigation :: left-navigation}"></div><br><br><br><br>
+    <form id="tech-report-form" action="/manager/report/downloadTechCSV" method="post">
+        <div style="display: flex; flex-direction: row;">
+            <span class="date-box">
+                <label for="start-select"><b>Start date</b></label>
+                <input type="date" id="tech-start-select" name="start-date" required
+                    oninput="addRestrictionOnInputDate()">
+            </span>
+            <span class="date-box">
+                <label for="end-select"><b>End date</b></label>
+                <input type="date" id="tech-end-select" name="end-date" required oninput="addRestrictionOnInputDate()">
+            </span>
+        </div>
+        <br>    
+        <div id="tech-container" class="container">
+            <label class="col-12 text-center" for="tech-checkbox"><b>Select employees for report:</b></label>
+            <div class="text-center">
+                <button type="button" id="selectAll">Select All</button>
+            </div>
+            <div id="tech-checkbox" class="row justify-content-center">
+                <div th:each="tech : ${technicians}" class="col-md-2">
+                    <div class="tech-box form-check">
+                        <input th:id="${'tech' + tech.id}" th:value="${tech.id}" name="technicianIds" type="checkbox"
+                            class="form-check-input" />
+                        <label th:for="${'tech' + tech.id}" class="form-check-label">
+                            <div class="tech-name" th:text="${tech.name}"></div>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-warning" id="report-button" style="margin-top: 10px;">
+            <b>Download report</b>
+        </button>
+    </form>
+</body>
+<script>
+
+    function addRestrictionOnInputDate() {
+        var startDate = document.getElementById("tech-start-select").value;
+        var endDate = document.getElementById("tech-end-select").value;
+        var downloadButton = document.getElementById("report-button");
+
+        if (new Date(startDate) > new Date(endDate)) {
+            window.alert("The start date must not be greater than the end date.");
+            document.getElementById("tech-end-select").value = startDate;
+            downloadButton.disabled = true;
+        } else {
+            downloadButton.disabled = false;
+        }
+    }
+
+    document.getElementById('selectAll').addEventListener('click', function() {
+        // Find all checkboxes within the #tech-checkbox container
+        var checkboxes = document.querySelectorAll('#tech-checkbox .form-check-input');
+        // Determine whether all checkboxes are currently checked
+        var allChecked = true;
+        for (var checkbox of checkboxes) {
+            if (!checkbox.checked) {
+                allChecked = false;
+                break;
+            }
+        }
+        // Toggle the checked status of all checkboxes
+        if(allChecked){
+            for (var checkbox of checkboxes) {
+                checkbox.checked = false;
+                var box = checkbox.parentElement;
+                box.classList.remove("checked");
+            }
+        }
+        else{
+            for (var checkbox of checkboxes) {
+                checkbox.checked = true;
+                var box = checkbox.parentElement;
+                box.classList.add("checked");
+            }
+        }
+    });
+
+    document.getElementById('tech-report-form').addEventListener('submit', function(e) {
+        // Get all checkbox elements from the form
+        var checkboxes = document.querySelectorAll('input[name="technicianIds"]:checked');
+
+        // Check if no checkbox is checked
+        if (checkboxes.length === 0) {
+            alert('Please select at least one employee.');
+            e.preventDefault(); // Prevent form submission
+        }
+    });
+
+    // Enables clicking on user boxes to check them..................
+    let techBoxes = document.querySelectorAll(".tech-box");
+    techBoxes.forEach(function (box) {
+        box
+            .querySelector('input[type="checkbox"]')
+            .addEventListener("change", function () {
+                if (this.checked) {
+                    box.classList.add("checked");
+                } else {
+                    box.classList.remove("checked");
+                }
+            });
+    });
+
+    // Uncheck all checkboxes when page is refreshed
+    var checkboxes = document.querySelectorAll('input[name="technicianIds"]');
+    checkboxes.forEach(function (checkbox) {
+        checkbox.checked = false;
+    });
+    // Enables clicking on user boxes to check them..................
+</script>
+
+</html>
