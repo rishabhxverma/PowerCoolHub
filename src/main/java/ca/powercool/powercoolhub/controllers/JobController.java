@@ -127,7 +127,7 @@ public class JobController {
             technicians.add(optionalUser.get().getName());
         }
     
-        //mailService.sendBookingConfirmation(customer.getEmail(), customerName, serviceDate, customer.getAddress(), jobTypeString, technicians);
+        mailService.sendBookingConfirmation(customer.getEmail(), customerName, serviceDate, customer.getAddress(), jobTypeString, technicians);
     
         return "redirect:/customers/viewAll?filter=requesting-app";
     }
@@ -419,7 +419,7 @@ public class JobController {
                     // Add note to customer that job has been deleted
                     customer.get().setMessage("last job was cancelled");
                     // MAILS CUSTOMER THAT JOB HAS BEEN CANCELLED, uncomment when wanting functionality
-                    //mailService.sendCancellationConfirmation(customer.get().getEmail(), customer.get().getName(), job.get().getServiceDate(), customer.get().getAddress(), job.get().getJobType());
+                    mailService.sendCancellationConfirmation(customer.get().getEmail(), customer.get().getName(), job.get().getServiceDate(), customer.get().getAddress(), job.get().getJobType());
                 } else {
                     // Handle case where customer is not found
                     System.out.println("Customer not found");
