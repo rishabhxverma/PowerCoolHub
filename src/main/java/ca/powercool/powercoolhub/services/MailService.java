@@ -93,7 +93,7 @@ public class MailService {
 
     public void notifyManagersOfLateClockOutTime(Long technicianId, Duration duration, LocalDateTime clockOutTime){
         String technicianName = userRepository.findNameById(technicianId);
-        String to = "menzies23@gmail.com";
+        String to = "rishabhverma2503@gmail.com";
         String subject = "Technician Clocked Out Late";
         String formattedDuration = formatDuration(duration);
         String body = "Technician with name: " + technicianName + " has clocked out at " + clockOutTime + ".\n"+  "They were clocked in for a duration of: " 
