@@ -81,7 +81,6 @@ PowerCool Hub is a custom-built, role-based platform that solves these problems 
 * **Build:** Apache Maven
 
 ---
-
 ## Running the Project Locally
 
 This project is fully containerized using Docker and Docker Compose. This is the simplest way to run the application and its database with a single command.
@@ -117,37 +116,7 @@ With your `.env` file created, open a terminal in the project's root directory a
 ```bash
 # This will build the Java app's image and start both the app and database containers
 docker-compose up --build
-
-**Example:**
-
-1.  **Clone the repository:**
-    ```bash
-    git clone [https://github.com/rishabhxverma/PowerCoolHub.git](https://github.com/rishabhxverma/PowerCoolHub.git)
-    cd PowerCoolHub
-    ```
-
-2.  **Set up Environment Variables:**
-    * Create an `application.properties` file in `src/main/resources/`.
-    * Add the following properties (you can use your own local DB):
-        ```properties
-        # Example for PostgreSQL
-        spring.datasource.url=jdbc:postgresql://localhost:5432/powercool
-        spring.datasource.username=postgres
-        spring.datasource.password=your_db_password
-
-        # Google Maps API Key
-        google.maps.api.key=YOUR_GOOGLE_MAPS_API_KEY
-        ```
-
-3.  **Build and Run the Application:**
-    ```bash
-    # Using Maven
-    mvn spring-boot:run
-    ```
-
-4.  **Access the application:**
-    Open your browser and navigate to `http://localhost:8080`.
-
+```
 ---
 
 ## Acknowledgements
