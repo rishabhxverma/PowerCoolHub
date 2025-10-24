@@ -51,8 +51,25 @@ PowerCool Hub is a custom-built, role-based platform that solves these problems 
 
 ## Tech Stack
 
-``
-``
+* **Backend:** **Java 17** & **Spring Boot 3.2.3**
+    * **Spring Web:** For building the RESTful APIs and web controllers.
+    * **Spring Data JPA:** For object-relational mapping (ORM) to interact with the database.
+* **Frontend (View):** **Thymeleaf**
+    * A modern server-side Java template engine used to render dynamic HTML.
+* **Database:**
+    * **PostgreSQL:** The primary production-grade relational database.
+    * **H2 Database:** An in-memory database used for testing and local development.
+* **Security:** **Spring Security (Crypto)**
+    * Used for securely hashing and verifying user passwords (e.g., using BCrypt).
+* **Data Validation:** **Jakarta Validation (Hibernate Validator)**
+    * Used for server-side validation of data models and request bodies (e.g., `@NotBlank`, `@Email`).
+* **Testing:** **JUnit 4** & **Spring Boot Test**
+    * For unit and integration testing of the application.
+* **Utilities:**
+    * **Apache Commons CSV:** For generating and parsing CSV files (used for reports).
+    * **Spring Mail:** For integrating email-sending capabilities.
+* **Build Tool:** **Apache Maven**
+    * For managing project dependencies and building the application.
 
 **Example:**
 
