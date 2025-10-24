@@ -71,15 +71,6 @@ PowerCool Hub is a custom-built, role-based platform that solves these problems 
 * **Build Tool:** **Apache Maven**
     * For managing project dependencies and building the application.
 
-**Example:**
-
-* **Backend:** Java 17, Spring Boot (Spring Web, Spring Security, Spring Data JPA)
-* **Frontend:** Thymeleaf (Server-Side Rendered), HTML5, CSS3, JavaScript (ES6+)
-* **Database:** PostgreSQL (or MySQL, H2 for testing)
-* **APIs:** Google Maps API (for routing and geolocation)
-* **Testing:** JUnit 5, Mockito
-* **Build:** Apache Maven
-
 ---
 ## Running the Project Locally
 
