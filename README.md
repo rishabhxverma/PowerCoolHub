@@ -7,7 +7,7 @@ This platform replaces outdated paper-and-text-message-based systems with a cent
 ### Key Info
 
 * **Live Demo:** ``
-* **Project Status:** ``
+* **Project Status:** `V1.0 (Stable Release)`
 
 ---
 
