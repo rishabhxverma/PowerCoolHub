@@ -84,8 +84,39 @@ PowerCool Hub is a custom-built, role-based platform that solves these problems 
 
 ## Running the Project Locally
 
-``
-``
+This project is fully containerized using Docker and Docker Compose. This is the simplest way to run the application and its database with a single command.
+
+### Prerequisites
+
+* [Docker](https://www.docker.com/products/docker-desktop/) must be installed and running on your machine.
+
+### 1. Create Environment File
+
+Before you can run the app, you must provide your secret keys.
+
+1.  In the root folder of the project, create a new file named `.env`
+    * (This file is automatically ignored by `.gitignore` and should **never** be committed to GitHub.)
+
+2.  Copy and paste the following into the `.env` file, replacing the `...` with your actual secret keys:
+
+    ```bash
+    # A secure password for the PostgreSQL database
+    DATABASE_PASSWORD=...
+
+    # The Google App Password for the powercool205@gmail.com account
+    powercool205_PASSWORD=...
+
+    # Your Google Cloud API Key (for Google Maps)
+    GOOGLE_API_KEY=...
+    ```
+
+### 2. Build and Run
+
+With your `.env` file created, open a terminal in the project's root directory and run a single command:
+
+```bash
+# This will build the Java app's image and start both the app and database containers
+docker-compose up --build
 
 **Example:**
 
