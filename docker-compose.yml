@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # 1. The Java Application Service
+  app:
+    # Build the app using the Dockerfile in the current directory
+    build: .
+    # Restart the app if it ever fails
+    restart: always
+    # Map port 8080 inside the container to port 8080 on your local machine
+    ports:
+      - "8080:8080"
+    # This service depends on the 'db' service; Docker will start 'db' first
+    depends_on:
+      - db
+    # Pass in the environment variables from the .env file
+    environment:
+      # This URL points to the 'db' service defined below
+      - DATABASE_URL=jdbc:postgresql://db:5432/powercool
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - powercool205_PASSWORD=${powercool205_PASSWORD}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+
+  # 2. The PostgreSQL Database Service
+  db:
+    # Use the official Postgres image from Docker Hub
+    image: postgres:15
+    # Restart the database if it ever fails
+    restart: always
+    # Environment variables to configure the Postgres container
+    environment:
+      # Create a database named 'powercool'
+      - POSTGRES_DB=powercool
+      # Create a user matching your application.properties
+      - POSTGRES_USER=powercool_hub_database_user
+      # Set the password from the .env file
+      - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+    # Mount a Docker volume to persist database data even if the container stops
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+# Define the Docker volume for persisting data
+volumes:
+  postgres_data:
